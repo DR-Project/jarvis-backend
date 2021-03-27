@@ -80,7 +80,7 @@ def coin_get_price(instrument_id: str) -> dict:
     try:
         r = httpx.get(url)
     except httpx.RequestError:
-        raise Exception('Interface Error / 接口错误')
+        raise Exception('Interface Error / 接口异常')
     else:
         msg = r.json()
     # payload = r.json()

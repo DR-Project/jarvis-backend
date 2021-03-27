@@ -47,9 +47,14 @@ async def _traffic(bot: Bot, event: MessageEvent):
 @cryptocoin.handle()
 async def _cryptocoin(bot: Bot, event: MessageEvent):
     coin_type = event.get_plaintext().upper()
-    dicts = data_source.coin_get_price(data_source.cryptocurrency[coin_type])
-    result = data_source.coin_construct_string(dicts)
-    await bot.send(event, result, at_sender=False)
+    try:
+        dicts = data_source.coin_get_price(data_source.cryptocurrency[coin_type])
+        result = data_source.coin_construct_string(dicts)
+    except: 
+        result = "接口异常"
+        await bot.send(event, result, at_sender=False)
+    else:
+        await bot.send(event, result, at_sender=False)
 
 
 # Just for fun
