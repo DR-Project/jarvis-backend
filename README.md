@@ -1,2 +1,5 @@
+<div align="center">
 # Ai-Hyperion
-Ai Hyperion Bot based on Mirai. 
+_ Bot based on MAH and NoneBot2 _
+</div>
+. 
