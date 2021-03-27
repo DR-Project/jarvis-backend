@@ -63,7 +63,7 @@ def btc_get_price() -> dict:
     :return: the key message to the upstream
     """
 
-    url = 'https://www.okexcn.com/api/spot/v3/instruments/BTC-USTD/ticker'
+    url = 'https://www.okexcn.com/api/spot/v3/instruments/BTC-USDT/ticker'
 
     '''
     # useless for now
@@ -124,8 +124,8 @@ mem_dicts = {
 }
 
 
-'''
+
 if __name__ == '__main__':
     msg = btc_get_price()
     print(btc_construct_string(msg))
-'''
+
