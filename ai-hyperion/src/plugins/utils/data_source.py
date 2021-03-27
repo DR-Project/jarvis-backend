@@ -107,7 +107,7 @@ def btc_construct_string(msg: dict) -> str:
     # ret = '现在BTC的价格是1BTC = ' + f'{price}' + 'USDT。折合美元价格为' + f'{usd_price}' + '刀'
     # ret = '现在BTC单位价格为 f'{price}' + 'USDT，折合美元价格为' + f'{usd_price}' + 'USD'。 
     # 这句话，你看情况改改。我不知道怎么写
-    ret = '现在BTC的价格是1 BTC = ' + f'{price}' + ' USDT。'
+    ret = '现在BTC的价格是1 BTC = ' + f'{price}' + ' USDT 。'
     # abandoned above
     # ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'
 
@@ -115,14 +115,13 @@ def btc_construct_string(msg: dict) -> str:
 
 
 mem_dicts = {
-    "丢***": "***",
-    "丢***": "***",
-    "丢***": "***",
-    "丢***": "***",
-    "丢***": "***",
-    "丢***": "***"
+    '丢***': '***',
+    '丢***': '***',
+    '丢***': '***',
+    '丢***': '***',
+    '丢***': '***',
+    '丢***': '***'
 }
-
 
 
 if __name__ == '__main__':
