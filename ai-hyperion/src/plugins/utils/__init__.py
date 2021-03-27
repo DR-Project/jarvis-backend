@@ -15,7 +15,7 @@ config = Config(**global_config.dict())
 #     pass
 
 
-from nonebot.plugin import on_regex
+from nonebot.plugin import on_regex, on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 from nonebot.adapters.cqhttp import GroupMessageEvent
 
@@ -29,7 +29,7 @@ BOT_QNUM = ***
 
 queshi = on_regex('(确实|qs|有一说一|yysy)')
 traffic = on_regex('^(查流量|魔法|Magic|magic)$')
-bitcoin = on_regex('^(BTC|btc|比特币|来点BTC|来点btc|来丶BTC|来丶btc)$')
+cryptocoin = on_regex('^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$')
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: MessageEvent):
@@ -44,10 +44,11 @@ async def _traffic(bot: Bot, event: MessageEvent):
     await bot.send(event, result, at_sender=False)
 
 
-@bitcoin.handle()
-async def _bitcoin(bot: Bot, event: MessageEvent):
-    dicts = data_source.btc_get_price()
-    result = data_source.btc_construct_string(dicts)
+@cryptocoin.handle()
+async def _cryptocoin(bot: Bot, event: MessageEvent):
+    coin_type = event.get_plaintext().upper()
+    dicts = data_source.coin_get_price(data_source.cryptocurrency[coin_type])
+    result = data_source.coin_construct_string(dicts)
     await bot.send(event, result, at_sender=False)
 
 
@@ -93,3 +94,35 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
         }
     }]
     await bot.send(event, at_mem, at_sender=False)
+
+
+help_list = on_regex('^(Jarvis|贾维斯|命令列表)$')
+@help_list.handle()
+async def _help_list(bot: Bot, event: MessageEvent):
+    lists = [{
+        'type': 'text',
+        'data': {
+            'text': " __Command List v0.1__ \n"
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': " [Magic/魔法] \n> 查询Magic流量 \n",
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': " [BTG/LTC/...] \n> 数字货币价格 \n",
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': " [丢人/diu] \n> 随机抽取幸运儿 \n",
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': " [色来/selai] \n> 在鹿上了 0% \n",
+        }
+    }]
+    await bot.send(event, lists, at_sender=False)

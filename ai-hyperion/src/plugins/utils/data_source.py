@@ -57,7 +57,7 @@ def magic_construct_string(msg: dict) -> str:
     return ret
 
 
-def get_price(instrument_id: str) -> dict:
+def coin_get_price(instrument_id: str) -> dict:
     """
     :param instrument_id: the cryptocurrency you want to check
     :return: the key message to the upstream
@@ -90,7 +90,7 @@ def get_price(instrument_id: str) -> dict:
     return msg
 
 
-def construct_string(msg: dict) -> str:
+def coin_construct_string(msg: dict) -> str:
     """
 
     :param msg:  msg is a dict from upstream method
