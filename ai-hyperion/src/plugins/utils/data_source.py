@@ -1,3 +1,5 @@
+from typing import Union
+
 import httpx
 import json
 
@@ -57,7 +59,7 @@ def magic_construct_string(msg: dict) -> str:
     return ret
 
 
-def get_price(instrument_id: str) -> dict:
+def get_price(instrument_id: str) -> Union[int, dict]:
     """
     :param instrument_id: the cryptocurrency you want to check
     :return: the key message to the upstream
@@ -65,6 +67,8 @@ def get_price(instrument_id: str) -> dict:
 
     url = 'https://www.okexcn.com/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
 
+    # for test
+    # url = 'www.test404domain.cc'
     '''
     # useless for now
     proxies = {
@@ -75,16 +79,18 @@ def get_price(instrument_id: str) -> dict:
 
     r = httpx.get(url, proxies=proxies)
     '''
-
-    r = httpx.get(url)
-
+    try:
+        r = httpx.get(url)
+    except httpx.RequestError:
+        raise Exception('Interface Error / 接口错误')
+    else:
+        msg = r.json()
     # payload = r.json()
 
     '''msg = {
         'okex': payload['data']['constituents'][0],
         'price': payload['data']['last']
     }'''
-    msg = r.json()
     # print(json.dumps(msg))
 
     return msg
@@ -133,5 +139,8 @@ cryptocurrency = {
 
 if __name__ == '__main__':
     msg = get_price('BTC-USDT')
-    print(construct_string(msg))
+    if msg != 404:
+        print(construct_string(msg))
+    else:
+        print(404)
 
