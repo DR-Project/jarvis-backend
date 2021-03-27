@@ -63,7 +63,7 @@ def btc_get_price() -> dict:
     :return: the key message to the upstream
     """
 
-    url = 'https://www.okexcn.com/api/index/v3/BTC-USDT/constituents'
+    url = 'https://www.okexcn.com/api/spot/v3/instruments/BTC-USTD/ticker'
 
     '''
     # useless for now
@@ -80,11 +80,12 @@ def btc_get_price() -> dict:
     r = httpx.get(url)
 
     payload = r.json()
-    msg = {
+
+    '''msg = {
         'okex': payload['data']['constituents'][0],
         'price': payload['data']['last']
-    }
-
+    }'''
+    msg = {'price': payload['last']}
     # print(json.dumps(msg))
 
     return msg
@@ -101,14 +102,14 @@ def btc_construct_string(msg: dict) -> str:
     price = msg['price']
 
     # abandoned
-    usd_price = msg['okex']['original_price']
+    # usd_price = msg['okex']['original_price']
 
     # ret = '现在BTC的价格是1BTC = ' + f'{price}' + 'USDT。折合美元价格为' + f'{usd_price}' + '刀'
     # ret = '现在BTC单位价格为 f'{price}' + 'USDT，折合美元价格为' + f'{usd_price}' + 'USD'。 
     # 这句话，你看情况改改。我不知道怎么写
-    # ret = '现在BTC的价格是1 BTC = ' + f'{price}' + ' USDT。'
+    ret = '现在BTC的价格是1 BTC = ' + f'{price}' + ' USDT。'
     # abandoned above
-    ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'
+    # ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'
 
     return ret
 
