@@ -14,20 +14,24 @@ def magic_get_usage() -> dict:
         'veid': '***',
         'api_key': '***'
     }
+    try:
+        r = httpx.get(url, params=param)
+        # print(r.url)
+        payload = r.json()
+    except httpx.RequestError:
+        raise Exception('Interface Error / 接口错误')
+    else:
 
-    r = httpx.get(url, params=param)
-    # print(r.url)
-    payload = r.json()
-    # print(json.dumps(payload))
+        # print(json.dumps(payload))
 
-    # "data_next_reset" "data_counter" "plan_monthly_data" "suspended"
+        # "data_next_reset" "data_counter" "plan_monthly_data" "suspended"
 
-    msg = {
-        'data_next_reset': payload['data_next_reset'],
-        'data_counter': payload['data_counter'],
-        'plan_monthly_data': payload['plan_monthly_data'],
-        'suspended': payload['suspended']
-    }
+        msg = {
+            'data_next_reset': payload['data_next_reset'],
+            'data_counter': payload['data_counter'],
+            'plan_monthly_data': payload['plan_monthly_data'],
+            'suspended': payload['suspended']
+        }
 
     # print(json.dumps(msg))
     return msg
@@ -65,7 +69,7 @@ def coin_get_price(instrument_id: str) -> dict:
 
     url = 'https://www.okexcn.com/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
 
-    # for test
+    # for test to raise Exception
     # url = 'www.test404domain.cc'
     '''
     # useless for now
@@ -134,8 +138,6 @@ cryptocurrency = {
     'ETH': 'ETH-USDT'
 }
 
-
 if __name__ == '__main__':
-    msg = get_price('BTC-USDT')
-    print(construct_string(msg))
-
+    msg = coin_get_price('BTC-USDT')
+    print(coin_construct_string(msg))
