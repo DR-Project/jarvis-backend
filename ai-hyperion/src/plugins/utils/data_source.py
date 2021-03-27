@@ -65,6 +65,8 @@ def coin_get_price(instrument_id: str) -> dict:
 
     url = 'https://www.okexcn.com/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
 
+    # for test
+    # url = 'www.test404domain.cc'
     '''
     # useless for now
     proxies = {
@@ -75,16 +77,18 @@ def coin_get_price(instrument_id: str) -> dict:
 
     r = httpx.get(url, proxies=proxies)
     '''
-
-    r = httpx.get(url)
-
+    try:
+        r = httpx.get(url)
+    except httpx.RequestError:
+        raise Exception('Interface Error / 接口错误')
+    else:
+        msg = r.json()
     # payload = r.json()
 
     '''msg = {
         'okex': payload['data']['constituents'][0],
         'price': payload['data']['last']
     }'''
-    msg = r.json()
     # print(json.dumps(msg))
 
     return msg
