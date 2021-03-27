@@ -57,41 +57,40 @@ def magic_construct_string(msg: dict) -> str:
     return ret
 
 
-def btc_get_price() -> dict:
+def get_price(instrument_id: str) -> dict:
     """
-
+    :param instrument_id: the cryptocurrency you want to check
     :return: the key message to the upstream
     """
 
-    url = 'https://www.okexcn.com/api/spot/v3/instruments/BTC-USDT/ticker'
+    url = 'https://www.okexcn.com/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
 
     '''
     # useless for now
     proxies = {
         # 部署到服务器或者容器里面之后 需要修改为对应的
-        "http://": "http://localhost:7890",
-        "https://": "http://localhost:7890",
+        'http://': "http://localhost:7890',
+        'https://': "http://localhost:7890',
     }
-    
 
     r = httpx.get(url, proxies=proxies)
     '''
 
     r = httpx.get(url)
 
-    payload = r.json()
+    # payload = r.json()
 
     '''msg = {
         'okex': payload['data']['constituents'][0],
         'price': payload['data']['last']
     }'''
-    msg = {'price': payload['last']}
+    msg = r.json()
     # print(json.dumps(msg))
 
     return msg
 
 
-def btc_construct_string(msg: dict) -> str:
+def construct_string(msg: dict) -> str:
     """
 
     :param msg:  msg is a dict from upstream method
@@ -99,16 +98,14 @@ def btc_construct_string(msg: dict) -> str:
     """
 
     # init variable
-    price = msg['price']
+    price = msg['last']
+    product_id = msg['product_id']
 
+    coin = product_id.split('-')[0]
+    # print(tmp)
+
+    ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{price}' + ' USDT。'
     # abandoned
-    # usd_price = msg['okex']['original_price']
-
-    # ret = '现在BTC的价格是1BTC = ' + f'{price}' + 'USDT。折合美元价格为' + f'{usd_price}' + '刀'
-    # ret = '现在BTC单位价格为 f'{price}' + 'USDT，折合美元价格为' + f'{usd_price}' + 'USD'。 
-    # 这句话，你看情况改改。我不知道怎么写
-    ret = '现在BTC的价格是1 BTC = ' + f'{price}' + ' USDT 。'
-    # abandoned above
     # ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'
 
     return ret
@@ -123,8 +120,18 @@ mem_dicts = {
     '丢***': '***'
 }
 
+cryptocurrency = {
+    'BTC': 'BTC-USDT',
+    'EOS': 'EOS-USDT',
+    'BTG': 'BTG-USDT',
+    'ADA': 'ADA-USDT',
+    'DOGE': 'DOGE-USDT',
+    'LTC': 'LTC-USDT',
+    'ETH': 'ETH-USDT'
+}
+
 
 if __name__ == '__main__':
-    msg = btc_get_price()
-    print(btc_construct_string(msg))
+    msg = get_price('BTC-USDT')
+    print(construct_string(msg))
 
