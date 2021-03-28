@@ -31,7 +31,7 @@ REG_HELP        = '^(Jarvis|贾维斯|命令列表)$'
 REG_QUESHI      = '(确实|qs|有一说一|yysy)'
 REG_DIUREN      = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
 REG_RDIUREN     = '^(丢人|diuren|diu)$'
-REG_TRAFFIC     = '^(查流量|魔法|Magic|magic)$'
+REG_TRAFFIC     = '^(查流量|魔法|Magic|magic|cxll)$'
 REG_COIN        = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
 
 # Register Event
