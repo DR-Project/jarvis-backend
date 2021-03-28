@@ -1,12 +1,6 @@
 # import nonebot
-import os
-import random
-
 from nonebot import get_driver
-from nonebot.adapters.cqhttp import Bot, MessageEvent
-from nonebot.plugin import on_regex
 
-from . import data_source
 from .config import Config
 
 global_config = get_driver().config
@@ -21,11 +15,24 @@ config = Config(**global_config.dict())
 #     pass
 
 
-REG_COLORFUL = '^(色来|色图|涩图|来点涩图|来点色图)$'
+from nonebot.plugin import on_regex
+from nonebot.adapters.cqhttp import Bot, MessageEvent
+from nonebot.adapters.cqhttp import GroupMessageEvent
+
+import os, random
+
+# Constant List
+
 DIR_IMAGE = '/src/plugins/colorful/image/creep/'
 PROT_FILE = 'file:///'
+REG_COLORFUL = '^(色来|色图|涩图|来点涩图|来点色图)$'
+
+# Register Event
 
 colorful = on_regex(REG_COLORFUL)
+
+
+''' >>>>>> Core Function for Colorful <<<<<< '''
 
 
 @colorful.handle()
