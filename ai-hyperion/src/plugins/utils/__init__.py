@@ -23,21 +23,29 @@ from . import data_source
 
 import random
 
-BOT_QNUM = ***
-REG_QUESHI = '(确实|qs|有一说一|yysy)'
-REG_TRAFFIC = '^(查流量|魔法|Magic|magic)$'
-REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
+# Constant List
 
-# Function for Utils 
+BOT_QNUM        = ***
+REG_SWITCH      = '^(sw-qs)$'
+REG_HELP        = '^(Jarvis|贾维斯|命令列表)$'
+REG_QUESHI      = '(确实|qs|有一说一|yysy)'
+REG_DIUREN      = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
+REG_RDIUREN     = '^(丢人|diuren|diu)$'
+REG_TRAFFIC     = '^(查流量|魔法|Magic|magic)$'
+REG_COIN        = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
 
-queshi = on_regex(REG_QUESHI)
-traffic = on_regex(REG_TRAFFIC)
-cryptocoin = on_regex(REG_COIN)
+# Register Event
 
-@queshi.handle()
-async def _queshi(bot: Bot, event: MessageEvent):
-    text = '确实'
-    await bot.send(event, text, at_sender=False)
+switch_change   = on_command(REG_SWITCH)
+help_list       = on_regex(REG_HELP)
+queshi          = on_regex(REG_QUESHI)
+random_diuren   = on_regex(REG_RDIUREN)
+diuren          = on_regex(REG_RDIUREN)
+traffic         = on_regex(REG_TRAFFIC)
+cryptocoin      = on_regex(REG_COIN)
+
+
+''' >>>>>> Core Function for Utils <<<<<< '''
 
 
 @traffic.handle()
@@ -60,8 +68,14 @@ async def _cryptocoin(bot: Bot, event: MessageEvent):
         await bot.send(event, result, at_sender=False)
 
 
-# Just for fun
-diuren = on_regex('^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$')
+''' >>>>>> Just for fun <<<<<< '''
+
+@queshi.handle()
+async def _queshi(bot: Bot, event: MessageEvent):
+    text = '确实'
+    await bot.send(event, text, at_sender=False)
+
+
 @diuren.handle()
 async def _diuren(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
@@ -94,7 +108,6 @@ async def _diuren(bot: Bot, event: MessageEvent):
     await bot.send(event, at_mem, at_sender=False)
 
 
-random_diuren = on_regex('^(丢人|diuren|diu)$')
 @random_diuren.handle()
 async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
@@ -118,7 +131,11 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     await bot.send(event, at_mem, at_sender=False)
 
 
-help_list = on_regex('^(Jarvis|贾维斯|命令列表)$')
+@switch_change.handle()
+async def _switch_change(bot: Bot, event: MessageEvent):
+    await bot.send(event, "TODO", at_sender=False)
+
+
 @help_list.handle()
 async def _help_list(bot: Bot, event: MessageEvent):
     lists = [{
