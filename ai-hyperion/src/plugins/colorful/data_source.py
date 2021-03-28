@@ -1,32 +1,36 @@
 import httpx
 
-def get_colorful() -> dict:
 
+def get_colorful() -> dict:
+    """
+
+    :return: msg is a dict from upstream method
+    """
     url = 'https://api.lolicon.app/setu/'
 
     param = {
         'r18': '0',
-        'size1200' : 'true'
+        'size1200': True
     }
 
     proxies = {
-            'http://': 'http://localhost:7890',
-            'https://': 'http://localhost:7890'
-        }
+        'http://': 'http://localhost:7890',
+        'https://': 'http://localhost:7890'
+    }
 
     r = httpx.get(url, params=param, proxies=proxies)
-    
+
     payload = r.json()
 
     msg = {
-            'code': payload['code'],
-            'msg': payload['msg'],
-            'quota': payload['quota'],
-            'quota_min_ttl': payload['quota_min_ttl'],
-            'count': payload['count'],
-            'data': payload['data']
-        }
-    
+        'code': payload['code'],
+        'msg': payload['msg'],
+        'quota': payload['quota'],
+        'quota_min_ttl': payload['quota_min_ttl'],
+        'count': payload['count'],
+        'data': payload['data']
+    }
+
     return msg
 
 

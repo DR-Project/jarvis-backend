@@ -31,12 +31,16 @@ colorful = on_regex(REG_COLORFUL)
 @colorful.handle()
 async def _colorful(bot: Bot, event: MessageEvent):
     switch_flag = False
-    if switch_flag is True:
+    if switch_flag:
+
         dicts = data_source.get_colorful()['data'][0]
+
+        # init variable
         url = dicts['url']
         pid = 'PID: ' + str(dicts['pid']) + '\n'
         title = '标题: ' + dicts['title'] + '\n'
         author = '作者: ' + dicts['author'] + '\n'
+
         result = [{
             'type': 'text',
             'data': {
@@ -59,11 +63,14 @@ async def _colorful(bot: Bot, event: MessageEvent):
             }
         }]
     else:
+
+        # get a random image from data warehouse
         img_dir = os.getcwd() + DIR_IMAGE
         img_list = os.listdir(img_dir)
         luck_dog = random.sample(img_list, 1)[0]
         img_path = PROT_FILE + img_dir + luck_dog
         lsp = event.get_user_id()
+
         result = [{
             'type': 'image',
             'data': {
@@ -80,4 +87,5 @@ async def _colorful(bot: Bot, event: MessageEvent):
                 'qq': lsp
             }
         }]
+
     await bot.send(event, result, at_sender=False)
