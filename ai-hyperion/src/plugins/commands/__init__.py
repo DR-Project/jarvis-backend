@@ -30,32 +30,67 @@ help_list       = on_regex(REG_HELP)
 ''' >>>>>> Core Function for Commands <<<<<< '''
 
 
+'''
+命令列表 格式
+
+✨ 目前可用 API ✨
+🍭 CXLL -> 查询魔法流量
+🍭 COIN -> 数字货币价格
+🍭 丢人 -> 随机抽取幸运儿
+🍭 丢X -> 唯一指定丢人
+🍭 色来 -> 随机涩图抽卡
+🍭 命令列表 -> 列出命令
+
+{
+    'type': 'text',
+    'data': {
+        'text': " 命令列表 -> 列出命令 \n",
+    }
+}
+
+'''
+
 @help_list.handle()
 async def _help_list(bot: Bot, event: MessageEvent):
     lists = [{
         'type': 'text',
         'data': {
-            'text': " __Command List v0.1__ \n"
+            'text': "✨ 目前可用 API ✨ \n"
         }
     },{
         'type': 'text',
         'data': {
-            'text': " [Magic/魔法] \n> 查询Magic流量 \n",
+            'text': "🍭 CXLL -> 查询魔法流量 \n",
         }
     },{
         'type': 'text',
         'data': {
-            'text': " [BTG/LTC/...] \n> 数字货币价格 \n",
+            'text': "🍭 COIN -> 数字货币价格 \n",
         }
     },{
         'type': 'text',
         'data': {
-            'text': " [丢人/diu] \n> 随机抽取幸运儿 \n",
+            'text': "🍭 药闻 -> 火星警察出动 \n",
         }
     },{
         'type': 'text',
         'data': {
-            'text': " [色来/selai] \n> 在鹿上了 0% \n",
+            'text': "🍭 丢人 -> 随机抽取幸运儿 \n",
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': "🍭 丢X -> 唯一指定丢人 \n",
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': "🍭 色来 -> 随机涩图抽卡 \n",
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': "🍭 命令列表 -> 列出命令 \n",
         }
     }]
     await bot.send(event, lists, at_sender=False)

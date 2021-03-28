@@ -22,7 +22,7 @@ from . import data_source
 
 # Constant List
 
-REG_TRAFFIC     = '^(查流量|魔法|Magic|magic|cxll)$'
+REG_TRAFFIC     = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
 REG_COIN        = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
 
 # Register Event
