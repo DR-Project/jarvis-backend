@@ -18,9 +18,16 @@ def get_colorful() -> dict:
         'https://': 'http://localhost:7890'
     }
 
-    r = httpx.get(url, params=param, proxies=proxies)
+    try:
+        r = httpx.get(url, params=param, proxies=proxies)
 
-    payload = r.json()
+    except httpx.RequestError:
+
+        raise Exception('Interface Error / 接口异常')
+
+    else:
+
+        payload = r.json()
 
     msg = {
         'code': payload['code'],
