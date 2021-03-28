@@ -127,25 +127,6 @@ def coin_construct_string(msg: dict) -> str:
     return ret
 
 
-def switch_change(msg: str) -> str:
-    return "TODO"
-
-
-def switch_get_status(msg: str) -> bool:
-    return False
-
-
-mem_dicts = {
-    '丢***': '***',
-    '丢***': '***',
-    '丢***': '***',
-    '丢***': '***',
-    '丢***': '***',
-    '丢***': '***',
-    '丢***': '***',
-    '丢***': '***'
-}
-
 cryptocurrency = {
     'BTC': 'BTC-USDT',
     'EOS': 'EOS-USDT',
