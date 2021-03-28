@@ -24,12 +24,15 @@ from . import data_source
 import random
 
 BOT_QNUM = ***
+REG_QUESHI = '(确实|qs|有一说一|yysy)'
+REG_TRAFFIC = '^(查流量|魔法|Magic|magic)$'
+REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
 
 # Function for Utils 
 
-queshi = on_regex('(确实|qs|有一说一|yysy)')
-traffic = on_regex('^(查流量|魔法|Magic|magic)$')
-cryptocoin = on_regex('^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$')
+queshi = on_regex(REG_QUESHI)
+traffic = on_regex(REG_TRAFFIC)
+cryptocoin = on_regex(REG_COIN)
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: MessageEvent):
@@ -58,22 +61,36 @@ async def _cryptocoin(bot: Bot, event: MessageEvent):
 
 
 # Just for fun
-diuren = on_regex('^(丢***|丢***|丢***|丢***|丢***|丢***)$')
+diuren = on_regex('^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$')
 @diuren.handle()
 async def _diuren(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
-    num = data_source.mem_dicts[msg]
-    at_mem = [{
-        'type': 'at',
-        'data': {
-            'qq': num
-        }
-    },{
-        'type': 'text',
-        'data': {
-            'text': " 丢人 "
-        }
-    }]
+    if msg == "***":
+        num = event.get_user_id()
+        at_mem = [{
+            'type': 'at',
+            'data': {
+                'qq': num
+            }
+        },{
+            'type': 'text',
+            'data': {
+                'text': " 好逊哦，丢哪个胖 "
+            }
+        }]
+    else:
+        num = data_source.mem_dicts[msg]
+        at_mem = [{
+            'type': 'at',
+            'data': {
+                'qq': num
+            }
+        },{
+            'type': 'text',
+            'data': {
+                'text': " 丢人 "
+            }
+        }]
     await bot.send(event, at_mem, at_sender=False)
 
 

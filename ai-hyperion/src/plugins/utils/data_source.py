@@ -75,14 +75,21 @@ def coin_get_price(instrument_id: str) -> dict:
     # useless for now
     proxies = {
         # 部署到服务器或者容器里面之后 需要修改为对应的
-        'http://': "http://localhost:7890',
-        'https://': "http://localhost:7890',
+        'http://': 'http://localhost:7890',
+        'https://': 'http://localhost:7890'
     }
 
     r = httpx.get(url, proxies=proxies)
     '''
+
+    proxies = {
+            # 部署到服务器或者容器里面之后 需要修改为对应的
+            'http://': 'http://localhost:7890',
+            'https://': 'http://localhost:7890'
+        }
+
     try:
-        r = httpx.get(url)
+        r = httpx.get(url, proxies=proxies)
     except httpx.RequestError:
         raise Exception('Interface Error / 接口异常')
     else:
@@ -121,6 +128,8 @@ def coin_construct_string(msg: dict) -> str:
 
 
 mem_dicts = {
+    '丢***': '***',
+    '丢***': '***',
     '丢***': '***',
     '丢***': '***',
     '丢***': '***',
