@@ -18,7 +18,7 @@ config = Config(**global_config.dict())
 from nonebot.plugin import on_regex
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 
-from . import data_source
+from . import data_source, morning_news
 
 # Constant List
 
