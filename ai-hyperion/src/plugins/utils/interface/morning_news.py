@@ -1,6 +1,7 @@
 import httpx
 import json
 import xmltodict
+import binascii
 
 
 def get_news() -> list:

@@ -18,17 +18,19 @@ config = Config(**global_config.dict())
 from nonebot.plugin import on_regex
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 
-from . import data_source, morning_news
+from . import data_source
 
 # Constant List
 
-REG_TRAFFIC     = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
-REG_COIN        = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
+REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
+REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
+REG_NEWS = '^(药闻)$'
 
 # Register Event
 
-traffic         = on_regex(REG_TRAFFIC)
-cryptocoin      = on_regex(REG_COIN)
+traffic = on_regex(REG_TRAFFIC)
+cryptocoin = on_regex(REG_COIN)
+mars_news = on_regex(REG_NEWS)
 
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
@@ -36,19 +38,18 @@ cryptocoin      = on_regex(REG_COIN)
 
 @traffic.handle()
 async def _traffic(bot: Bot, event: MessageEvent):
-    dicts = data_source.magic_get_usage()
-    result = data_source.magic_construct_string(dicts)
-    await bot.send(event, result, at_sender=False)
+    ret = data_source.magic_get_usage()
+    await bot.send(event, ret, at_sender=False)
 
 
 @cryptocoin.handle()
 async def _cryptocoin(bot: Bot, event: MessageEvent):
     coin_type = event.get_plaintext().upper()
-    try:
-        dicts = data_source.coin_get_price(data_source.cryptocurrency[coin_type])
-        result = data_source.coin_construct_string(dicts)
-    except: 
-        result = "接口异常"
-        await bot.send(event, result, at_sender=False)
-    else:
-        await bot.send(event, result, at_sender=False)
+    ret = data_source.coin_get_price(coin_type)
+    await bot.send(event, ret, at_sender=False)
+
+
+@mars_news.handle()
+async def _mars_news(bot: Bot, event: MessageEvent):
+    ret = data_source.mars_get_news()
+    await bot.send(event, ret, at_sender=False)

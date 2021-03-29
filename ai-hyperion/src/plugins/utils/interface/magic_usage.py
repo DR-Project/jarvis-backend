@@ -2,7 +2,7 @@ import httpx
 import json
 
 
-def magic_get_usage() -> dict:
+def get_usage() -> dict:
     """
 
     :return: the key message to upstream
@@ -37,7 +37,7 @@ def magic_get_usage() -> dict:
     return msg
 
 
-def magic_construct_string(msg: dict) -> str:
+def construct_string(msg: dict) -> str:
     """
 
     :param msg: msg is a dict from upstream method

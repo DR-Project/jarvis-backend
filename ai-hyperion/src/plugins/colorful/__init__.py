@@ -19,6 +19,8 @@ from nonebot.plugin import on_regex
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 from nonebot.adapters.cqhttp import GroupMessageEvent
 
+from . import data_source
+
 import os, random
 
 # Constant List
