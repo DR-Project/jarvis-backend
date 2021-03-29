@@ -20,11 +20,13 @@ from nonebot.adapters.cqhttp import Bot, MessageEvent
 
 # Constant List
 
-REG_HELP        = '^(Jarvis|贾维斯|命令列表)$'
+REG_HELP = '^(Jarvis|贾维斯|命令列表)$'
+REG_IN_HELP = '^(里世界|整丶活)$'
 
 # Register Event
 
-help_list       = on_regex(REG_HELP)
+help_list = on_regex(REG_HELP)
+help_inlist = on_regex(REG_IN_HELP)
 
 
 ''' >>>>>> Core Function for Commands <<<<<< '''
@@ -75,6 +77,22 @@ async def _help_list(bot: Bot, event: MessageEvent):
     },{
         'type': 'text',
         'data': {
+            'text': "🍭 命令列表 -> 列出命令 \n",
+        }
+    }]
+    await bot.send(event, lists, at_sender=False)
+
+
+@help_inlist.handle()
+async def _help_inlist(bot: Bot, event: MessageEvent):
+    lists = [{
+        'type': 'text',
+        'data': {
+            'text': "✨ 里世界 API ✨ \n"
+        }
+    },{
+        'type': 'text',
+        'data': {
             'text': "🍭 丢人 -> 随机抽取幸运儿 \n",
         }
     },{
@@ -86,11 +104,6 @@ async def _help_list(bot: Bot, event: MessageEvent):
         'type': 'text',
         'data': {
             'text': "🍭 色来 -> 随机涩图抽卡 \n",
-        }
-    },{
-        'type': 'text',
-        'data': {
-            'text': "🍭 命令列表 -> 列出命令 \n",
         }
     }]
     await bot.send(event, lists, at_sender=False)
