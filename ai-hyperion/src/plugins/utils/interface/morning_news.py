@@ -1,7 +1,6 @@
 import httpx
 import json
 import xmltodict
-import binascii
 
 
 def get_news() -> list:
@@ -42,7 +41,7 @@ def construct_string(msg: dict) -> str:
         title = item['title']
         link = item['link']
         num_hex = '0x{:02X}'.format(num)
-        ret += f'{num_hex}' + '.' + f'{title}' + '\n' + f'{link}' + '\n\n'
+        ret += f'{num_hex} ' + '.' + f'{title}' + '\n' + f'{link}' + '\n\n'
         num += 1
 
     return ret
