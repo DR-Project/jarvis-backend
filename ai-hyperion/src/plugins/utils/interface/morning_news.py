@@ -1,15 +1,17 @@
 import httpx
 import json
 import xmltodict
+import time
 
 
-def get_news(rss_source: str) -> list:
+def get_news(rss_source: str, quantity: int) -> list:
     """
 
-    :return: the top 5 news from ithome
+    :param rss_source: rss url, must fit rss v2.0 standard
+    :param quantity: to control how many news wants to return
+    :return: the top 5 news from rss_source
     """
-
-    url = 'https://a.jiemian.com/index.php?m=article&a=rss'
+    # url = 'https://a.jiemian.com/index.php?m=article&a=rss'
 
     proxies = {
             # 部署到服务器或者容器里面之后 需要修改为对应的
@@ -18,7 +20,7 @@ def get_news(rss_source: str) -> list:
         }
 
     try:
-        r = httpx.get(url, proxies=proxies)
+        r = httpx.get(rss_source, proxies=proxies)
     except httpx.RequestError:
         raise Exception('Interface Error / 接口异常')
     else:
@@ -27,7 +29,7 @@ def get_news(rss_source: str) -> list:
 
         msg = []
 
-        for i in range(5):
+        for i in range(quantity):
             msg.append(payload['rss']['channel']['item'][i])
         # print(msg)
         return msg
@@ -41,20 +43,22 @@ def construct_string(msg: dict) -> str:
     """
 
     # init variable
-    ret = ''
+    date = time.strftime('%m月%d日', time.localtime())
+    ret = date + '早间新闻\n\n'
     num = 0
+
+    # print(type(date))
     for item in msg:
         title = item['title']
         link = item['link']
         num_hex = '0x{:02X}'.format(num)
-        ret += f'{num_hex}' + '. ' + f'{title}' + '\n' + f'{link}' + '\n\n'
+        ret += f'{num_hex}' + '. ' + f'{title}' + '\n' + '\n'
         num += 1
 
     return ret
 
 
-'''
 if __name__ == '__main__':
-    msg = get_news()
+    msg = get_news('https://a.jiemian.com/index.php?m=article&a=rss', 5)
     print(construct_string(msg))
-'''
+
