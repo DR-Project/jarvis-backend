@@ -41,8 +41,8 @@ def construct_string(msg: dict) -> str:
     for item in msg:
         title = item['title']
         link = item['link']
-
-        ret += f'{hex(num)}' + '.' + f'{title}' + '\n' + f'{link}' + '\n\n'
+        num_hex = '0x{:02X}'.format(num)
+        ret += f'{num_hex}' + '.' + f'{title}' + '\n' + f'{link}' + '\n\n'
         num += 1
 
     return ret
