@@ -1,6 +1,6 @@
 from .interface import crypto_coin
 from .interface import magic_usage
-from .interface import morning_news
+from .interface import rss_news
 
 
 def magic_get_usage() -> str:
@@ -24,11 +24,11 @@ def coin_get_price(coin_type: str) -> str:
     return ret
 
 
-def mars_get_news() -> str:
+def rss_get_news(target: str) -> str:
     try:
-        dicts = morning_news.get_news()
+        dicts = rss_news.get_news(target, 8)
     except:
         ret = "接口异常"
     else:
-        ret = morning_news.construct_string(dicts)
+        ret = rss_news.construct_string(dicts, target)
     return ret

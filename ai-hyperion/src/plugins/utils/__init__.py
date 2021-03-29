@@ -24,7 +24,7 @@ from . import data_source
 
 REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
 REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
-REG_NEWS = '^(药闻)$'
+REG_NEWS = '^(药闻|热搜)$'
 
 # Register Event
 
@@ -51,5 +51,6 @@ async def _cryptocoin(bot: Bot, event: MessageEvent):
 
 @mars_news.handle()
 async def _mars_news(bot: Bot, event: MessageEvent):
-    ret = data_source.mars_get_news()
+    target = event.get_plaintext()
+    ret = data_source.rss_get_news(target)
     await bot.send(event, ret, at_sender=False)

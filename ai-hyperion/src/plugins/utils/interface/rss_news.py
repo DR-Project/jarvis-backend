@@ -13,6 +13,8 @@ def get_news(rss_source: str, quantity: int) -> list:
     """
     # url = 'https://a.jiemian.com/index.php?m=article&a=rss'
 
+    rss_source = rss_sources[rss_source]
+
     proxies = {
             # 部署到服务器或者容器里面之后 需要修改为对应的
             'http://': 'http://localhost:7890',
@@ -35,7 +37,7 @@ def get_news(rss_source: str, quantity: int) -> list:
         return msg
 
 
-def construct_string(msg: dict) -> str:
+def construct_string(msg: dict, target: str) -> str:
     """
 
     :param msg:  msg is a dict from upstream method
@@ -44,10 +46,11 @@ def construct_string(msg: dict) -> str:
 
     # init variable
     date = time.strftime('%m月%d日', time.localtime())
-    ret = date + '早间新闻\n\n'
+    ret = date + ' ' + target + '\n\n'
     num = 0
 
     # print(type(date))
+
     for item in msg:
         title = item['title']
         link = item['link']
@@ -56,6 +59,12 @@ def construct_string(msg: dict) -> str:
         num += 1
 
     return ret
+
+
+rss_sources = {
+    '药闻': 'https://a.jiemian.com/index.php?m=article&a=rss',
+    '热搜': 'https://rsshub.app/weibo/search/hot'
+}
 
 
 if __name__ == '__main__':
