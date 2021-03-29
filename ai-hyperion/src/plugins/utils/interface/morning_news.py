@@ -3,16 +3,22 @@ import json
 import xmltodict
 
 
-def get_news() -> list:
+def get_news(rss_source: str) -> list:
     """
 
     :return: the top 5 news from ithome
     """
 
-    url = 'https://www.ithome.com/rss/'
+    url = 'https://a.jiemian.com/index.php?m=article&a=rss'
+
+    proxies = {
+            # 部署到服务器或者容器里面之后 需要修改为对应的
+            'http://': 'http://localhost:7890',
+            'https://': 'http://localhost:7890'
+        }
 
     try:
-        r = httpx.get(url)
+        r = httpx.get(url, proxies=proxies)
     except httpx.RequestError:
         raise Exception('Interface Error / 接口异常')
     else:
@@ -41,7 +47,7 @@ def construct_string(msg: dict) -> str:
         title = item['title']
         link = item['link']
         num_hex = '0x{:02X}'.format(num)
-        ret += f'{num_hex} ' + '.' + f'{title}' + '\n' + f'{link}' + '\n\n'
+        ret += f'{num_hex}' + '. ' + f'{title}' + '\n' + f'{link}' + '\n\n'
         num += 1
 
     return ret
