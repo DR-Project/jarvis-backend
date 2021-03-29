@@ -2,7 +2,7 @@ import httpx
 import json
 
 
-def coin_get_price(instrument_id: str) -> dict:
+def get_price(instrument_id: str) -> dict:
     """
     :param instrument_id: the cryptocurrency you want to check
     :return: the key message to the upstream
@@ -12,16 +12,6 @@ def coin_get_price(instrument_id: str) -> dict:
 
     # for test to raise Exception
     # url = 'www.test404domain.cc'
-    '''
-    # useless for now
-    proxies = {
-        # 部署到服务器或者容器里面之后 需要修改为对应的
-        'http://': 'http://localhost:7890',
-        'https://': 'http://localhost:7890'
-    }
-
-    r = httpx.get(url, proxies=proxies)
-    '''
 
     proxies = {
             # 部署到服务器或者容器里面之后 需要修改为对应的
@@ -46,7 +36,7 @@ def coin_get_price(instrument_id: str) -> dict:
     return msg
 
 
-def coin_construct_string(msg: dict) -> str:
+def construct_string(msg: dict) -> str:
     """
 
     :param msg:  msg is a dict from upstream method
@@ -66,6 +56,7 @@ def coin_construct_string(msg: dict) -> str:
     # ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'
 
     return ret
+
 
 cryptocurrency = {
     'BTC': 'BTC-USDT',
