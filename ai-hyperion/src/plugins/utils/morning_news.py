@@ -4,6 +4,10 @@ import xmltodict
 
 
 def get_news() -> list:
+    """
+
+    :return: the top 5 news from ithome
+    """
 
     url = 'https://www.ithome.com/rss/'
 
@@ -24,6 +28,13 @@ def get_news() -> list:
 
 
 def construct_string(msg: dict) -> str:
+    """
+
+    :param msg:  msg is a dict from upstream method
+    :return: the message that will forward to QQ
+    """
+
+    # init variable
     ret = ''
     num = 0
     for item in msg:
@@ -36,6 +47,8 @@ def construct_string(msg: dict) -> str:
     return ret
 
 
+'''
 if __name__ == '__main__':
     msg = get_news()
     print(construct_string(msg))
+'''
