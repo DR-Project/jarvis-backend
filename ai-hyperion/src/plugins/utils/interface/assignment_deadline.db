@@ -1,0 +1,52 @@
+[
+  {
+    "code": "ITECH3001",
+    "name": "User Experience",
+    "assignment": [
+      {
+        "name": "Assignment 1: Form Design",
+        "ddl": "Friday, 02 April 2021, 6:00 PM"
+      },
+      {
+        "name": "Assignment 2: Evaluating a System",
+        "ddl": "Monday, 24 May 2021, 5:00 PM"
+      }
+    ]
+  },
+  {
+    "code": "ITECH2002",
+    "name": "Systems Modelling",
+    "assignment": [
+      {
+        "name": "Quiz 5 and 6",
+        "ddl": "Monday, 03 May 2021 11:55 PM"
+      },
+      {
+        "name": "Quiz 7 and 9",
+        "ddl": "Monday, 17 May 2021 11:55 PM"
+      },
+      {
+        "name": "Assignment 1: Systems Requirement Specification",
+        "ddl": "Monday, 26 April 2021, 11:55 PM"
+      },
+      {
+        "name": "Assignment 2: Not Release ",
+        "ddl": "N/A"
+      }
+    ]
+  },
+  {
+    "code": "ITECH3208",
+    "name": "Project 1",
+    "assignment": [
+      {
+        "name": "Initial Backlog/Functional requirements analysis",
+        "ddl": "Sunday, 4 April 2021, 4:00 PM"
+      },
+      {
+        "name": "Ongoing product backlog maintenance",
+        "ddl": "Sunday, 6 June 2021, 12:00 AM"
+      }
+    ]
+  }
+]
