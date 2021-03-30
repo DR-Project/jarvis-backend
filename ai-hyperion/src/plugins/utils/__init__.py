@@ -24,7 +24,7 @@ from . import data_source
 
 REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
 REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
-REG_NEWS = '^(药闻|热搜)$'
+REG_NEWS = '^(今日[药闻|热搜]|TESTNEWS)$'
 
 # Register Event
 

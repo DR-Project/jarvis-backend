@@ -44,7 +44,7 @@ def get_news(target: str, quantity: int) -> dict:
 def construct_string(msg: dict) -> str:
     """
 
-    :param target: 【给我写清楚这个】
+    :param target: rss source name
     :param msg:  msg is a dict from upstream method
     :return: the message that will forward to QQ
     """
@@ -69,7 +69,8 @@ def construct_string(msg: dict) -> str:
 
 rss_sources = {
     '药闻': 'https://a.jiemian.com/index.php?m=article&a=rss',
-    '热搜': 'https://rsshub.app/weibo/search/hot'
+    '热搜': 'https://rsshub.app/weibo/search/hot',
+    'TESTNEWS': 'https://rsshub.app/thepaper/featured'
 }
 
 

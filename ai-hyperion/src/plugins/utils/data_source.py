@@ -25,10 +25,12 @@ def coin_get_price(coin_type: str) -> str:
 
 
 def rss_get_news(target: str) -> str:
+    prefix = '今日'
+    target = target.strip(prefix)
     try:
         dicts = rss_news.get_news(target, 8)
     except:
         ret = "接口异常"
     else:
-        ret = rss_news.construct_string(dicts, target)
+        ret = rss_news.construct_string(dicts)
     return ret
