@@ -15,7 +15,7 @@ config = Config(**global_config.dict())
 #     pass
 
 
-from nonebot.plugin import on_regex
+from nonebot.plugin import on_regex, on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 
 from . import data_source
@@ -26,14 +26,14 @@ REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
 REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
-
+EREG_COIN = 'ECOIN'
 # Register Event
 
 traffic = on_regex(REG_TRAFFIC)
 cryptocoin = on_regex(REG_COIN)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
-
+exp_cryptocoin = on_command(EREG_COIN)
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -62,4 +62,10 @@ async def _mars_news(bot: Bot, event: MessageEvent):
 async def _weather(bot: Bot, event: MessageEvent):
     target = event.get_plaintext()
     ret = data_source.weather_get(target)
+    await bot.send(event, ret, at_sender=False)
+
+@exp_cryptocoin.handle()
+async def _exp_cryptocoin(bot: Bot, event: MessageEvent):
+    instrument_id = event.get_plaintext().upper()
+    ret = data_source.coin_exp_get_price(instrument_id)
     await bot.send(event, ret, at_sender=False)

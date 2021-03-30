@@ -40,9 +40,28 @@ def weather_get(city: str) -> str:
     city = city[:-2]
     city_list = []
     city_list.append(city)
-    city_py = weather.get_pinyin_list(city_list)
+    if weather.china_city_validator(city + '市'):
+        try:
+            ret = weather.get_finally_weather(city_list)
+        except weather.NoDefineException:
+            ret = '城市天气不存在'
+        except:
+            ret = '接口异常'
+    else:
+        ret = city + ' ∉ {城市}'
+    return ret
+
+
+''' >>>>>> Exp Function <<<<<< '''
+
+
+def coin_exp_get_price(instrument_id: str) -> str:
+    instrument_id = instrument_id[-8:]
+    print(instrument_id)
     try:
-        ret = weather.particular_time_construct_string(city_py)
+        dicts = crypto_coin.get_price(instrument_id)
     except:
-        ret = "接口异常"
+        ret = "币对不存在"
+    else:
+        ret = crypto_coin.construct_string(dicts)
     return ret
