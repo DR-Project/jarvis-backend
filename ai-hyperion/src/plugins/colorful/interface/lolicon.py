@@ -1,6 +1,6 @@
 import os
-import json
 import httpx
+import json, base64
 from typing import List
 
 
@@ -45,31 +45,22 @@ def get_lolicon() -> dict:
     return msg
 
 
-def construct_string(msg: dict) -> str:
-    msg = msg['data'][0]
-    url = msg['url']
-    pid = 'PID: ' + str(msg['pid']) + '\n'
-    title = '标题: ' + msg['title'] + '\n'
-    author = '作者: ' + msg['author'] + '\n'
-    ret = [{
-            'type': 'text',
-            'data': {
-                'text': pid
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': title
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': author
-            }
-        }, {
-            'type': 'image',
-            'data': {
-                'file': url
-            }
-        }]
+def dump_img(url: str) -> bytes:
+
+    proxies = {
+        'http://': 'http://localhost:7890',
+        'https://': 'http://localhost:7890'
+    }
+
+    try:
+        r = httpx.get(url, proxies=proxies)
+    except httpx.RequestError:
+        raise Exception('接口异常')
+
+    ret = r.content
+
+    return ret
+
+def convert_base64(bitstream: bytes) -> str:
+    ret = str(base64.b64encode(bitstream).decode('UTF-8'))
     return ret
