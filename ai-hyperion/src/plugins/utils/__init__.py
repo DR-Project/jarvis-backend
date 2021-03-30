@@ -24,13 +24,15 @@ from . import data_source
 
 REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
 REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
-REG_NEWS = '^(今日[药闻|热搜]|TESTNEWS)$'
+REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
+REG_WEATHER = '^.*(天气)$'
 
 # Register Event
 
 traffic = on_regex(REG_TRAFFIC)
 cryptocoin = on_regex(REG_COIN)
 mars_news = on_regex(REG_NEWS)
+weather = on_regex(REG_WEATHER)
 
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
@@ -53,4 +55,11 @@ async def _cryptocoin(bot: Bot, event: MessageEvent):
 async def _mars_news(bot: Bot, event: MessageEvent):
     target = event.get_plaintext()
     ret = data_source.rss_get_news(target)
+    await bot.send(event, ret, at_sender=False)
+
+
+@weather.handle()
+async def _weather(bot: Bot, event: MessageEvent):
+    target = event.get_plaintext()
+    ret = data_source.weather_get(target)
     await bot.send(event, ret, at_sender=False)
