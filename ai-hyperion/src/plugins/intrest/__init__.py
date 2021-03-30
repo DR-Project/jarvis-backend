@@ -42,8 +42,9 @@ diuren = on_regex(REG_DIUREN)
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: MessageEvent):
-    text = '确实'
-    await bot.send(event, text, at_sender=False)
+    if(data_source.to_be_or_not_be(30)):
+        text = '确实'
+        await bot.send(event, text, at_sender=False)
 
 
 @diuren.handle()
