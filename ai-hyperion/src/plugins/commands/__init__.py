@@ -20,9 +20,9 @@ from nonebot.adapters.cqhttp import Bot, MessageEvent
 
 # Constant List
 
-REG_HELP = '^(Jarvis|贾维斯|指令列表)$'
+REG_HELP = '^(Jarvis|贾维斯|星期五|Friday|指令列表)$'
 REG_EXP_HELP = '^(实验性指令列表|ExpCommands)$'
-REG_IN_HELP = '^(里世界|ExEc)$'
+REG_IN_HELP = '^(Alphas|ExEc)$'
 
 # Register Event
 
@@ -79,6 +79,11 @@ async def _help_list(bot: Bot, event: MessageEvent):
     },{
         'type': 'text',
         'data': {
+            'text': "🍭 城市天气 -> 查询城市天气 \n",
+        }
+    },{
+        'type': 'text',
+        'data': {
             'text': "🍭 丢人 -> 随机抽取幸运儿 \n",
         }
     },{
@@ -106,6 +111,11 @@ async def _help_explist(bot: Bot, event: MessageEvent):
         'type': 'text',
         'data': {
             'text': "✨ 实验性 API ✨ \n"
+        }
+    },{
+        'type': 'text',
+        'data': {
+            'text': "🍭 /ECOIN 币-对 -> 指定币对价格 \n",
         }
     }]
     await bot.send(event, lists, at_sender=False)
