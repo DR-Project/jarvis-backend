@@ -2,6 +2,13 @@ import httpx
 import json
 
 
+class InstrumentNotExistException(Exception):
+    """
+    defined a InstrumentNotExist Exception
+    """
+    pass
+
+
 def get_price(instrument_id: str) -> dict:
     """
     :param instrument_id: the cryptocurrency you want to check
@@ -42,6 +49,9 @@ def construct_string(msg: dict) -> str:
     :param msg:  msg is a dict from upstream method
     :return: the message that will forward to QQ
     """
+
+    if 'last' not in msg:
+        raise InstrumentNotExistException('币对不存在')
 
     # init variable
     price = float(msg['last'])
