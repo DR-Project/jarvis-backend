@@ -21,17 +21,17 @@ from nonebot.adapters.cqhttp import GroupMessageEvent
 
 from . import data_source
 
-import os, random
 
 # Constant List
 
-DIR_IMAGE = '/src/plugins/colorful/image/creep/'
-PROT_FILE = 'file:///'
-REG_COLORFUL = '^(色来|色图|涩图|来点涩图|来点色图)$'
+
+REG_COLORFUL = '^(色来)$|^(来点|来丶)(色图|涩图)$|^(色图|涩图)|(给点给点)$'
+REG_COLORFLAG = '^涩图(ON|OFF)$'
 
 # Register Event
 
 colorful = on_regex(REG_COLORFUL)
+colorfalg = on_regex(REG_COLORFLAG)
 
 
 ''' >>>>>> Core Function for Colorful <<<<<< '''
@@ -39,62 +39,28 @@ colorful = on_regex(REG_COLORFUL)
 
 @colorful.handle()
 async def _colorful(bot: Bot, event: MessageEvent):
-    switch_flag = False
-    if switch_flag:
-
-        dicts = data_source.get_colorful()['data'][0]
-
-        # init variable
-        url = dicts['url']
-        pid = 'PID: ' + str(dicts['pid']) + '\n'
-        title = '标题: ' + dicts['title'] + '\n'
-        author = '作者: ' + dicts['author'] + '\n'
-
-        result = [{
-            'type': 'text',
-            'data': {
-                'text': pid
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': title
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': author
-            }
-        }, {
-            'type': 'image',
-            'data': {
-                'file': url
-            }
-        }]
+    lsp = event.get_user_id()
+    if data_source.SWITCH_FLAG:
+        ret = data_source.get_colorful()
     else:
+        ret = data_source.get_crepper(lsp)
+    await bot.send(event, ret, at_sender=False)
 
-        # get a random image from data warehouse
-        img_dir = os.getcwd() + DIR_IMAGE
-        img_list = os.listdir(img_dir)
-        luck_dog = random.sample(img_list, 1)[0]
-        img_path = PROT_FILE + img_dir + luck_dog
-        lsp = event.get_user_id()
 
-        result = [{
-            'type': 'image',
-            'data': {
-                'file': img_path
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': '不许色！'
-            }
-        }, {
-            'type': 'at',
-            'data': {
-                'qq': lsp
-            }
-        }]
-
-    await bot.send(event, result, at_sender=False)
+@colorfalg.handle()
+async def _colorfalg(bot: Bot, event: MessageEvent):
+    msg = event.get_plaintext()
+    lsp = event.get_user_id()
+    if data_source.premission_valid(lsp):
+        if msg == '涩图ON':
+            data_source.SWITCH_FLAG = True
+            ret = 'GKD'
+        else:
+            data_source.SWITCH_FLAG = False
+            ret = '涩图OFF'
+    else:
+        if msg == '涩图ON':
+            ret = '不许色！'
+        else:
+            ret = '摩多摩多！'
+    await bot.send(event, ret, at_sender=False)
