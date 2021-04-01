@@ -43,7 +43,7 @@ async def _colorful(bot: Bot, event: MessageEvent):
     await bot.send(event, ret, at_sender=False)
 
 
-@colorflag.handle()
+@color_flag.handle()
 async def _color_flag(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
     lsp = event.get_user_id()
