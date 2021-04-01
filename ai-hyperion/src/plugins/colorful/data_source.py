@@ -5,11 +5,11 @@ from typing import List
 
 from .interface import lolicon
 
-
 SWITCH_FLAG = True
 PROT_FILE = 'base64://'
 DIR_MANAGER = '/src/data/'
 DIR_CREEP_IMG = '/src/plugins/colorful/image/creep/'
+
 
 def get_colorful(lsp: int) -> str:
     msg = lolicon.get_lolicon()
@@ -25,56 +25,56 @@ def get_colorful(lsp: int) -> str:
     print(PROT_FILE + b64_img[:200])
 
     ret = [{
-            'type': 'text',
-            'data': {
-                'text': pid
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': title
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': author
-            }
-        },{
-            'type': 'image',
-            'data': {
-                'file': PROT_FILE + b64_img
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': '来啦来啦！'
-            }
-        },{
-            'type': 'at',
-            'data': {
-                'qq': lsp
-            }
-        }]
+        'type': 'text',
+        'data': {
+            'text': pid
+        }
+    }, {
+        'type': 'text',
+        'data': {
+            'text': title
+        }
+    }, {
+        'type': 'text',
+        'data': {
+            'text': author
+        }
+    }, {
+        'type': 'image',
+        'data': {
+            'file': PROT_FILE + b64_img
+        }
+    }, {
+        'type': 'text',
+        'data': {
+            'text': '来啦来啦！'
+        }
+    }, {
+        'type': 'at',
+        'data': {
+            'qq': lsp
+        }
+    }]
     return ret
 
 
 def get_crepper(lsp: int) -> str:
     ret = [{
-            'type': 'image',
-            'data': {
-                'file': get_creep_path()
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': '不许色！'
-            }
-        },{
-            'type': 'at',
-            'data': {
-                'qq': lsp
-            }
-        }]
+        'type': 'image',
+        'data': {
+            'file': get_creep_path()
+        }
+    }, {
+        'type': 'text',
+        'data': {
+            'text': '不许色！'
+        }
+    }, {
+        'type': 'at',
+        'data': {
+            'qq': lsp
+        }
+    }]
     return ret
 
 
@@ -87,10 +87,10 @@ def get_file() -> str:
 def get_manager(file: str) -> List[str]:
     with open(file, mode='rb') as f:
         manager_object = f.read()
-    
+
     manager_dict = json.loads(manager_object)
     owners = manager_dict['OWNER']
-    
+
     return owners
 
 
@@ -102,7 +102,7 @@ def get_creep_path() -> str:
     return PROT_FILE + img_dir + luck_dog
 
 
-def premission_valid(user: str) -> bool:
+def permission_valid(user: str) -> bool:
     return user in get_manager(get_file())
 
 

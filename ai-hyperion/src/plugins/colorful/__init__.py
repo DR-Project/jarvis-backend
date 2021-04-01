@@ -1,8 +1,11 @@
 # import nonebot
 from nonebot import get_driver
-
 from .config import Config
+from nonebot.plugin import on_regex
+from nonebot.adapters.cqhttp import Bot, MessageEvent
+from nonebot.adapters.cqhttp import GroupMessageEvent
 
+from . import data_source
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
@@ -15,13 +18,6 @@ config = Config(**global_config.dict())
 #     pass
 
 
-from nonebot.plugin import on_regex
-from nonebot.adapters.cqhttp import Bot, MessageEvent
-from nonebot.adapters.cqhttp import GroupMessageEvent
-
-from . import data_source
-
-
 # Constant List
 
 
@@ -31,7 +27,7 @@ REG_COLORFLAG = '^涩图(ON|OFF)$'
 # Register Event
 
 colorful = on_regex(REG_COLORFUL)
-colorfalg = on_regex(REG_COLORFLAG)
+color_flag = on_regex(REG_COLORFLAG)
 
 
 ''' >>>>>> Core Function for Colorful <<<<<< '''
@@ -47,11 +43,11 @@ async def _colorful(bot: Bot, event: MessageEvent):
     await bot.send(event, ret, at_sender=False)
 
 
-@colorfalg.handle()
-async def _colorfalg(bot: Bot, event: MessageEvent):
+@colorflag.handle()
+async def _color_flag(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
     lsp = event.get_user_id()
-    if data_source.premission_valid(lsp):
+    if data_source.permission_valid(lsp):
         if msg == '涩图ON':
             data_source.SWITCH_FLAG = True
             ret = 'GKD'
