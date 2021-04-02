@@ -12,9 +12,9 @@ PROT_FILE = 'file:///'
 DIR_MANAGER = '/src/data/'
 DIR_CREEP_IMG = '/src/plugins/colorful/image/creep/'
 
+
 async def get_colorful(lsp: int) -> str:
-    msg = lolicon.get_lolicon()
-    msg = msg['data'][0]
+    msg = lolicon.get_lolicon()['data'][0]
     url = str(msg['url'])
     pid = 'PID: ' + str(msg['pid']) + '\n'
     title = '标题: ' + msg['title'] + '\n'
@@ -107,6 +107,6 @@ def premission_valid(user: str) -> bool:
     return user in get_manager(get_file())
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
     msg = get_colorful()['data'][0]
-    print('PID: ' + str(msg['pid']))
+    print('PID: ' + str(msg['pid']))'''

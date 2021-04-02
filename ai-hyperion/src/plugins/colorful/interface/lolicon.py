@@ -2,6 +2,20 @@ import os
 import httpx
 import json, base64
 from typing import List
+from threading import Thread
+from PIL import Image
+from io import BytesIO
+
+
+class Base64Convertor(Thread):
+    base64_str = ''
+
+    def __init__(self, image_base64):
+        Thread.__init__(self)
+        self.image_base64 = image_base64
+
+    def run(self):
+        self.base64_str = convert_base64(self.image_base64)
 
 
 def get_lolicon() -> dict:
@@ -33,14 +47,7 @@ def get_lolicon() -> dict:
 
         payload = r.json()
 
-    msg = {
-        'code': payload['code'],
-        'msg': payload['msg'],
-        'quota': payload['quota'],
-        'quota_min_ttl': payload['quota_min_ttl'],
-        'count': payload['count'],
-        'data': payload['data']
-    }
+    msg = payload['data']
 
     return msg
 
@@ -56,11 +63,31 @@ def dump_img(url: str) -> bytes:
         r = httpx.get(url, proxies=proxies)
     except httpx.RequestError:
         raise Exception('接口异常')
+    else:
+        image = r.content
 
-    ret = r.content
+    return image
 
-    return ret
 
-def convert_base64(bitstream: bytes) -> str:
-    ret = str(base64.b64encode(bitstream).decode('UTF-8'))
-    return ret
+def convert_base64(image: bytes) -> str:
+    base64_str = str(base64.b64encode(image).decode('UTF-8'))
+
+    return base64_str
+
+
+if __name__ == '__main__':
+    msg = get_lolicon()
+
+    image = dump_img(msg[0]['url'])
+    # print(convert_base64(image))
+
+    try:
+        t1 = Base64Convertor(image)
+        t1.start()
+        t1.join()
+    except :
+        print('66666')
+    else:
+        print(t1.base64_str)
+        del t1
+
