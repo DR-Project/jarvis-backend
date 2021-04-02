@@ -27,8 +27,7 @@ def get_lolicon() -> dict:
 
     param = {
         'apikey': '***',
-        'r18': '0',
-        'size1200': True,
+        'r18': '0'
     }
 
     proxies = {
@@ -37,7 +36,7 @@ def get_lolicon() -> dict:
     }
 
     try:
-        r = httpx.get(url, params=param, proxies=proxies)
+        r = httpx.get(url, params=param, timeout=120,proxies=proxies)
 
     except httpx.RequestError:
 

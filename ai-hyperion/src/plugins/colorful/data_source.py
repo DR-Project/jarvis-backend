@@ -6,7 +6,7 @@ from typing import List
 from .interface import lolicon
 
 
-SWITCH_FLAG = False
+SWITCH_FLAG = True
 PROT_B64 = 'base64://'
 PROT_FILE = 'file:///'
 DIR_MANAGER = '/src/data/'
@@ -14,16 +14,22 @@ DIR_CREEP_IMG = '/src/plugins/colorful/image/creep/'
 
 
 async def get_colorful(lsp: int) -> str:
-    msg = lolicon.get_lolicon()['data'][0]
-    url = str(msg['url'])
+    msg = lolicon.get_lolicon()[0]
+    url = msg['url']
     pid = 'PID: ' + str(msg['pid']) + '\n'
     title = '标题: ' + msg['title'] + '\n'
     author = '作者: ' + msg['author'] + '\n'
 
     bitstream = lolicon.dump_img(url)
-    b64_img = lolicon.convert_base64(bitstream)
+    try:
+        bit_thread = lolicon.Base64Convertor(bitstream)
+        bit_thread.start()
+        bit_thread.join()
+    except:
+        raise Exception('不知道神魔异常')
+    
+    b64_img = bit_thread.base64_str
 
-    print(PROT_B64 + b64_img[:200])
 
     ret = [{
             'type': 'text',
@@ -103,7 +109,7 @@ def get_creep_path() -> str:
     return PROT_FILE + img_dir + luck_dog
 
 
-def premission_valid(user: str) -> bool:
+def permission_valid(user: str) -> bool:
     return user in get_manager(get_file())
 
 
