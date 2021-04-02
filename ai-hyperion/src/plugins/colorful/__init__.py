@@ -25,7 +25,7 @@ from . import data_source
 # Constant List
 
 
-REG_COLORFUL = '^(色来)$|^(来点|来丶)(色图|涩图)$|^(色图|涩图)$|^(给点给点)$'
+REG_COLORFUL = '^(色来)$|^(来点|来丶)(色图|涩图|嗷图)$|^(色图|涩图|嗷图)$|^(给点给点)$'
 REG_COLORFLAG = '^涩图(ON|OFF)$'
 
 # Register Event
@@ -41,7 +41,7 @@ colorfalg = on_regex(REG_COLORFLAG)
 async def _colorful(bot: Bot, event: MessageEvent):
     lsp = event.get_user_id()
     if data_source.SWITCH_FLAG:
-        ret = data_source.get_colorful(lsp)
+        ret = await data_source.get_colorful(lsp)
     else:
         ret = data_source.get_crepper(lsp)
     await bot.send(event, ret, at_sender=False)
@@ -57,10 +57,10 @@ async def _colorfalg(bot: Bot, event: MessageEvent):
             ret = 'GKD'
         else:
             data_source.SWITCH_FLAG = False
-            ret = '涩图OFF'
+            ret = '草'
     else:
         if msg == '涩图ON':
             ret = '不许色！'
         else:
-            ret = '摩多摩多！'
+            ret = '草'
     await bot.send(event, ret, at_sender=False)

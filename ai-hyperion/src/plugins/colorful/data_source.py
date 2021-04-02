@@ -6,12 +6,13 @@ from typing import List
 from .interface import lolicon
 
 
-SWITCH_FLAG = True
-PROT_FILE = 'base64://'
+SWITCH_FLAG = False
+PROT_B64 = 'base64://'
+PROT_FILE = 'file:///'
 DIR_MANAGER = '/src/data/'
 DIR_CREEP_IMG = '/src/plugins/colorful/image/creep/'
 
-def get_colorful(lsp: int) -> str:
+async def get_colorful(lsp: int) -> str:
     msg = lolicon.get_lolicon()
     msg = msg['data'][0]
     url = str(msg['url'])
@@ -22,7 +23,7 @@ def get_colorful(lsp: int) -> str:
     bitstream = lolicon.dump_img(url)
     b64_img = lolicon.convert_base64(bitstream)
 
-    print(PROT_FILE + b64_img[:200])
+    print(PROT_B64 + b64_img[:200])
 
     ret = [{
             'type': 'text',
@@ -42,7 +43,7 @@ def get_colorful(lsp: int) -> str:
         },{
             'type': 'image',
             'data': {
-                'file': PROT_FILE + b64_img
+                'file': PROT_B64 + b64_img
             }
         },{
             'type': 'text',
@@ -90,8 +91,8 @@ def get_manager(file: str) -> List[str]:
     
     manager_dict = json.loads(manager_object)
     owners = manager_dict['OWNER']
-    
-    return owners
+    admin = manager_dict['ADMIN']
+    return owners +admin
 
 
 def get_creep_path() -> str:
