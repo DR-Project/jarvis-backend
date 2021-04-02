@@ -18,6 +18,14 @@ class Base64Convertor(Thread):
         self.base64_str = convert_base64(self.image_base64)
 
 
+class ImageReadTimeout(Exception):
+    pass
+
+
+class ImageRequestError(Exception):
+    pass
+
+
 def get_lolicon() -> dict:
     """
 
@@ -53,7 +61,6 @@ def get_lolicon() -> dict:
 
 
 def dump_img(url: str) -> bytes:
-
     proxies = {
         'http://': 'http://localhost:7890',
         'https://': 'http://localhost:7890'
@@ -62,7 +69,9 @@ def dump_img(url: str) -> bytes:
     try:
         r = httpx.get(url, proxies=proxies)
     except httpx.RequestError:
-        raise Exception('接口异常')
+        raise ImageRequestError('接口异常')
+    except httpx.ReadTimeout:
+        raise ImageReadTimeout('超时')
     else:
         image = r.content
 
@@ -85,9 +94,8 @@ if __name__ == '__main__':
         t1 = Base64Convertor(image)
         t1.start()
         t1.join()
-    except :
+    except:
         print('66666')
     else:
         print(t1.base64_str)
         del t1
-
