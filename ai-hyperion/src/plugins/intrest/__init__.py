@@ -30,6 +30,7 @@ REG_QUESHI = '(确实|qs|有一说一|yysy)'
 REG_DIUREN = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
 
+
 # Register Event
 
 queshi = on_regex(REG_QUESHI)
