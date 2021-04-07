@@ -15,7 +15,7 @@ def get_price(instrument_id: str) -> dict:
     :return: the key message to the upstream
     """
 
-    url = 'https://www.okexcn.com/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
+    url = 'https://www.okex.win/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
 
     # for test to raise Exception
     # url = 'www.test404domain.cc'
