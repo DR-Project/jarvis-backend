@@ -44,7 +44,7 @@ def get_lolicon() -> dict:
     }
 
     try:
-        r = httpx.get(url, params=param, timeout=120,proxies=proxies)
+        r = httpx.get(url, params=param, timeout=45,proxies=proxies)
 
     except httpx.RequestError:
 

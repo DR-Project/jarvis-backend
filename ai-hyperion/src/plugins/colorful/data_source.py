@@ -25,9 +25,11 @@ async def get_colorful(lsp: int) -> str:
         bit_thread = lolicon.Base64Convertor(bitstream)
         bit_thread.start()
         bit_thread.join()
-    except:
-        raise Exception('不知道神魔异常')
-    
+    except lolicon.ImageReadTimeout:
+        return 'TIMEOUT'
+    except lolicon.ImageRequestError:
+        return '接口异常'
+
     b64_img = bit_thread.base64_str
 
 
