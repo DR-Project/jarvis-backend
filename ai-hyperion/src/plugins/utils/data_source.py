@@ -2,6 +2,7 @@ from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
 from .interface import weather
+from .interface import assignment_ddl
 
 
 def magic_get_usage() -> str:
@@ -27,7 +28,7 @@ def coin_get_price(coin_type: str) -> str:
 
 def rss_get_news(target: str) -> str:
     try:
-        dicts = rss_news.get_news(target, 8)
+        dicts = rss_news.get_news(target, rss_news.rss_sources[target][0])
     except:
         ret = "接口异常"
     else:
@@ -50,6 +51,10 @@ def weather_get(city: str) -> str:
     else:
         ret = city + ' ∉ {城市}'
     return ret
+
+
+def ddl_get() -> str:
+    return assignment_ddl.construct_string()
 
 
 ''' >>>>>> Exp Function <<<<<< '''

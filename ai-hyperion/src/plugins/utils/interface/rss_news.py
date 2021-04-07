@@ -24,7 +24,7 @@ def get_news(target: str, quantity: int) -> dict:
         }
 
     try:
-        r = httpx.get(rss_sources[target], proxies=proxies)
+        r = httpx.get(rss_sources[target][1], proxies=proxies)
     except httpx.RequestError:
         raise Exception('Interface Error / 接口异常')
     else:
@@ -68,9 +68,9 @@ def construct_string(msg: dict) -> str:
 
 
 rss_sources = {
-    '药闻': 'https://a.jiemian.com/index.php?m=article&a=rss',
-    '热搜': 'https://rsshub.app/weibo/search/hot',
-    'TESTNEWS': 'https://rsshub.app/thepaper/featured'
+    '药闻': [8,'https://a.jiemian.com/index.php?m=article&a=rss'],
+    '热搜': [15, 'https://rsshub.app/weibo/search/hot'],
+    'TESTNEWS': [10, 'https://rsshub.app/thepaper/featured']
 }
 
 

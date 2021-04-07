@@ -17,8 +17,14 @@ config = Config(**global_config.dict())
 
 from nonebot.plugin import on_regex, on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent
+from nonebot import require
 
 from . import data_source
+
+
+# Load crontab plugin
+scheduler = require('nonebot_plugin_apscheduler').scheduler
+
 
 # Constant List
 
@@ -26,14 +32,19 @@ REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
 REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
+REG_DDL = '^(DDL|ddl)$'
 EREG_COIN = 'ECOIN'
+
+
 # Register Event
 
 traffic = on_regex(REG_TRAFFIC)
 cryptocoin = on_regex(REG_COIN)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
+ass_ddl = on_regex(REG_DDL)
 exp_cryptocoin = on_command(EREG_COIN)
+
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -63,6 +74,15 @@ async def _weather(bot: Bot, event: MessageEvent):
     target = event.get_plaintext()
     ret = data_source.weather_get(target)
     await bot.send(event, ret, at_sender=False)
+
+@ass_ddl.handle()
+async def _ass_ddl(bot: Bot, event: MessageEvent):
+    ret = data_source.ddl_get()
+    await bot.send(event, ret, at_sender=False)
+
+
+''' >>>>>> EXP Function for Utils <<<<<< '''
+
 
 @exp_cryptocoin.handle()
 async def _exp_cryptocoin(bot: Bot, event: MessageEvent):
