@@ -65,8 +65,8 @@ def coin_exp_get_price(instrument_id: str) -> str:
     print(instrument_id)
     try:
         dicts = crypto_coin.get_price(instrument_id)
+        ret = crypto_coin.construct_string(dicts)
     except:
         ret = "币对不存在"
-    else:
-        ret = crypto_coin.construct_string(dicts)
+        
     return ret
