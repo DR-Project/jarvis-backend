@@ -6,7 +6,7 @@ from typing import List
 from .interface import lolicon
 
 
-SWITCH_FLAG = True
+SWITCH_FLAG = False
 PROT_B64 = 'base64://'
 PROT_FILE = 'file:///'
 DIR_MANAGER = '/src/data/'
