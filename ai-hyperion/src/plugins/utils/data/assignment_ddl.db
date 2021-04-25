@@ -48,5 +48,15 @@
         "ddl": "Sunday, 6 June 2021, 12:00 AM"
       }
     ]
+  },
+  {
+    "code": "ITECH3107",
+    "name": "Mobile Device Programming",
+    "assignment": [
+      {
+        "name": "Assignment 3: FedUni Millionaire v3",
+        "ddl": "Sunday, 30 May 2021, 11:00 PM"
+      }
+    ]
   }
 ]
