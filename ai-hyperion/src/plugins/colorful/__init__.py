@@ -51,12 +51,12 @@ async def _color_flag(bot: Bot, event: MessageEvent):
         if msg == '涩图ON':
             data_source.SWITCH_FLAG = True
             ret = 'GKD'
+            await bot.send(event, ret, at_sender=False)
         else:
             data_source.SWITCH_FLAG = False
-            ret = '草'
     else:
         if msg == '涩图ON':
             ret = '不许色！'
+            await bot.send(event, ret, at_sender=False)
         else:
-            ret = '草'
-    await bot.send(event, ret, at_sender=False)
+            pass
