@@ -58,5 +58,19 @@
         "ddl": "Sunday, 30 May 2021, 11:00 PM"
       }
     ]
+  },
+  {
+    "code": "ITECH3108",
+    "name": "Dynamic Web Development",
+    "assignment": [
+      {
+        "name": "Assignment 1:  Front-End Development",
+        "ddl": "Sunday, 2 May 2021, 4:00 PM"
+      },
+      {
+        "name": "Assignment 2: Back-End Development",
+        "ddl": "N/A"
+      }
+    ]
   }
 ]
