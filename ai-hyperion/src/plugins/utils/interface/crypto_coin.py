@@ -81,3 +81,13 @@ cryptocurrency = {
     'LTC': 'LTC-USDT',
     'ETH': 'ETH-USDT'
 }
+
+
+def set_line() -> any:
+    # todo
+    pass
+
+
+def auto_alert() -> any:
+    # todo
+    pass
