@@ -7,6 +7,7 @@ from .interface import covid_vaccinations
 
 import time
 
+
 def magic_get_usage() -> str:
     try:
         dicts = magic_usage.get_usage()

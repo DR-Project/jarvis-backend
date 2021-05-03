@@ -1,28 +1,22 @@
-# import nonebot
-from nonebot import get_driver
 from .config import Config
+
+from nonebot import get_driver
 from nonebot.plugin import on_regex
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 from nonebot.adapters.cqhttp import GroupMessageEvent
 
 from . import data_source
+
+
 global_config = get_driver().config
 config = Config(**global_config.dict())
-
-# Export something for other plugin
-# export = nonebot.export()
-# export.foo = "bar"
-
-# @export.xxx
-# def some_function():
-#     pass
 
 
 # Constant List
 
-
 REG_COLORFUL = '^(色来)$|^(来点|来丶)(色图|涩图|嗷图)$|^(色图|涩图|嗷图)$|^(给点给点)$'
 REG_COLORFLAG = '^涩图(ON|OFF)$'
+
 
 # Register Event
 

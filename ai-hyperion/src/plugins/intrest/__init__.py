@@ -1,27 +1,17 @@
-# import nonebot
-from nonebot import get_driver
-
 from .config import Config
+
+from nonebot import get_driver
+from nonebot.plugin import on_regex
+from nonebot.adapters.cqhttp import Bot, MessageEvent, GroupMessageEvent
+
+import random
+
+from . import data_source
+
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
-# Export something for other plugin
-# export = nonebot.export()
-# export.foo = "bar"
-
-# @export.xxx
-# def some_function():
-#     pass
-
-
-from nonebot.plugin import on_regex
-from nonebot.adapters.cqhttp import Bot, MessageEvent
-from nonebot.adapters.cqhttp import GroupMessageEvent
-
-from . import data_source
-
-import random
 
 # Constant List
 

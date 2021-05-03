@@ -1,30 +1,16 @@
-# import nonebot
-from nonebot import get_driver
-
 from .config import Config
 
-global_config = get_driver().config
-config = Config(**global_config.dict())
-
-# Export something for other plugin
-# export = nonebot.export()
-# export.foo = "bar"
-
-# @export.xxx
-# def some_function():
-#     pass
-
-
+from nonebot import get_driver
 from nonebot.plugin import on_regex, on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent
-from nonebot import require
-
-from . import data_source
 
 import re
 
-# Load crontab plugin
-# scheduler = require('nonebot_plugin_apscheduler').scheduler
+from . import data_source
+
+
+global_config = get_driver().config
+config = Config(**global_config.dict())
 
 
 # Constant List
@@ -88,6 +74,7 @@ async def _ass_ddl(bot: Bot, event: MessageEvent):
 async def _covid_vacc(bot: Bot, event: MessageEvent):
     ret = await data_source.covid_get_vaccinations()
     await bot.send(event, ret, at_sender=False)
+
 
 ''' >>>>>> EXP Function for Utils <<<<<< '''
 
