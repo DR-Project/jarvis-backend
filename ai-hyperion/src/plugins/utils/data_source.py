@@ -3,7 +3,9 @@ from .interface import magic_usage
 from .interface import rss_news
 from .interface import weather
 from .interface import assignment_ddl
+from .interface import covid_vaccinations
 
+import time
 
 def magic_get_usage() -> str:
     try:
@@ -52,6 +54,15 @@ def weather_get(city: str) -> str:
         ret = city + ' ∉ {城市}'
     return ret
 
+async def covid_get_vaccinations():
+    data = await covid_vaccinations.get_last_date()
+    date = data['date']
+    count = data['total_vaccinations']
+    count = float(count) / 10000
+    pattern = '%Y-%m-%d'
+    date = time.strftime(pattern, time.localtime(date))
+    ret = '截至 ' + date + ' 中国内地已接种' + str(count) + '万针'
+    return ret
 
 def ddl_get() -> str:
     return assignment_ddl.construct_string()

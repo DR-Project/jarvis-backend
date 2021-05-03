@@ -36,6 +36,7 @@ REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
 REG_DDL = '^(DDL|ddl)$'
 EREG_COIN = 'ECOIN'
+COVID_VACC = 'COVID'
 
 
 # Register Event
@@ -46,6 +47,7 @@ mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL)
 exp_cryptocoin = on_command(EREG_COIN)
+covid_vacc = on_regex(COVID_VACC)
 
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
@@ -82,6 +84,10 @@ async def _ass_ddl(bot: Bot, event: MessageEvent):
     ret = data_source.ddl_get()
     await bot.send(event, ret, at_sender=False)
 
+@covid_vacc.handle()
+async def _covid_vacc(bot: Bot, event: MessageEvent):
+    ret = await data_source.covid_get_vaccinations()
+    await bot.send(event, ret, at_sender=False)
 
 ''' >>>>>> EXP Function for Utils <<<<<< '''
 
