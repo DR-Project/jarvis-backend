@@ -65,7 +65,28 @@ async def covid_get_vaccinations():
     return ret
 
 def ddl_get() -> str:
-    return assignment_ddl.construct_string()
+        # assignments_display = assignments[:3]
+
+    ret = ''
+    pattern = '%Y年%m月%d日 %H:%M'
+
+    assignments = assignment_ddl.sort_assignment(assignment_ddl.convert_date(assignment_ddl.get_assignment(assignment_ddl.get_course())))
+
+    for assignment in assignments:
+        # init variable
+        course_name = assignment['course_name']
+        course_code = assignment['course_code']
+        deadline = assignment['ddl']
+        assignment_name = assignment['name']
+
+        ddl = time.strftime(pattern, time.localtime(deadline))
+        now = time.time()
+
+        if now <= deadline:
+            ret += f'{course_code}' + ' ' + f'{course_name}' + ' ' + f'{assignment_name}' + '\n' \
+                   + f'{ddl}' + '\n\n'
+
+    return ret[:-2]
 
 
 ''' >>>>>> Exp Function <<<<<< '''
