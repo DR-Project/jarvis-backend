@@ -21,15 +21,17 @@ from nonebot import require
 
 from . import data_source
 
+import re
 
 # Load crontab plugin
-scheduler = require('nonebot_plugin_apscheduler').scheduler
+# scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 
 # Constant List
 
 REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
-REG_COIN = '^(BTC|btc|EOS|eos|BTG|btg|ADA|ada|DOGE|doge|LTC|ltc|ETH|eth)$'
+REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
+            'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT)$'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
 REG_DDL = '^(DDL|ddl)$'
@@ -39,7 +41,7 @@ EREG_COIN = 'ECOIN'
 # Register Event
 
 traffic = on_regex(REG_TRAFFIC)
-cryptocoin = on_regex(REG_COIN)
+cryptocoin = on_regex(REG_COIN, re.IGNORECASE)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL)

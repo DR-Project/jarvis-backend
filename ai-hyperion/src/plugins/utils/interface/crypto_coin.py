@@ -57,7 +57,7 @@ def construct_string(msg: dict) -> str:
     price = float(msg['last'])
     product_id = msg['product_id']
     open_utc8 = float(msg['open_utc8'])
-    change_percent = round((price - open_utc8) / price * 100, 2)
+    change_percent = round((price - open_utc8) / open_utc8 * 100, 2)
 
     instrument_id = product_id.split('-')
     coin = instrument_id[0]

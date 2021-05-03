@@ -16,7 +16,7 @@ def magic_get_usage() -> str:
 
 
 def coin_get_price(coin_type: str) -> str:
-    instrument_id = crypto_coin.cryptocurrency[coin_type]
+    instrument_id = coin_type.upper() + "-USDT"
     try:
         dicts = crypto_coin.get_price(instrument_id)
     except:
