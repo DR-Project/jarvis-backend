@@ -37,12 +37,9 @@ def rss_get_news(target: str) -> str:
 
 
 def weather_get(city: str) -> str:
-    prefix = '天气'
-    city = city[:-2]
+    city = city[:-2].strip()
     city_list = []
     city_list.append(city)
-    # todo: trim 一下 这里的city 去掉左右的空格
-    raise Exception("看这个 todo")
 
     if weather.china_city_validator(city + '市'):
         try:
