@@ -219,6 +219,7 @@ async def market_capitalization_controller() -> dict:
     """
     *** It's a controller method to call
         to check the object template in process_data() method
+        You need to call it to get the dict and construct the string by your own.
 
     :return: dict
     """
