@@ -1,3 +1,5 @@
+import asyncio
+
 import httpx
 import json
 
@@ -6,6 +8,14 @@ class InstrumentNotExistException(Exception):
     """
     defined a InstrumentNotExist Exception
     """
+    pass
+
+
+class RequestError(Exception):
+    pass
+
+
+class ReadTimeout(Exception):
     pass
 
 
@@ -21,10 +31,10 @@ def get_price(instrument_id: str) -> dict:
     # url = 'www.test404domain.cc'
 
     proxies = {
-            # 部署到服务器或者容器里面之后 需要修改为对应的
-            'http://': 'http://localhost:7890',
-            'https://': 'http://localhost:7890'
-        }
+        # 部署到服务器或者容器里面之后 需要修改为对应的
+        'http://': 'http://localhost:7890',
+        'https://': 'http://localhost:7890'
+    }
 
     try:
         r = httpx.get(url, proxies=proxies)
@@ -72,7 +82,7 @@ def construct_string(msg: dict) -> str:
     return ret
 
 
-cryptocurrency = {
+'''cryptocurrency = {
     'BTC': 'BTC-USDT',
     'EOS': 'EOS-USDT',
     'BTG': 'BTG-USDT',
@@ -81,6 +91,7 @@ cryptocurrency = {
     'LTC': 'LTC-USDT',
     'ETH': 'ETH-USDT'
 }
+'''
 
 
 def set_line() -> any:
@@ -91,3 +102,131 @@ def set_line() -> any:
 def auto_alert() -> any:
     # todo
     pass
+
+
+'''
+👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
+👇👇**Basic Plan:                               👇👇
+👇👇                                            👇👇
+👇👇Daily credit limit: 333 (soft cap)          👇👇
+👇👇Monthly credit limit: 10,000 (hard cap)     👇👇
+👇👇                                            👇👇
+👇👇API call rate limit: 30 requests a minute   👇👇
+👇👇Endpoints enabled: 9                        👇👇
+👇👇Currency conversions: Limit 1 per request   👇👇
+👇👇License: Personal use                       👇👇
+👇👇                                            👇👇
+👇👇You are currently on a basic free plan.     👇👇
+👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
+'''
+
+
+async def get_market_capitalization() -> str:
+    API_KEY = '***'
+
+    host = 'https://pro-api.coinmarketcap.com'
+    endpoint = '/v1/cryptocurrency/listings/latest'
+    url = host + endpoint
+
+    proxies = {
+        # 部署到服务器或者容器里面之后 需要修改为对应的
+        'http://': 'http://localhost:7890',
+        'https://': 'http://localhost:7890'
+    }
+
+    headers = {
+        'Accept': 'application / json',
+        'X-CMC_PRO_API_KEY': API_KEY
+    }
+
+    async with httpx.AsyncClient(proxies=proxies, headers=headers) as client:
+        try:
+            r = await client.get(url)
+        except httpx.RequestError:
+            raise RequestError('Request Error')
+        except httpx.ReadTimeout:
+            raise ReadTimeout('Read Timeout')
+        else:
+            msg = r.text
+
+    return msg
+
+
+async def process_data() -> dict:
+    """
+
+    :return: a dict.
+
+    the object contains two things,
+        one is a timestamp (ISO 8601) on the server,
+        another is a json array, which contains 10 objects
+            each object contains the information about the crypto asset in Descending order
+
+    You probably only needs the timestamp(or last_updated), symbol, market_cap
+
+    template :
+    {
+        "timestamp": "2021-05-06T07:33:00.176Z",
+        "payload": [
+            {
+                "id": 1, // id doesnt mean anything
+                "name": "Bitcoin",
+                "symbol": "BTC",
+                "slug": "bitcoin",
+                "num_market_pairs": 9513,
+                "date_added": "2013-04-28T00:00:00.000Z",
+                "tags": [29 items],
+                "max_supply": 21000000,
+                "circulating_supply": 18701106,
+                "total_supply": 18701106,
+                "platform": null,
+                "cmc_rank": 1,
+                "last_updated": "2021-05-06T07:32:02.000Z",
+                "quote": {
+                    "USD": {
+                        "price": 56776.252502255695,
+                        "volume_24h": 67733917594.070595,
+                        "percent_change_1h": -0.17821812,
+                        "percent_change_24h": 4.02751912,
+                        "percent_change_7d": 4.27689177,
+                        "percent_change_30d": -3.57890923,
+                        "percent_change_60d": 14.44680101,
+                        "percent_change_90d": 51.03463704,
+                        "market_cap": 1061778716327.449, //should change the unit to human readable
+                        "last_updated": "2021-05-06T07:32:02.000Z"
+                    }
+                }
+            },
+        ]
+    }
+
+    """
+
+    data = json.loads(await get_market_capitalization())
+
+    ret = {}
+
+    if data['status']['error_code'] != 0:
+        raise RequestError('Request Error')
+    else:
+        ret['timestamp'] = data['status']['timestamp']
+        ret['payload'] = data['data'][:10]
+
+    return ret
+
+
+async def market_capitalization_controller() -> dict:
+    """
+    *** It's a controller method to call
+        to check the object template in process_data() method
+
+    :return: dict
+    """
+    ret = await process_data()
+
+    return ret
+
+'''
+if __name__ == '__main__':
+    print(json.dumps(asyncio.run(process_data())))
+    '''
