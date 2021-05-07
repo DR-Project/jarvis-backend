@@ -89,6 +89,23 @@ def construct_string(msg: dict) -> str:
     return ret
 
 
+'''
+👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
+👇👇**Basic Plan:                               👇👇
+👇👇                                            👇👇
+👇👇Daily credit limit: 333 (soft cap)          👇👇
+👇👇Monthly credit limit: 10,000 (hard cap)     👇👇
+👇👇                                            👇👇
+👇👇API call rate limit: 30 requests a minute   👇👇
+👇👇Endpoints enabled: 9                        👇👇
+👇👇Currency conversions: Limit 1 per request   👇👇
+👇👇License: Personal use                       👇👇
+👇👇                                            👇👇
+👇👇You are currently on a basic free plan.     👇👇
+👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
+'''
+
+
 def get_price_instead(instrument_id: str) -> dict:
 
     host = 'pro-api.coinmarketcap.com'
