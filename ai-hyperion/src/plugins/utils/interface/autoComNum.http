@@ -7,3 +7,13 @@ Origin: https://www.kuaidi100.com
 Referer: https://www.kuaidi100.com/
 
 ### 淦，提示IP被封，用不了。
+
+GET https://www.kuaidi100.com/autonumber/auto?num={{number}}
+Accept: application/json
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.25 Safari/537.36 Core/1.70.3861.400 QQBrowser/10.7.4313.400
+X-Requested-With: XMLHttpRequest
+Host: www.kuaidi100.com
+Origin: https://www.kuaidi100.com
+Referer: https://www.kuaidi100.com/
+
+###这个要key，淦

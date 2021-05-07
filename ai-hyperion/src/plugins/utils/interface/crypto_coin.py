@@ -180,23 +180,6 @@ def auto_alert() -> any:
     pass
 
 
-'''
-👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
-👇👇**Basic Plan:                               👇👇
-👇👇                                            👇👇
-👇👇Daily credit limit: 333 (soft cap)          👇👇
-👇👇Monthly credit limit: 10,000 (hard cap)     👇👇
-👇👇                                            👇👇
-👇👇API call rate limit: 30 requests a minute   👇👇
-👇👇Endpoints enabled: 9                        👇👇
-👇👇Currency conversions: Limit 1 per request   👇👇
-👇👇License: Personal use                       👇👇
-👇👇                                            👇👇
-👇👇You are currently on a basic free plan.     👇👇
-👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇👇
-'''
-
-
 async def get_market_capitalization() -> str:
     API_KEY = '***'
 
@@ -304,7 +287,7 @@ async def market_capitalization_controller() -> dict:
     return ret
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
 
     instrument_id = 'SHIB-BTC'
 
@@ -314,6 +297,6 @@ if __name__ == '__main__':
     except InstrumentNotExistException:
         msg_v2 = get_price_instead(instrument_id)
         ret = construct_string_instead(msg_v2)
-        print(ret)
+        print(ret)'''
 
 
