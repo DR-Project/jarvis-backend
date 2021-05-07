@@ -42,13 +42,13 @@ async def _queshi(bot: Bot, event: MessageEvent):
 async def _diuren(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
     if msg == "***":
-        num = event.get_user_id()
-        at_mem = [{
-            'type': 'at',
+        num = event.message_id
+        at_mem = [{ # 新加的这个作为测试，没问题的话，就扩展到全部的食用性功能上面
+            'type': 'reply', # 这里改了一下，更符合逻辑。记得测试
             'data': {
-                'qq': num
+                'id': num
             }
-        },{
+        }, {
             'type': 'text',
             'data': {
                 'text': " 好逊哦，丢哪个胖 "
