@@ -8,10 +8,8 @@ import random
 
 from . import data_source
 
-
 global_config = get_driver().config
 config = Config(**global_config.dict())
-
 
 # Constant List
 
@@ -20,20 +18,18 @@ REG_QUESHI = '(确实|qs|有一说一|yysy)'
 REG_DIUREN = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
 
-
 # Register Event
 
 queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
 diuren = on_regex(REG_DIUREN)
 
-
 ''' >>>>>> Just for fun <<<<<< '''
 
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: MessageEvent):
-    if(data_source.to_be_or_not_be(30)):
+    if (data_source.to_be_or_not_be(30)):
         text = '确实'
         await bot.send(event, text, at_sender=False)
 
@@ -43,8 +39,9 @@ async def _diuren(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
     if msg == "***":
         num = event.message_id
-        at_mem = [{ # 新加的这个作为测试，没问题的话，就扩展到全部的食用性功能上面
-            'type': 'reply', # 这里改了一下，更符合逻辑。记得测试
+        at_mem = [{  # 新加的这个作为测试，没问题的话，就扩展到全部的食用性功能上面
+            'type': 'reply',  # 这里改了一下，更符合逻辑。记得测试,
+            # 如果不行，可能要在原来的基础上，加上这个，就是又要at type 又要reply type
             'data': {
                 'id': num
             }
@@ -61,7 +58,7 @@ async def _diuren(bot: Bot, event: MessageEvent):
             'data': {
                 'qq': num
             }
-        },{
+        }, {
             'type': 'text',
             'data': {
                 'text': " 丢人 "
@@ -84,7 +81,7 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
         'data': {
             'qq': luck_dog
         }
-    },{
+    }, {
         'type': 'text',
         'data': {
             'text': " 丢人 "
