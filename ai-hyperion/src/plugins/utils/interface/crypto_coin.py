@@ -19,6 +19,13 @@ class ReadTimeout(Exception):
     pass
 
 
+class NoDefineException(Exception):
+    """
+    defined a NoDefineException
+    """
+    pass
+
+
 def get_price(instrument_id: str) -> dict:
     """
     :param instrument_id: the cryptocurrency you want to check
@@ -82,16 +89,68 @@ def construct_string(msg: dict) -> str:
     return ret
 
 
-'''cryptocurrency = {
-    'BTC': 'BTC-USDT',
-    'EOS': 'EOS-USDT',
-    'BTG': 'BTG-USDT',
-    'ADA': 'ADA-USDT',
-    'DOGE': 'DOGE-USDT',
-    'LTC': 'LTC-USDT',
-    'ETH': 'ETH-USDT'
-}
-'''
+def get_price_instead(instrument_id: str) -> dict:
+
+    host = 'pro-api.coinmarketcap.com'
+    endpoint = '/v1/cryptocurrency/quotes/latest'
+    url = 'https://' + host + endpoint
+
+    proxies = {
+        # 部署到服务器或者容器里面之后 需要修改为对应的
+        'http://': 'http://localhost:7890',
+        'https://': 'http://localhost:7890'
+    }
+
+    headers = {
+        'Accept': 'application / json',
+        'X-CMC_PRO_API_KEY': '***'
+    }
+    request_data = instrument_id.split('-')
+    symbol = request_data[0]
+    convert = request_data[1]
+
+    params = {
+        'symbol': symbol,
+        'convert': convert
+    }
+
+    try:
+        r = httpx.get(url, params=params, proxies=proxies, headers=headers)
+    except httpx.RequestError:
+        raise RequestError('Request Error')
+    except httpx.ReadTimeout:
+        raise ReadTimeout('Read Timeout')
+    else:
+        msg = r.json()
+
+    print(msg)
+    payload = {}
+    try:
+        if msg['status']['error_code'] == 0:
+            payload['coin'] = symbol
+            payload['price'] = msg['data'][symbol]['quote'][convert]['price']
+            payload['base'] = convert
+            payload['change_percent'] = msg['data'][symbol]['quote'][convert]['percent_change_24h']
+        else:
+            raise NoDefineException('返回体不正确')
+    except KeyError:
+        raise NoDefineException('未定义异常 （确信')
+
+    return payload
+
+
+def construct_string_instead(payload: dict) -> str:
+
+    # init variable
+    coin = payload['coin']
+    base = payload['base']
+    last = payload['price']
+    change_percent = payload['change_percent']
+
+    ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{last}' + ' ' + f'{base}' + '，24小时涨幅为 ' \
+          + f'{change_percent}' + '%。 '
+
+    return ret
 
 
 def set_line() -> any:
@@ -227,7 +286,17 @@ async def market_capitalization_controller() -> dict:
 
     return ret
 
-'''
+
 if __name__ == '__main__':
-    print(json.dumps(asyncio.run(process_data())))
-    '''
+
+    instrument_id = 'SHIB-BTC'
+
+    try:
+        msg = get_price(instrument_id)
+        construct_string(msg)
+    except InstrumentNotExistException:
+        msg_v2 = get_price_instead(instrument_id)
+        ret = construct_string_instead(msg_v2)
+        print(ret)
+
+

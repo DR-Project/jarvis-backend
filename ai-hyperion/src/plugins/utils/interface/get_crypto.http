@@ -1,0 +1,14 @@
+GET https://www.okex.win/api/spot/v3/instruments/{{instrument_id}}/ticker
+
+###
+
+GET https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol={{symbol}}
+Accept: application/json
+X-CMC_PRO_API_KEY: ***
+###
+
+GET https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol={{symbol}}&convert={{convert}}
+Accept: application/json
+X-CMC_PRO_API_KEY: ***
+
+###

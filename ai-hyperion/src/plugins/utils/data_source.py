@@ -25,7 +25,7 @@ def coin_get_price(coin_type: str) -> str:
     except:
         ret = "接口异常"
     else:
-        ret = crypto_coin.construct_string(dicts)
+        ret = crypto_coin.construct_string_insead(dicts)
     return ret
 
 
@@ -98,7 +98,7 @@ def coin_exp_get_price(instrument_id: str) -> str:
     print(instrument_id)
     try:
         dicts = crypto_coin.get_price(instrument_id)
-        ret = crypto_coin.construct_string(dicts)
+        ret = crypto_coin.construct_string_insead(dicts)
     except:
         ret = "币对不存在"
         
