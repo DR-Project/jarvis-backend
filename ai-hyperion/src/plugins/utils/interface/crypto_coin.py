@@ -12,11 +12,15 @@ class InstrumentNotExistException(Exception):
 
 
 class RequestError(Exception):
-    pass
+    """
+    defined a RequestErrorException
+    """
 
 
 class ReadTimeout(Exception):
-    pass
+    """
+    defined a ReadTimeoutException
+    """
 
 
 class NoDefineException(Exception):
