@@ -92,7 +92,7 @@ def construct_string(msg: dict) -> str:
     base = instrument_id[1]
     # print(change_percent)
 
-    ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{price}' + ' ' + f'{base}' + '，对比今天开盘价涨幅为 ' \
+    ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{price}' + ' ' + f'{base}' + '，对比今日开盘价涨幅为 ' \
           + f'{change_percent}' + '%。 '
     # abandoned
     # ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'

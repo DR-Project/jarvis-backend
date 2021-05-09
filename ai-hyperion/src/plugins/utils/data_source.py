@@ -26,8 +26,12 @@ def coin_get_price(coin_type: str) -> str:
         msg = crypto_coin.get_price(instrument_id)
         ret = crypto_coin.construct_string(msg)
     except crypto_coin.InstrumentNotExistException:
-        msg_v2 = crypto_coin.get_price_instead(instrument_id)
-        ret = crypto_coin.construct_string_instead(msg_v2)
+        try:
+            msg_v2 = crypto_coin.get_price_instead(instrument_id)
+            ret = crypto_coin.construct_string_instead(msg_v2)
+        except crypto_coin.InstrumentNotExistException:
+            msg_err = "Interface Exception"
+            ret = msg_err
     return ret
 
 
@@ -100,9 +104,10 @@ def coin_exp_get_price(instrument_id: str) -> str:
         msg = crypto_coin.get_price(instrument_id)
         ret = crypto_coin.construct_string(msg)
     except crypto_coin.InstrumentNotExistException:
-        msg_v2 = crypto_coin.get_price_instead(instrument_id)
-        ret = crypto_coin.construct_string_instead(msg_v2)
-    
-    return ret
-        
+        try:
+            msg_v2 = crypto_coin.get_price_instead(instrument_id)
+            ret = crypto_coin.construct_string_instead(msg_v2)
+        except crypto_coin.InstrumentNotExistException:
+            msg_err = "Instrument 404"
+            ret = msg_err
     return ret
