@@ -19,13 +19,15 @@ def magic_get_usage() -> str:
 
 
 def coin_get_price(coin_type: str) -> str:
+
     instrument_id = coin_type.upper() + "-USDT"
+    
     try:
-        dicts = crypto_coin.get_price(instrument_id)
-    except:
-        ret = "接口异常"
-    else:
-        ret = crypto_coin.construct_string_insead(dicts)
+        msg = crypto_coin.get_price(instrument_id)
+        ret = crypto_coin.construct_string(msg)
+    except InstrumentNotExistException:
+        msg_v2 = crypto_coin.get_price_instead(instrument_id)
+        ret = crypto_coin.construct_string_instead(msg_v2)
     return ret
 
 
