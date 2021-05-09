@@ -19,7 +19,7 @@ REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
             'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH)$'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
-REG_DDL = '^(DDL|ddl)$'
+REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
 COVID_VACC = 'COVID'
 
@@ -29,9 +29,9 @@ traffic = on_regex(REG_TRAFFIC)
 cryptocoin = on_regex(REG_COIN, re.IGNORECASE)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
-ass_ddl = on_regex(REG_DDL)
+ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
-covid_vacc = on_regex(COVID_VACC)
+covid_vacc = on_regex(COVID_VACC re.IGNORECASE))
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
