@@ -15,7 +15,8 @@ config = Config(**global_config.dict())
 
 REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
-           'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT)$'
+            'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
+            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH)$'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
 REG_DDL = '^(DDL|ddl)$'

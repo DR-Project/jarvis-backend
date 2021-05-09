@@ -25,7 +25,7 @@ def coin_get_price(coin_type: str) -> str:
     try:
         msg = crypto_coin.get_price(instrument_id)
         ret = crypto_coin.construct_string(msg)
-    except InstrumentNotExistException:
+    except crypto_coin.InstrumentNotExistException:
         msg_v2 = crypto_coin.get_price_instead(instrument_id)
         ret = crypto_coin.construct_string_instead(msg_v2)
     return ret
@@ -96,12 +96,13 @@ def ddl_get() -> str:
 
 
 def coin_exp_get_price(instrument_id: str) -> str:
-    instrument_id = instrument_id[-8:]
-    print(instrument_id)
     try:
-        dicts = crypto_coin.get_price(instrument_id)
-        ret = crypto_coin.construct_string_insead(dicts)
-    except:
-        ret = "币对不存在"
+        msg = crypto_coin.get_price(instrument_id)
+        ret = crypto_coin.construct_string(msg)
+    except crypto_coin.InstrumentNotExistException:
+        msg_v2 = crypto_coin.get_price_instead(instrument_id)
+        ret = crypto_coin.construct_string_instead(msg_v2)
+    
+    return ret
         
     return ret
