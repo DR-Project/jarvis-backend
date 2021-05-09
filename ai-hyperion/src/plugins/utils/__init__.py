@@ -90,5 +90,5 @@ async def _exp_cryptocoin(bot: Bot, event: MessageEvent):
 @driver.on_bot_connect
 async def do_something(bot: Bot):
     group_id = ***
-    msg = 'Jarvis snow already back online, Sir'
+    msg = 'Jarvis now already back online, Sir'
     await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)

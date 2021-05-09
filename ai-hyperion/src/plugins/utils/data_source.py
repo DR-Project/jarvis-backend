@@ -12,7 +12,7 @@ def magic_get_usage() -> str:
     try:
         dicts = magic_usage.get_usage()
     except:
-        ret = "接口异常"
+        ret = '接口异常'
     else:
         ret = magic_usage.construct_string(dicts)
     return ret
@@ -20,7 +20,7 @@ def magic_get_usage() -> str:
 
 def coin_get_price(coin_type: str) -> str:
 
-    instrument_id = coin_type.upper() + "-USDT"
+    instrument_id = coin_type.upper() + '-USDT'
     
     try:
         msg = crypto_coin.get_price(instrument_id)
@@ -30,7 +30,7 @@ def coin_get_price(coin_type: str) -> str:
             msg_v2 = crypto_coin.get_price_instead(instrument_id)
             ret = crypto_coin.construct_string_instead(msg_v2)
         except crypto_coin.InstrumentNotExistException:
-            msg_err = "Interface Exception"
+            msg_err = 'Interface Exception'
             ret = msg_err
     return ret
 
@@ -39,7 +39,7 @@ def rss_get_news(target: str) -> str:
     try:
         dicts = rss_news.get_news(target, rss_news.rss_sources[target][0])
     except:
-        ret = "接口异常"
+        ret = '接口异常'
     else:
         ret = rss_news.construct_string(dicts)
     return ret
@@ -108,6 +108,6 @@ def coin_exp_get_price(instrument_id: str) -> str:
             msg_v2 = crypto_coin.get_price_instead(instrument_id)
             ret = crypto_coin.construct_string_instead(msg_v2)
         except crypto_coin.InstrumentNotExistException:
-            msg_err = "Instrument 404"
+            msg_err = 'Instrument 404'
             ret = msg_err
     return ret
