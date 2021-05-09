@@ -1,5 +1,6 @@
-from .config import Config
+import nonebot
 
+from .config import Config
 from nonebot import get_driver
 from nonebot.plugin import on_regex, on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent
@@ -10,6 +11,7 @@ from . import data_source
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
+driver = nonebot.get_driver()
 
 # Constant List
 
@@ -31,7 +33,7 @@ mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
-covid_vacc = on_regex(COVID_VACC re.IGNORECASE))
+covid_vacc = on_regex(COVID_VACC, re.IGNORECASE)
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -84,14 +86,9 @@ async def _exp_cryptocoin(bot: Bot, event: MessageEvent):
     ret = data_source.coin_exp_get_price(instrument_id)
     await bot.send(event, ret, at_sender=False)
 
-# 你下次测试一下这段代码，这块我不熟
-'''driver = get_driver()
 
-
-@driver.on_startup
-async def do_something():
-
-    bot = Bot(driver, 'websocket', config, '***')
+@driver.on_bot_connect
+async def do_something(bot: Bot):
     group_id = ***
-    msg = 'Jarvis already back online, Sir.'
-    await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)'''
+    msg = 'Jarvis snow already back online, Sir'
+    await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)
