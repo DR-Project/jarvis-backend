@@ -12,3 +12,9 @@ Accept: application/json
 X-CMC_PRO_API_KEY: ***
 
 ###
+
+GET https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol={{notExist}}&convert={{convert}}
+Accept: application/json
+X-CMC_PRO_API_KEY: ***
+
+###

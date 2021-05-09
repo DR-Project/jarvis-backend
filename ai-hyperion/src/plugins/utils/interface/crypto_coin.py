@@ -30,6 +30,13 @@ class NoDefineException(Exception):
     pass
 
 
+class RequestLimitExceeded(Exception):
+    """
+    defined a RequestLimitExceeded
+    """
+    pass
+
+
 def get_price(instrument_id: str) -> dict:
     """
     :param instrument_id: the cryptocurrency you want to check
@@ -146,12 +153,17 @@ def get_price_instead(instrument_id: str) -> dict:
 
     print(msg)
     payload = {}
+    status_code = msg['status']['error_code']
     try:
-        if msg['status']['error_code'] == 0:
+        if status_code == 0:
             payload['coin'] = symbol
             payload['price'] = msg['data'][symbol]['quote'][convert]['price']
             payload['base'] = convert
             payload['change_percent'] = msg['data'][symbol]['quote'][convert]['percent_change_24h']
+        elif status_code == 400:  # 币对不存在
+            raise InstrumentNotExistException(msg['status']['error_message'])
+        elif status_code == 1000:
+            raise RequestLimitExceeded('超出请求限制')
         else:
             raise NoDefineException('返回体不正确')
     except KeyError:
@@ -291,7 +303,7 @@ async def market_capitalization_controller() -> dict:
     return ret
 
 
-'''if __name__ == '__main__':
+if __name__ == '__main__':
 
     instrument_id = 'SHIB-BTC'
 
@@ -301,6 +313,6 @@ async def market_capitalization_controller() -> dict:
     except InstrumentNotExistException:
         msg_v2 = get_price_instead(instrument_id)
         ret = construct_string_instead(msg_v2)
-        print(ret)'''
+        print(ret)
 
 
