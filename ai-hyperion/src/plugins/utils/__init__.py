@@ -13,7 +13,7 @@ config = Config(**global_config.dict())
 
 # Constant List
 
-REG_TRAFFIC = '^(查流量|魔法|Magic|magic|cxll|CXLL)$'
+REG_TRAFFIC = '^(查流量|魔法|Magic|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
             'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
             'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH)$'
@@ -25,7 +25,7 @@ COVID_VACC = 'COVID'
 
 # Register Event
 
-traffic = on_regex(REG_TRAFFIC)
+traffic = on_regex(REG_TRAFFIC, re.IGNORECASE)
 cryptocoin = on_regex(REG_COIN, re.IGNORECASE)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
