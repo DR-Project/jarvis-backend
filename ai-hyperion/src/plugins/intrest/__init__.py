@@ -17,12 +17,14 @@ BOT_QNUM = ***
 REG_QUESHI = '(确实|qs|有一说一|yysy)'
 REG_DIUREN = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
+REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
 
 # Register Event
 
 queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
 diuren = on_regex(REG_DIUREN)
+plus1s = on_regex(REG_PLUS1S)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -88,3 +90,9 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
         }
     }]
     await bot.send(event, at_mem, at_sender=False)
+
+
+@plus1s.handle()
+async def plus1s(bot: Bot, event: MessageEvent):
+    msg = "+1s"
+    await bot.send(event, msg, at_sender=False)
