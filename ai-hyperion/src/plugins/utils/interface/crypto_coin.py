@@ -221,12 +221,12 @@ async def get_volume(time: str, limit) -> str:
     }
 
     params = {
-        'sort': time,
+        'sort': 'volume_' + time,
         'convert': 'USDT',
         'limit': limit
     }
 
-    async with httpx.AsyncClient(proxies=proxies, headers=headers) as client:
+    async with httpx.AsyncClient(proxies=proxies, headers=headers, params=params) as client:
         try:
             r = await client.get(url)
         except httpx.RequestError:
@@ -290,6 +290,7 @@ async def process_data() -> dict:
     """
 
     data = json.loads(await get_volume('24h', 3))
+    # print(json.dumps(data))
 
     ret = {}
 
@@ -315,9 +316,9 @@ async def volume_controller() -> dict:
     return ret
 
 
-'''if __name__ == '__main__':
+if __name__ == '__main__':
 
-    print(json.dumps(asyncio.run(volume_controller())))'''
+    print(json.dumps(asyncio.run(volume_controller())))
 
 
 
