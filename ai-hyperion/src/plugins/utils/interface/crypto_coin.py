@@ -196,7 +196,7 @@ def auto_alert() -> any:
     pass
 
 
-async def get_volume(time: str, limit) -> str:
+async def get_volume(time: str, limit: int) -> str:
     """
 
     :param limit:
@@ -239,7 +239,7 @@ async def get_volume(time: str, limit) -> str:
     return msg
 
 
-async def process_data() -> dict:
+async def process_data(time: str, limit: int) -> dict:
     """
 
     :return: a dict.
@@ -289,7 +289,7 @@ async def process_data() -> dict:
 
     """
 
-    data = json.loads(await get_volume('24h', 3))
+    data = json.loads(await get_volume(time, limit))
     # print(json.dumps(data))
 
     ret = {}
@@ -303,7 +303,7 @@ async def process_data() -> dict:
     return ret
 
 
-async def volume_controller() -> dict:
+async def volume_controller(time: str, limit: int) -> dict:
     """
     *** It's a controller method to call
         to check the object template in process_data() method
@@ -311,14 +311,14 @@ async def volume_controller() -> dict:
 
     :return: dict
     """
-    ret = await process_data()
+    ret = await process_data(time, limit)
 
     return ret
 
 
 if __name__ == '__main__':
 
-    print(json.dumps(asyncio.run(volume_controller())))
+    print(json.dumps(asyncio.run(volume_controller('24h', 3))))
 
 
 
