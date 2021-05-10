@@ -40,7 +40,7 @@ help_inlist = on_regex(REG_IN_HELP)
 {
     'type': 'text',
     'data': {
-        'text': " 命令列表 -> 列出命令 \n",
+        'text': ' 命令列表 -> 列出命令 \n',
     }
 }
 
@@ -51,47 +51,47 @@ async def _help_list(bot: Bot, event: MessageEvent):
     lists = [{
         'type': 'text',
         'data': {
-            'text': "✨ 目前可用 API ✨ \n"
+            'text': '✨ 目前可用 API ✨ \n'
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 CXLL -> 查询魔法流量 \n",
+            'text': '🍭 CXLL -> 查询魔法流量 \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 COIN -> 数字货币价格 \n",
+            'text': '🍭 COIN -> 数字货币价格 \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 药闻 -> 火星警察出动 \n",
+            'text': '🍭 药闻 -> 火星警察出动 \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 城市天气 -> 查询城市天气 \n",
+            'text': '🍭 城市天气 -> 查询城市天气 \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 丢人 -> 随机抽取幸运儿 \n",
+            'text': '🍭 丢人 -> 随机抽取幸运儿 \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 丢X -> 唯一指定丢人 \n",
+            'text': '🍭 丢X -> 唯一指定丢人 \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 色来 -> 随机涩图抽卡 \n",
+            'text': '🍭 色来 -> 随机涩图抽卡 \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 指令列表 -> 列出命令 \n",
+            'text': '🍭 指令列表 -> 列出命令 \n',
         }
     }]
     await bot.send(event, lists, at_sender=False)
@@ -102,12 +102,12 @@ async def _help_explist(bot: Bot, event: MessageEvent):
     lists = [{
         'type': 'text',
         'data': {
-            'text': "✨ 实验性 API ✨ \n"
+            'text': '✨ 实验性 API ✨ \n'
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 /ECOIN 币-对 -> 指定币对价格 \n",
+            'text': '🍭 /ECOIN 币-对 -> 指定币对价格 \n',
         }
     }]
     await bot.send(event, lists, at_sender=False)
@@ -118,17 +118,17 @@ async def _help_inlist(bot: Bot, event: MessageEvent):
     lists = [{
         'type': 'text',
         'data': {
-            'text': "✨ 里世界 API ✨ \n"
+            'text': '✨ 里世界 API ✨ \n'
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 GO-status -> Status GO-CQHTTP \n",
+            'text': '🍭 GO-status -> Status GO-CQHTTP \n',
         }
     },{
         'type': 'text',
         'data': {
-            'text': "🍭 GO-reload -> Reload GO-CQHTTP \n",
+            'text': '🍭 GO-reload -> Reload GO-CQHTTP \n',
         }
     }]
     await bot.send(event, lists, at_sender=False)

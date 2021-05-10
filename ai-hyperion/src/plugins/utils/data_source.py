@@ -12,20 +12,26 @@ def magic_get_usage() -> str:
     try:
         dicts = magic_usage.get_usage()
     except:
-        ret = "接口异常"
+        ret = '接口异常'
     else:
         ret = magic_usage.construct_string(dicts)
     return ret
 
 
 def coin_get_price(coin_type: str) -> str:
-    instrument_id = coin_type.upper() + "-USDT"
+
+    instrument_id = coin_type.upper() + '-USDT'
+    
     try:
-        dicts = crypto_coin.get_price(instrument_id)
-    except:
-        ret = "接口异常"
-    else:
-        ret = crypto_coin.construct_string_insead(dicts)
+        msg = crypto_coin.get_price(instrument_id)
+        ret = crypto_coin.construct_string(msg)
+    except crypto_coin.InstrumentNotExistException:
+        try:
+            msg_v2 = crypto_coin.get_price_instead(instrument_id)
+            ret = crypto_coin.construct_string_instead(msg_v2)
+        except crypto_coin.InstrumentNotExistException:
+            msg_err = 'Interface Exception'
+            ret = msg_err
     return ret
 
 
@@ -33,7 +39,7 @@ def rss_get_news(target: str) -> str:
     try:
         dicts = rss_news.get_news(target, rss_news.rss_sources[target][0])
     except:
-        ret = "接口异常"
+        ret = '接口异常'
     else:
         ret = rss_news.construct_string(dicts)
     return ret
@@ -94,12 +100,14 @@ def ddl_get() -> str:
 
 
 def coin_exp_get_price(instrument_id: str) -> str:
-    instrument_id = instrument_id[-8:]
-    print(instrument_id)
     try:
-        dicts = crypto_coin.get_price(instrument_id)
-        ret = crypto_coin.construct_string_insead(dicts)
-    except:
-        ret = "币对不存在"
-        
+        msg = crypto_coin.get_price(instrument_id)
+        ret = crypto_coin.construct_string(msg)
+    except crypto_coin.InstrumentNotExistException:
+        try:
+            msg_v2 = crypto_coin.get_price_instead(instrument_id)
+            ret = crypto_coin.construct_string_instead(msg_v2)
+        except crypto_coin.InstrumentNotExistException:
+            msg_err = 'Instrument 404'
+            ret = msg_err
     return ret

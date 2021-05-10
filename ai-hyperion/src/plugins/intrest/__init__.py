@@ -17,12 +17,14 @@ BOT_QNUM = ***
 REG_QUESHI = '(确实|qs|有一说一|yysy)'
 REG_DIUREN = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
+REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
 
 # Register Event
 
 queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
 diuren = on_regex(REG_DIUREN)
+plus1s = on_regex(REG_PLUS1S)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -37,7 +39,7 @@ async def _queshi(bot: Bot, event: MessageEvent):
 @diuren.handle()
 async def _diuren(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
-    if msg == "***":
+    if msg == '***':
         num = event.message_id
         at_mem = [{  # 新加的这个作为测试，没问题的话，就扩展到全部的食用性功能上面
             'type': 'reply',  # 这里改了一下，更符合逻辑。记得测试,
@@ -48,7 +50,7 @@ async def _diuren(bot: Bot, event: MessageEvent):
         }, {
             'type': 'text',
             'data': {
-                'text': " 好逊哦，丢哪个胖 "
+                'text': ' 好逊哦，丢哪个胖 '
             }
         }]
     else:
@@ -61,7 +63,7 @@ async def _diuren(bot: Bot, event: MessageEvent):
         }, {
             'type': 'text',
             'data': {
-                'text': " 丢人 "
+                'text': ' 丢人 '
             }
         }]
     await bot.send(event, at_mem, at_sender=False)
@@ -84,7 +86,13 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     }, {
         'type': 'text',
         'data': {
-            'text': " 丢人 "
+            'text': ' 丢人 '
         }
     }]
     await bot.send(event, at_mem, at_sender=False)
+
+
+@plus1s.handle()
+async def plus1s(bot: Bot, event: MessageEvent):
+    msg = '+1s'
+    await bot.send(event, msg, at_sender=False)
