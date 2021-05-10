@@ -2,5 +2,10 @@ GET https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest
 Accept: application/json
 X-CMC_PRO_API_KEY: ***
 
+###
 
+GET https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?sort={{sort}}
+Accept: application/json
+X-CMC_PRO_API_KEY: ***
 
+###
