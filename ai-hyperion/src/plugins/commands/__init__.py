@@ -4,6 +4,7 @@ from nonebot import get_driver
 from nonebot.plugin import on_regex, on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 
+import re
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -12,13 +13,13 @@ config = Config(**global_config.dict())
 # Constant List
 
 REG_HELP = '^(Jarvis|贾维斯|星期五|Friday|指令列表)$'
-REG_EXP_HELP = '^(实验性指令列表|ExpCommands)$'
-REG_IN_HELP = '^(Alphas|ExEc)$'
+REG_EXP_HELP = '^(Hyperion)$'
+REG_IN_HELP = '^(Alphas)$'
 
 
 # Register Event
 
-help_list = on_regex(REG_HELP)
+help_list = on_regex(REG_HELP, re.IGNORECASE)
 help_explist = on_regex(REG_EXP_HELP)
 help_inlist = on_regex(REG_IN_HELP)
 
@@ -71,7 +72,7 @@ async def _help_list(bot: Bot, event: MessageEvent):
     },{
         'type': 'text',
         'data': {
-            'text': '🍭 城市天气 -> 查询城市天气 \n',
+            'text': '🍭 天气 -> 查询城市天气 \n',
         }
     },{
         'type': 'text',
@@ -102,7 +103,7 @@ async def _help_explist(bot: Bot, event: MessageEvent):
     lists = [{
         'type': 'text',
         'data': {
-            'text': '✨ 实验性 API ✨ \n'
+            'text': '✨ More API ✨ \n'
         }
     },{
         'type': 'text',
@@ -118,7 +119,7 @@ async def _help_inlist(bot: Bot, event: MessageEvent):
     lists = [{
         'type': 'text',
         'data': {
-            'text': '✨ 里世界 API ✨ \n'
+            'text': '✨ Console API ✨ \n'
         }
     },{
         'type': 'text',
