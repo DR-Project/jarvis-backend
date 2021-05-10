@@ -61,6 +61,7 @@ def weather_get(city: str) -> str:
         ret = city + ' ∉ {城市}'
     return ret
 
+
 async def covid_get_vaccinations():
     data = await covid_vaccinations.get_last_date()
     date = data['date']
@@ -70,6 +71,7 @@ async def covid_get_vaccinations():
     date = time.strftime(pattern, time.localtime(date))
     ret = '截至 ' + date + ' 中国内地已接种' + str(count) + '万针'
     return ret
+
 
 def ddl_get() -> str:
         # assignments_display = assignments[:3]
@@ -95,6 +97,19 @@ def ddl_get() -> str:
 
     return ret[:-2]
 
+
+async def get_coin_volume() -> str:
+    dicts = await crypto_coin.volume_controller('24h', 6)
+    ret = '🎉 Crypto Index 🎉\n\n'
+    index = 1
+    for i in dicts['payload']:
+        if i['name'] == 'Tether':
+            continue
+        ret += 'No.' + str(index) + ' ' + i['name'] + ' (' + i['symbol'] + ')' + '\n'
+        ret += 'Vol: ₮ ' + str(round((i['quote']['USDT']['volume_24h'] / 1000000000))) + ' Billion\n'
+        ret += 'Price: ₮ ' + str(round(i['quote']['USDT']['price'], 2)) + '\n\n'
+        index += 1
+    return ret.strip()
 
 ''' >>>>>> Exp Function <<<<<< '''
 

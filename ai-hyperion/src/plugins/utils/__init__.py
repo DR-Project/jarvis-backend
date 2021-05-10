@@ -19,6 +19,7 @@ REG_TRAFFIC = '^(查流量|魔法|Magic|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
             'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
             'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH)$'
+REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
 REG_DDL = '^(DDL)$'
@@ -29,6 +30,7 @@ COVID_VACC = 'COVID'
 
 traffic = on_regex(REG_TRAFFIC, re.IGNORECASE)
 cryptocoin = on_regex(REG_COIN, re.IGNORECASE)
+hotcoin = on_regex(REG_HOTCOIN)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
@@ -74,6 +76,12 @@ async def _ass_ddl(bot: Bot, event: MessageEvent):
 @covid_vacc.handle()
 async def _covid_vacc(bot: Bot, event: MessageEvent):
     ret = await data_source.covid_get_vaccinations()
+    await bot.send(event, ret, at_sender=False)
+
+
+@hotcoin.handle()
+async def hotcoin(bot: Bot, event: MessageEvent):
+    ret = await data_source.get_coin_volume()
     await bot.send(event, ret, at_sender=False)
 
 
