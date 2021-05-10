@@ -196,7 +196,13 @@ def auto_alert() -> any:
     pass
 
 
-async def get_market_capitalization() -> str:
+async def get_volume(time: str, limit) -> str:
+    """
+
+    :param limit:
+    :param time: could be '24h', '7d', '30d'
+    :return:
+    """
     API_KEY = '***'
 
     host = 'https://pro-api.coinmarketcap.com'
@@ -212,6 +218,12 @@ async def get_market_capitalization() -> str:
     headers = {
         'Accept': 'application / json',
         'X-CMC_PRO_API_KEY': API_KEY
+    }
+
+    params = {
+        'sort': time,
+        'convert': 'USDT',
+        'limit': limit
     }
 
     async with httpx.AsyncClient(proxies=proxies, headers=headers) as client:
@@ -277,7 +289,7 @@ async def process_data() -> dict:
 
     """
 
-    data = json.loads(await get_market_capitalization())
+    data = json.loads(await get_volume('24h', 3))
 
     ret = {}
 
@@ -290,7 +302,7 @@ async def process_data() -> dict:
     return ret
 
 
-async def market_capitalization_controller() -> dict:
+async def volume_controller() -> dict:
     """
     *** It's a controller method to call
         to check the object template in process_data() method
@@ -303,16 +315,9 @@ async def market_capitalization_controller() -> dict:
     return ret
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
 
-    instrument_id = 'SHIB-BTC'
+    print(json.dumps(asyncio.run(volume_controller())))'''
 
-    try:
-        msg = get_price(instrument_id)
-        construct_string(msg)
-    except InstrumentNotExistException:
-        msg_v2 = get_price_instead(instrument_id)
-        ret = construct_string_instead(msg_v2)
-        print(ret)
 
 
