@@ -1,8 +1,8 @@
 import nonebot
 
 from .config import Config
-from nonebot import get_driver
-from nonebot.plugin import on_regex, on_command
+from nonebot import get_driver, require
+from nonebot.plugin import on_regex, on_command, on_keyword
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 
 import re
@@ -12,6 +12,7 @@ from . import data_source
 global_config = get_driver().config
 config = Config(**global_config.dict())
 driver = nonebot.get_driver()
+scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 # Constant List
 
@@ -24,7 +25,8 @@ REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
 REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
-COVID_VACC = 'COVID'
+REG_COVID_VACC = 'COVID'
+REG_***_INDEX = '.*'
 
 # Register Event
 
@@ -35,7 +37,8 @@ mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
-covid_vacc = on_regex(COVID_VACC, re.IGNORECASE)
+covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
+***_index = on_regex(REG_***_INDEX)
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -100,3 +103,21 @@ async def do_something(bot: Bot):
     group_id = ***
     msg = 'Jarvis now already back online, Sir'
     await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)
+
+
+async def cron_daily_news():
+    group_id = ***
+    bot = nonebot.get_bots()['***']
+    ret = await data_source.get_coin_volume()
+    await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+
+
+async def cron_daily_coin():
+    group_id = ***
+    bot = nonebot.get_bots()['***']
+    ret = data_source.rss_get_news(target)
+    await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+
+
+scheduler.add_job(cron_daily_coin, "cron", hour=8, id="coins")
+scheduler.add_job(cron_daily_news, "cron", hour=7, minute=30, id="news")
