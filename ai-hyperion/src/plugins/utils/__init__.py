@@ -3,7 +3,7 @@ import nonebot
 from .config import Config
 from nonebot import get_driver, require
 from nonebot.plugin import on_regex, on_command, on_keyword
-from nonebot.adapters.cqhttp import Bot, MessageEvent
+from nonebot.adapters.cqhttp import Bot, MessageEvent, GroupMessageEvent
 
 import re
 
@@ -26,7 +26,6 @@ REG_WEATHER = '^.*(天气)$'
 REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
 REG_COVID_VACC = 'COVID'
-REG_***_INDEX = '.*'
 
 # Register Event
 
@@ -38,7 +37,7 @@ weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
 covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
-***_index = on_regex(REG_***_INDEX)
+
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -97,13 +96,13 @@ async def _exp_cryptocoin(bot: Bot, event: MessageEvent):
     ret = data_source.coin_exp_get_price(instrument_id)
     await bot.send(event, ret, at_sender=False)
 
-
+'''
 @driver.on_bot_connect
 async def do_something(bot: Bot):
     group_id = ***
     msg = 'Jarvis now already back online, Sir'
     await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)
-
+'''
 
 async def cron_daily_news():
     group_id = ***

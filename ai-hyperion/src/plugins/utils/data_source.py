@@ -111,6 +111,12 @@ async def get_coin_volume() -> str:
         index += 1
     return ret.strip()
 
+
+async def set_***_count(***_man: int) -> None:
+    pass
+
+
+
 ''' >>>>>> Exp Function <<<<<< '''
 
 

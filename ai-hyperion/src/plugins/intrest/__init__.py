@@ -1,15 +1,16 @@
 from .config import Config
 
-from nonebot import get_driver
-from nonebot.plugin import on_regex
+from nonebot import get_driver, require
+from nonebot.plugin import on_regex, on_keyword
 from nonebot.adapters.cqhttp import Bot, MessageEvent, GroupMessageEvent
 
-import random
+import random, re
 
 from . import data_source
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
+scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 # Constant List
 
@@ -18,13 +19,17 @@ REG_QUESHI = '(确实|qs|有一说一|yysy)'
 REG_DIUREN = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
 REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
+REG_***_REPORT = '^(***排行|***ph|kk***)$'
+REG_***_INDEX = '.*'
 
 # Register Event
 
 queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
-diuren = on_regex(REG_DIUREN)
+diuren = on_regex(REG_DIUREN, re.IGNORECASE)
 plus1s = on_regex(REG_PLUS1S)
+***_index = on_regex(REG_***_INDEX)
+***_report = on_regex(REG_***_REPORT, re.IGNORECASE)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -92,7 +97,49 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     await bot.send(event, at_mem, at_sender=False)
 
 
+@***_index.handle()
+async def ***_index(bot: Bot, event: GroupMessageEvent):
+    ret = str(event.get_message())
+    ***_man = event.get_user_id()
+    if ret.find('7f7177d2d24a93f532bac50ccfd02f70') != -1:
+        ***_mans = await bot.get_group_member_info(group_id=event.group_id, user_id=***_man)
+        ***_man_nick = ***_mans['card']
+        await data_source.set_***_to_dict(***_man, ***_man_nick)
+        msg = [{
+        'type': 'reply',
+        'data': {
+            'id': event.message_id
+        }
+    }, {
+        'type': 'text',
+        'data': {
+            'text': '你的***-1 '
+        }
+    }, {
+        'type': 'at',
+        'data': {
+            'qq': ***_man
+        }
+    }]
+        await bot.send(event, msg, at_sender=True)
+    else:
+        pass
+
+
+@***_report.handle()
+async def ***_report(bot: Bot, event: MessageEvent):
+    msg = data_source.get_***_report()
+    await bot.send(event, msg, at_sender=False)
+
+
 @plus1s.handle()
 async def plus1s(bot: Bot, event: MessageEvent):
     msg = '+1s'
     await bot.send(event, msg, at_sender=False)
+
+
+async def ***_clear():
+    data_source.mem_***s = {}
+
+
+scheduler.add_job(***_clear, "cron", hour=0, id="***s")
