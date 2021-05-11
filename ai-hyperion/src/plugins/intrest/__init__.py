@@ -21,6 +21,7 @@ REG_RDIUREN = '^(丢人|diuren|diu)$'
 REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
 REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
+REG_POT = '***'
 
 # Register Event
 
@@ -30,6 +31,7 @@ diuren = on_regex(REG_DIUREN, re.IGNORECASE)
 plus1s = on_regex(REG_PLUS1S)
 ***_index = on_regex(REG_***_INDEX)
 ***_report = on_regex(REG_***_REPORT, re.IGNORECASE)
+diuren_pot = on_regex(REG_POT)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -124,6 +126,22 @@ async def ***_index(bot: Bot, event: GroupMessageEvent):
         await bot.send(event, msg, at_sender=True)
     else:
         pass
+
+
+@diuren_pot.handle()
+async def diuren_pot(bot: Bot, event: MessageEvent):
+    at_mem = [{
+        'type': 'at',
+        'data': {
+            'qq': ***
+        }
+    }, {
+        'type': 'text',
+        'data': {
+            'text': ' 出来挨打 '
+        }
+    }]
+    await bot.send(event, at_mem, at_sender=False)
 
 
 @***_report.handle()
