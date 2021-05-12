@@ -176,7 +176,7 @@ def construct_string_instead(payload: dict) -> str:
 
     # init variable
     coin = payload['coin']
-    base = payload['base']
+    base = round(payload['base'], 3)
     last = payload['price']
     change_percent = payload['change_percent']
 
