@@ -200,8 +200,26 @@ def construct_string_instead(payload: dict) -> str:
 
 
 def set_line(qq: int, line: float, coin: str, group_id=None) -> int:
+    """
+    这个方法 需要判断返回值是不是【1】去判断是不是设置成功
+    有问题会抛出异常
+    调用是需要注意
+    :param qq:
+    :param line:
+    :param coin:
+    :param group_id:
+    :return:
+    """
+
+    try:
+        msg = get_price(coin.upper())
+    except httpx.RequestError:
+        raise RequestError('接口错误，设置失败')
+
+    base = float(msg['last'])
     if coin not in coin_line.keys():
         coin_line[coin] = [{
+            'base': base,
             'qq': qq,
             'line': line,
             'group_id': group_id
@@ -209,6 +227,7 @@ def set_line(qq: int, line: float, coin: str, group_id=None) -> int:
         return 1
     else:
         coin_line[coin].append({
+            'base': base,
             'qq': qq,
             'line': line,
             'group_id': group_id
@@ -219,7 +238,6 @@ def set_line(qq: int, line: float, coin: str, group_id=None) -> int:
 async def auto_alert() -> None:
     """
     建议1-5分钟 执行一次， 用scheduler 的 interval
-    向下查询，先写不出来。没构思好
     :return:
     """
 
@@ -231,7 +249,7 @@ async def auto_alert() -> None:
         try:
             msg = get_price(instrument_id)
         except httpx.RequestError:
-            raise
+            raise RequestError('No idea ')
         else:
             price = float(msg['last'])
 
@@ -240,9 +258,10 @@ async def auto_alert() -> None:
                 qq = data['qq']
                 line = data['line']
                 group_id = data['group_id']
+                base = data['base']
 
                 ret = '爬'  # 自己改
-                if price >= line:
+                if base <= line <= price:
                     if group_id:
                         await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
                     else:
