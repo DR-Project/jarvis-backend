@@ -3,6 +3,8 @@ import asyncio
 import httpx
 import json
 
+import nonebot
+
 
 class InstrumentNotExistException(Exception):
     """
@@ -131,7 +133,6 @@ def construct_string(msg: dict) -> str:
 
 
 def get_price_instead(instrument_id: str) -> dict:
-
     host = 'pro-api.coinmarketcap.com'
     endpoint = '/v1/cryptocurrency/quotes/latest'
     url = 'https://' + host + endpoint
@@ -186,7 +187,6 @@ def get_price_instead(instrument_id: str) -> dict:
 
 
 def construct_string_instead(payload: dict) -> str:
-
     # init variable
     coin = payload['coin']
     base = round(payload['base'], 3)
@@ -216,9 +216,39 @@ def set_line(qq: int, line: float, coin: str, group_id=None) -> int:
         return 1
 
 
-def auto_alert() -> any:
-    # todo
-    pass
+async def auto_alert() -> None:
+    """
+    建议1-5分钟 执行一次， 用scheduler 的 interval
+    向下查询，先写不出来。没构思好
+    :return:
+    """
+
+    bot = nonebot.get_bots()['***']
+
+    for coin, database in coin_line.items():
+        instrument_id = coin
+
+        try:
+            msg = get_price(instrument_id)
+        except httpx.RequestError:
+            raise
+        else:
+            price = float(msg['last'])
+
+            for data in database:
+
+                qq = data['qq']
+                line = data['line']
+                group_id = data['group_id']
+
+                ret = '爬'  # 自己改
+                if price >= line:
+                    if group_id:
+                        await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+                    else:
+                        await bot.send_private_msg(user_id=qq, message=ret, auto_escape=True)
+
+                database.remove(data)
 
 
 async def get_volume(time: str, limit: int) -> str:
