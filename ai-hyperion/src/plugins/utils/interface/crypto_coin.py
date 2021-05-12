@@ -212,7 +212,7 @@ def set_line(qq: int, line: float, coin: str, group_id=None) -> int:
     """
 
     try:
-        msg = get_price(coin.upper())
+        msg = get_price(coin + '-USDT')
     except httpx.RequestError:
         raise RequestError('接口错误，设置失败')
 
@@ -244,7 +244,7 @@ async def auto_alert() -> None:
     bot = nonebot.get_bots()['***']
 
     for coin, database in coin_line.items():
-        instrument_id = coin
+        instrument_id = coin + '-USDT'
 
         try:
             msg = get_price(instrument_id)
