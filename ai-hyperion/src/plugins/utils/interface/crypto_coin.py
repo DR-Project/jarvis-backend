@@ -37,6 +37,19 @@ class RequestLimitExceeded(Exception):
     pass
 
 
+coin_line = {}
+''''coin': [
+        {
+            'qq': 12348318,
+            'line': 4600
+        }, 
+        {
+            'qq': 12348318,
+            'line': 4670
+        }
+    ]'''
+
+
 def get_price(instrument_id: str) -> dict:
     """
     :param instrument_id: the cryptocurrency you want to check
@@ -186,9 +199,21 @@ def construct_string_instead(payload: dict) -> str:
     return ret
 
 
-def set_line() -> any:
-    # todo
-    pass
+def set_line(qq: int, line: float, coin: str, group_id=None) -> int:
+    if coin not in coin_line.keys():
+        coin_line[coin] = [{
+            'qq': qq,
+            'line': line,
+            'group_id': group_id
+        }]
+        return 1
+    else:
+        coin_line[coin].append({
+            'qq': qq,
+            'line': line,
+            'group_id': group_id
+        })
+        return 1
 
 
 def auto_alert() -> any:
@@ -317,8 +342,11 @@ async def volume_controller(time: str, limit: int) -> dict:
 
 
 if __name__ == '__main__':
+    set_line(1385, 4600, 'ETH')
+    print(coin_line)
 
-    print(json.dumps(asyncio.run(volume_controller('24h', 3))))
+    set_line(1385, 4700, 'ETH')
+    print(coin_line)
 
-
-
+    set_line(1385, 15, 'EOS')
+    print(coin_line)
