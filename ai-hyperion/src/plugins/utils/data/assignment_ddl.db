@@ -46,6 +46,22 @@
       {
         "name": "Ongoing product backlog maintenance",
         "ddl": "Sunday, 6 June 2021, 12:00 AM"
+      },
+      {
+        "name": "Sprint Iteration 2 Documentation and Evidence (10%)",
+        "ddl": "Sunday, 30 May 2021, 4:00 PM"
+      },
+      {
+        "name": "Development Demonstration 2 (10%)(Lecture Time)",
+        "ddl" : "Monday 31 May 2021 8:30AM"
+      }
+      {
+        "name": "Ongoing product backlog maintenance 5%",
+        "ddl": "Sunday, 6 June 2021, 12:00 AM"
+      },
+      {
+        "name": "Updated Project Handbook Submission 5%",
+        "ddl": "Sunday, 6 June 2021, 4:00 PM"
       }
     ]
   },
@@ -72,5 +88,20 @@
         "ddl": "Sunday, 30 May 2021, 4:00 PM"
       }
     ]
+  },
+  {
+    "code": " ITECH3000/7000",
+    "name": "IT Professional Engagement",
+    "assignment": [
+      {
+        "name": "Assignment task: HURDLE TASK  - Industry engagement task - reference to ITECH2002",
+        "ddl": "Monday, 7 June 2021, 11:55 PM"
+      },
+      {
+        "name": "Individual Research Report 10% - reference to ITECH3208",
+        "ddl": "Sunday, 20 June 2021, 12:00 AM"
+      }
+    ]
   }
+
 ]
