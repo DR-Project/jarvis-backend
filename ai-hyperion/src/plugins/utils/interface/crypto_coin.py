@@ -260,13 +260,17 @@ async def auto_alert() -> None:
                 group_id = data['group_id']
                 base = data['base']
 
-                ret = '爬'  # 自己改
+                ret = ''  # 自己改
                 if base <= line <= price:
+                    ret += '爬'
+                    # 向上查询的概念
                     if group_id:
                         await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
                     else:
                         await bot.send_private_msg(user_id=qq, message=ret, auto_escape=True)
-
+                else:
+                    # 向下查询的概念
+                    pass
                 database.remove(data)
 
 
@@ -390,7 +394,7 @@ async def volume_controller(time: str, limit: int) -> dict:
     return ret
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
     set_line(1385, 4600, 'ETH')
     print(coin_line)
 
@@ -398,4 +402,4 @@ if __name__ == '__main__':
     print(coin_line)
 
     set_line(1385, 15, 'EOS')
-    print(coin_line)
+    print(coin_line)'''
