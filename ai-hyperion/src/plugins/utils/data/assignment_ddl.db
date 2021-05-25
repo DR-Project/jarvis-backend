@@ -10,6 +10,10 @@
       {
         "name": "Assignment 2: Evaluating a System",
         "ddl": "Monday, 24 May 2021, 5:00 PM"
+      },
+      {
+        "name": "Exam - ITECH3001 User Experience (3 hours + 10 min)",
+        "ddl": "Thursday, 24 June 2021, 6:00 AM"
       }
     ]
   },
@@ -32,6 +36,10 @@
       {
         "name": "Assignment 2: Dynamic Modelling, Screen Design and Test Plan",
         "ddl": "Monday, 31 May 2021, 11:55 PM"
+      },
+      {
+        "name": "Exam - ITECH2002 Systems Modelling (3 hours + 10 min)",
+        "ddl": "Monday, 21 June 2021 6:00 AM"
       }
     ]
   },
@@ -72,6 +80,10 @@
       {
         "name": "Assignment 3: FedUni Millionaire v3",
         "ddl": "Sunday, 30 May 2021, 11:00 PM"
+      },
+      {
+        "name": "Exam - ITECH3107 Mobile Device Programming (2 hours)",
+        "ddl": "Friday, 18 June 2021, 6:00 AM"
       }
     ]
   },
@@ -86,6 +98,10 @@
       {
         "name": "Assignment 2: Back-End Development",
         "ddl": "Sunday, 30 May 2021, 4:00 PM"
+      },
+      {
+        "name": "Exam - ITECH3108 Dynamic Web Development (2 hours + 10min)",
+        "ddl": "Thursday, 17 June 2021, 6:00 AM"
       }
     ]
   },
@@ -102,6 +118,15 @@
         "ddl": "Sunday, 20 June 2021, 12:00 AM"
       }
     ]
+  },
+  {
+    "code": " ITECH3222",
+    "name": "COMPUTER GAMES DESIGN",
+    "assignment": [
+      {
+        "name": "Exam - ITECH3222 COMPUTER GAMES DESIGN (2 hours + 10 min)",
+        "ddl": "Tuesday, 22 June 2021, 6:00 AM"
+      }
+    ]
   }
-
 ]
