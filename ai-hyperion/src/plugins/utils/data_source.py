@@ -1,9 +1,11 @@
+import asyncio
+
 from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
 from .interface import weather
 from .interface import assignment_ddl
-from .interface import covid_vaccinations
+from .interface import covid
 
 import time
 
@@ -63,13 +65,16 @@ def weather_get(city: str) -> str:
 
 
 async def covid_get_vaccinations():
-    data = await covid_vaccinations.get_last_date()
+    data = await covid.get_china_num()
     date = data['date']
     count = data['total_vaccinations']
+
+    new_cases = int(data['new_cases'])
+    total_vaccinations_per_hundred = data['total_vaccinations_per_hundred']
     count = float(count) / 10000
-    pattern = '%Y-%m-%d'
-    date = time.strftime(pattern, time.localtime(date))
-    ret = '截至 ' + date + ' 中国内地已接种' + str(count) + '万针'
+
+    ret = '截至 ' + date + '\n\n中国内地已接种新冠疫苗 ' + str(count) + ' 万针。接种完成率为' + str(total_vaccinations_per_hundred) \
+          + ' %。 \n\n' + date + ' 全国31个省级行政区和新疆生产建设宾团共报告新增确诊' + f'{new_cases}' + '人。'
     return ret
 
 
@@ -114,7 +119,6 @@ async def get_coin_volume() -> str:
 
 async def set_***_count(***_man: int) -> None:
     pass
-
 
 
 ''' >>>>>> Exp Function <<<<<< '''
