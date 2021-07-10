@@ -1,61 +1,49 @@
+from typing import List, Dict, Any
 import httpx
-import json
 
 
-def get_usage() -> dict:
+def get_usage() -> List[Dict[str, Any]]:
     """
 
-    :return: the key message to upstream
+    :return: a list contain all the server usage data
     """
 
-    url = 'https://api.64clouds.com/v1/getServiceInfo?'
-
-    param = {
+    param_1 = {
         'veid': '***',
         'api_key': '***'
     }
+
+    param_2 = {
+        'veid': '***',
+        'api_key': '***'
+    }
+
+    params = [param_1, param_2]
+    ret = []
     try:
-        r = httpx.get(url, params=param)
-        # print(r.url)
-        payload = r.json()
+        for param in params:
+            data = ''
+            for k, v in param.items():
+                data += k + '=' + v + '&'
+
+            url = 'https://api.64clouds.com/v1/getServiceInfo?' + data
+
+            r = httpx.get(url)
+            payload = r.json()
+
+            msg = {
+                'data_next_reset': payload['data_next_reset'],
+                'data_counter': payload['data_counter'],
+                'plan_monthly_data': payload['plan_monthly_data'],
+                'suspended': payload['suspended']
+            }
+
+            ret.append(msg)
+
     except httpx.RequestError:
         raise Exception('Interface Error / 接口错误')
-    else:
-
-        # print(json.dumps(payload))
-
-        # "data_next_reset" "data_counter" "plan_monthly_data" "suspended"
-
-        msg = {
-            'data_next_reset': payload['data_next_reset'],
-            'data_counter': payload['data_counter'],
-            'plan_monthly_data': payload['plan_monthly_data'],
-            'suspended': payload['suspended']
-        }
-
-    # print(json.dumps(msg))
-    return msg
-
-
-def construct_string(msg: dict) -> str:
-    """
-
-    :param msg: msg is a dict from upstream method
-    :return: the message that will forward to QQ
-    """
-
-    # init variable
-    data_usage = (msg['data_counter'] / 1024 / 1024 / 1024)
-    data_usage = round(data_usage, 2)
-    plan_monthly_data = (msg['plan_monthly_data'] / 1024 / 1024 / 1024)
-    plan_monthly_data = round(plan_monthly_data, 2)
-
-    # TODO
-    suspended = msg['suspended']
-    data_next_reset = msg['data_next_reset']
-
-    left_data = plan_monthly_data - data_usage
-    left_data = round(left_data, 2)
-    ret = '本月魔法剩余' + f'{left_data}' + ' GB, 已经使用 ' + f'{data_usage}' + ' GB.'
-
     return ret
+
+
+if __name__ == '__main__':
+    pass
