@@ -5,7 +5,6 @@ from typing import List
 
 from .interface import lolicon
 
-from src.data.manager import manager
 
 SWITCH_FLAG = False
 PROT_B64 = 'base64://'
@@ -33,58 +32,75 @@ async def get_colorful(lsp: int) -> str:
 
     b64_img = bit_thread.base64_str
 
+
     ret = [{
-        'type': 'text',
-        'data': {
-            'text': pid
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': title
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': author
-        }
-    }, {
-        'type': 'image',
-        'data': {
-            'file': PROT_B64 + b64_img
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '来啦来啦！'
-        }
-    }, {
-        'type': 'at',
-        'data': {
-            'qq': lsp
-        }
-    }]
+            'type': 'text',
+            'data': {
+                'text': pid
+            }
+        },{
+            'type': 'text',
+            'data': {
+                'text': title
+            }
+        },{
+            'type': 'text',
+            'data': {
+                'text': author
+            }
+        },{
+            'type': 'image',
+            'data': {
+                'file': PROT_B64 + b64_img
+            }
+        },{
+            'type': 'text',
+            'data': {
+                'text': '来啦来啦！'
+            }
+        },{
+            'type': 'at',
+            'data': {
+                'qq': lsp
+            }
+        }]
     return ret
 
 
-def get_creeper(lsp: int) -> str:
+def get_crepper(lsp: int) -> str:
     ret = [{
-        'type': 'image',
-        'data': {
-            'file': get_creep_path()
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '不许色！'
-        }
-    }, {
-        'type': 'at',
-        'data': {
-            'qq': lsp
-        }
-    }]
+            'type': 'image',
+            'data': {
+                'file': get_creep_path()
+            }
+        },{
+            'type': 'text',
+            'data': {
+                'text': '不许色！'
+            }
+        },{
+            'type': 'at',
+            'data': {
+                'qq': lsp
+            }
+        }]
     return ret
+
+
+def get_file() -> str:
+    file = os.getcwd() + DIR_MANAGER + 'manager.json'
+
+    return file
+
+
+def get_manager(file: str) -> List[str]:
+    with open(file, mode='rb') as f:
+        manager_object = f.read()
+    
+    manager_dict = json.loads(manager_object)
+    owners = manager_dict['OWNER']
+    admin = manager_dict['ADMIN']
+    return owners +admin
 
 
 def get_creep_path() -> str:
@@ -96,10 +112,7 @@ def get_creep_path() -> str:
 
 
 def permission_valid(user: str) -> bool:
-    owner = manager['OWNER']
-    admin = manager['ADMIN']
-    managers = owner + admin
-    return user in managers
+    return user in get_manager(get_file())
 
 
 '''if __name__ == '__main__':
