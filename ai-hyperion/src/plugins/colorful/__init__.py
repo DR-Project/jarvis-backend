@@ -30,10 +30,14 @@ color_flag = on_regex(REG_COLORFLAG)
 @colorful.handle()
 async def _colorful(bot: Bot, event: MessageEvent):
     lsp = event.get_user_id()
-    if data_source.SWITCH_FLAG:
+
+    if data_source.permission_valid(lsp):
         ret = await data_source.get_colorful(lsp)
     else:
-        ret = data_source.get_crepper(lsp)
+        if data_source.SWITCH_FLAG:
+            ret = await data_source.get_colorful(lsp)
+        else:
+            ret = data_source.get_crepper(lsp)
     await bot.send(event, ret, at_sender=False)
 
 
