@@ -1,9 +1,0 @@
-nb-cli
-/*
-nonebot-plugin-test
-nonebot-adapter-cqhttp
-nonebot_plugin_apscheduler
-*/
-xmltodict
-pypinyin
-Pillow
