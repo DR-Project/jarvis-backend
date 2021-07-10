@@ -1,0 +1,7 @@
+nb-cli
+nonebot-plugin-test
+nonebot-adapter-cqhttp
+nonebot-plugin-apscheduler
+xmltodict
+pypinyin
+Pillow
