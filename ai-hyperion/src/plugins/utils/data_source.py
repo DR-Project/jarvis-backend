@@ -1,4 +1,5 @@
 import asyncio
+from typing import List
 
 from .interface import crypto_coin
 from .interface import magic_usage
@@ -12,18 +13,31 @@ import time
 
 def magic_get_usage() -> str:
     try:
-        dicts = magic_usage.get_usage()
+        lists = magic_usage.get_usage()
     except:
         ret = '接口异常'
     else:
-        ret = magic_usage.construct_string(dicts)
+        ret = magic_construct_string(lists)
     return ret
 
 
-def coin_get_price(coin_type: str) -> str:
+def magic_construct_string(lists: List[dict]) -> str:
+    index = 0
+    pattern = '%m月%d日 %H:%M'
+    pattern2 = '%m月%d日'
+    now = time.strftime(pattern, time.localtime(time.time()))
+    prefix = '尊敬的***Door群客户，截至' + now + '。\n'
+    for i in lists:
+        prefix += '节点' + str(index) + ' 当月魔法流量已用 ' + str(round(i['data_counter'] / 1024 / 1024 / 1024, 2)) + \
+                  'GiB' + '，可用 ' + str(round((1 - i['data_counter'] / i['plan_monthly_data']), 2) * 100) + '% ' + \
+            '下次重置日期为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '。\n'
+        index += 1
+    return prefix
 
+
+def coin_get_price(coin_type: str) -> str:
     instrument_id = coin_type.upper() + '-USDT'
-    
+
     try:
         msg = crypto_coin.get_price(instrument_id)
         ret = crypto_coin.construct_string(msg)
@@ -79,12 +93,13 @@ async def covid_get_vaccinations():
 
 
 def ddl_get() -> str:
-        # assignments_display = assignments[:3]
+    # assignments_display = assignments[:3]
 
     ret = ''
     pattern = '%Y年%m月%d日 %H:%M'
 
-    assignments = assignment_ddl.sort_assignment(assignment_ddl.convert_date(assignment_ddl.get_assignment(assignment_ddl.get_course())))
+    assignments = assignment_ddl.sort_assignment(
+        assignment_ddl.convert_date(assignment_ddl.get_assignment(assignment_ddl.get_course())))
 
     for assignment in assignments:
         # init variable

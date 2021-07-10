@@ -30,6 +30,8 @@ nonebot.load_from_toml("pyproject.toml")
 # config = driver.config
 # do something...
 
+# Plugin testing for front-end
+nonebot.load_plugin("nonebot_plugin_test")
 
 if __name__ == "__main__":
     nonebot.logger.warning("Always use `nb run` to start the bot instead of manually running!")
