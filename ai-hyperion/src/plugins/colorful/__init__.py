@@ -33,7 +33,7 @@ async def _colorful(bot: Bot, event: MessageEvent):
     if data_source.SWITCH_FLAG:
         ret = await data_source.get_colorful(lsp)
     else:
-        ret = data_source.get_crepper(lsp)
+        ret = data_source.get_creeper(lsp)
     await bot.send(event, ret, at_sender=False)
 
 
