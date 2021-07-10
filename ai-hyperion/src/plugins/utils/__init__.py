@@ -19,7 +19,7 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 REG_TRAFFIC = '^(查流量|魔法|Magic|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
             'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
-            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH)$'
+            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)$'
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'

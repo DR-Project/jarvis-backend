@@ -58,7 +58,7 @@ def get_price(instrument_id: str) -> dict:
     :return: the key message to the upstream
     """
 
-    url = 'https://www.okex.win/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
+    url = 'https://www.okex.com/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
 
     # for test to raise Exception
     # url = 'www.test404domain.cc'
@@ -189,7 +189,7 @@ def get_price_instead(instrument_id: str) -> dict:
 def construct_string_instead(payload: dict) -> str:
     # init variable
     coin = payload['coin']
-    base = round(payload['base'], 3)
+    base = payload['base']
     last = payload['price']
     change_percent = payload['change_percent']
 

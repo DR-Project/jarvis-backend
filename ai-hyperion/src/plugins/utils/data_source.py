@@ -48,6 +48,20 @@ def coin_get_price(coin_type: str) -> str:
         except crypto_coin.InstrumentNotExistException:
             msg_err = 'Interface Exception'
             ret = msg_err
+    except crypto_coin.ReadTimeout:
+        try:
+            msg_v2 = crypto_coin.get_price_instead(instrument_id)
+            ret = crypto_coin.construct_string_instead(msg_v2)
+        except crypto_coin.InstrumentNotExistException:
+            msg_err = 'Interface Exception'
+            ret = msg_err
+        except crypto_coin.ReadTimeout:
+            msg_err = 'Interface Timeout'
+            ret = msg_err
+    except:
+        msg_err = 'Unknown Exception'
+        ret = msg_err
+
     return ret
 
 
