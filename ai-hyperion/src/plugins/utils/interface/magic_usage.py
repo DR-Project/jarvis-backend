@@ -18,6 +18,11 @@ def get_usage() -> List[Dict[str, Any]]:
         'api_key': '***'
     }
 
+    magic_info = {
+        'planck': 'Himeko',
+        'dirac': 'Carrier'
+    }
+
     params = [param_1, param_2]
     ret = []
     try:
@@ -35,7 +40,8 @@ def get_usage() -> List[Dict[str, Any]]:
                 'data_next_reset': payload['data_next_reset'],
                 'data_counter': payload['data_counter'],
                 'plan_monthly_data': payload['plan_monthly_data'],
-                'suspended': payload['suspended']
+                'suspended': payload['suspended'],
+                'node_name': magic_info[payload['hostname']]
             }
 
             ret.append(msg)
@@ -46,4 +52,4 @@ def get_usage() -> List[Dict[str, Any]]:
 
 
 if __name__ == '__main__':
-    pass
+    print(get_usage())
