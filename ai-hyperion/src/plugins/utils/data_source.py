@@ -22,17 +22,16 @@ def magic_get_usage() -> str:
 
 
 def magic_construct_string(lists: List[dict]) -> str:
-    index = 0
-    pattern = '%m月%d日 %H:%M'
+    pattern = '%H时%M分'
     pattern2 = '%m月%d日'
     now = time.strftime(pattern, time.localtime(time.time()))
-    prefix = '尊敬的***Door群客户，截至' + now + '。\n'
+    prefix = '截至今日' + now + '\n' + '----------------\n'
     for i in lists:
-        prefix += '节点' + str(index) + ' 当月魔法流量已用 ' + str(round(i['data_counter'] / 1024 / 1024 / 1024, 2)) + \
-                  'GiB' + '，可用 ' + str(round((1 - i['data_counter'] / i['plan_monthly_data']), 2) * 100) + '% ' + \
-            '下次重置日期为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '。\n'
-        index += 1
-    return prefix
+        prefix += '🖥️ ' + i['node_name'] + '\n' + '已用' + \
+                  str(round(i['data_counter'] / 1024 / 1024 / 1024, 2)) + 'GiB' + \
+                  '，剩余' + str(round((1 - i['data_counter'] / i['plan_monthly_data']), 2) * 100) + '%\n' + \
+            '重置时间为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '\n'
+    return prefix.strip()
 
 
 def coin_get_price(coin_type: str) -> str:
