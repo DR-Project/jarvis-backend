@@ -31,6 +31,7 @@ def magic_construct_string(lists: List[dict]) -> str:
                   str(round(i['data_counter'] / 1024 / 1024 / 1024, 2)) + 'GiB' + \
                   '，剩余' + str(round((1 - i['data_counter'] / i['plan_monthly_data']), 2) * 100) + '%\n' + \
             '重置时间为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '\n'
+    prefix += '💸 Sponsor\n' + '@又是白云蓝天的一天'
     return prefix.strip()
 
 
