@@ -5,3 +5,8 @@ nonebot-plugin-apscheduler
 xmltodict
 pypinyin
 Pillow
+# ---------------------------------
+# add by Judy on 13rd July 2021
+tushare
+pandas
+# ----------------------------------
