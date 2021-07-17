@@ -30,7 +30,7 @@ def magic_construct_string(lists: List[dict]) -> str:
         prefix += '🖥️ ' + i['node_name'] + '\n' + '已用' + \
                   str(round(i['data_counter'] / 1024 / 1024 / 1024, 2)) + 'GiB' + \
                   '，剩余' + str(round((1 - i['data_counter'] / i['plan_monthly_data']), 2) * 100) + '%\n' + \
-            '重置时间为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '\n'
+                  '重置时间为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '\n'
     prefix += '💸 Sponsor\n' + '@又是白云蓝天的一天'
     return prefix.strip()
 
@@ -99,10 +99,11 @@ async def covid_get_vaccinations():
 
     new_cases = int(data['new_cases'])
     total_vaccinations_per_hundred = data['total_vaccinations_per_hundred']
-    count = float(count) / 10000
+    count = float(count) / 10000 / 10000
 
-    ret = '截至 ' + date + '\n\n中国内地已接种新冠疫苗 ' + str(count) + ' 万针。接种完成率为' + str(total_vaccinations_per_hundred) \
-          + ' %。 \n\n' + date + ' 全国31个省级行政区和新疆生产建设宾团共报告新增确诊' + f'{new_cases}' + '人。'
+    ret = '截至 ' + date + '\n----------------' + '\n\n中国内地已接种新冠疫苗 ' + str(round(count, 2)) + ' 亿剂次，每百人接种 ' + \
+          str(total_vaccinations_per_hundred) + ' 剂次。 \n\n' + '全国31个省级行政区和新疆生产建设兵团共报告新增确诊 ' + f'{new_cases}' + ' 人。'
+
     return ret
 
 

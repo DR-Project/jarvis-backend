@@ -2,8 +2,8 @@ import nonebot
 
 from .config import Config
 from nonebot import get_driver, require
-from nonebot.plugin import on_regex, on_command, on_keyword
-from nonebot.adapters.cqhttp import Bot, MessageEvent, GroupMessageEvent
+from nonebot.plugin import on_regex, on_command
+from nonebot.adapters.cqhttp import Bot, MessageEvent
 
 import re
 
@@ -102,14 +102,6 @@ async def do_something(bot: Bot):
     group_id = ***
     msg = 'Jarvis now already back online, Sir'
     await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)
-'''
-
-'''
-截至xyueyri
-----------------
-中国内地已接种新冠疫苗 137 亿针，每百人接种 123456 剂次。
-
-全国31个省级行政区和新疆生产建设宾团共报告新增确诊0人。
 '''
 
 
