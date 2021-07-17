@@ -1,4 +1,4 @@
-manager = {
+managers = {
     "owner": [
         "***",
         "***"
@@ -10,4 +10,4 @@ manager = {
 
 
 def is_permission_valid(user_id: str) -> bool:
-    return user_id in (manager['owner'] + manager['admin'])
+    return user_id in (managers['owner'] + managers['admin'])
