@@ -7,6 +7,6 @@ pypinyin
 Pillow
 # ---------------------------------
 # add by Judy on 13rd July 2021
-tushare
+# tushare abandoned on 17th July 2021
 pandas
 # ----------------------------------
