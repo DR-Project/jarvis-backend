@@ -5,3 +5,4 @@ nonebot-plugin-apscheduler
 xmltodict
 pypinyin
 Pillow
+psutil
