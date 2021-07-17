@@ -6,6 +6,10 @@ import xmltodict
 import time
 
 
+class RequestError(Exception):
+    pass
+
+
 def get_news(target: str, quantity: int) -> dict:
     """
 
@@ -26,7 +30,7 @@ def get_news(target: str, quantity: int) -> dict:
     try:
         r = httpx.get(rss_sources[target][1], proxies=proxies)
     except httpx.RequestError:
-        raise Exception('Interface Error / 接口异常')
+        raise RequestError('Interface Error / 接口异常')
     else:
         xml = xmltodict.parse(r.text)
         payload = json.loads(json.dumps(xml))
