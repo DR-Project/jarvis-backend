@@ -10,27 +10,30 @@
 """
 __author__ = "yanyongyu"
 
+from nonebot import get_driver, on_command, on_notice
+from nonebot.adapters.cqhttp import PokeNotifyEvent, Bot, MessageEvent
 from nonebot.typing import T_State
-from nonebot.matcher import Matcher
-from nonebot.adapters import Bot, Event
-from nonebot.permission import SUPERUSER
-from nonebot import get_driver, on_command, on_notice, on_message
-from nonebot.adapters.cqhttp import PrivateMessageEvent, PokeNotifyEvent
 
 from .config import Config
 from .data_source import cpu_status, per_cpu_status, memory_status, disk_usage
-
-from src.data.manager import is_permission_valid
+from ..settings.manager import is_permission_valid
 
 global_config = get_driver().config
 status_config = Config(**global_config.dict())
 
 command = on_command('status')
+group_poke = on_notice()
 
 
 @command.handle()
-async def server_status(bot: Bot, matcher: Matcher, event: Event):
-    if is_permission_valid(event.get_user_id()):
+async def server_status(bot: Bot, event: MessageEvent):
+    lsp = event.get_user_id()
+    data = send_status(lsp)
+    await bot.send(event, '\n'.join(data), at_sender=False)
+
+
+def send_status(user_id: str) -> list:
+    if is_permission_valid(user_id):
         data = []
 
         if status_config.server_status_cpu:
@@ -49,22 +52,12 @@ async def server_status(bot: Bot, matcher: Matcher, event: Event):
             for k, v in disk_usage().items():
                 data.append(f"  {k}: {int(v.percent):02d}%")
 
-        await matcher.send(message="\n".join(data))
+        return data
 
 
-async def _group_poke(bot: Bot, event: Event, state: T_State) -> bool:
-    return isinstance(event, PokeNotifyEvent) and str(
-        event.user_id) in global_config.superusers and event.is_tome()
-
-
-group_poke = on_notice(_group_poke, priority=10, block=True)
-group_poke.handle()(server_status)
-
-
-async def _poke(bot: Bot, event: Event, state: T_State) -> bool:
-    return (isinstance(event, PrivateMessageEvent) and
-            event.sub_type == "friend" and event.message[0].type == "poke")
-
-
-poke = on_message(_poke, permission=SUPERUSER, priority=10)
-poke.handle()(server_status)
+@group_poke.handle()
+async def _group_poke(bot: Bot, event: PokeNotifyEvent, state: T_State) -> bool:
+    lsp = event.get_user_id()
+    if isinstance(event, PokeNotifyEvent):
+        data = send_status(lsp)
+        await bot.send(event, '\n'.join(data), at_sender=False)
