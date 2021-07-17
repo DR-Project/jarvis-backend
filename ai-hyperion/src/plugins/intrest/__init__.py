@@ -22,6 +22,7 @@ REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
 REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
+MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
 
@@ -32,6 +33,7 @@ plus1s = on_regex(REG_PLUS1S)
 ***_index = on_regex(REG_***_INDEX)
 ***_report = on_regex(REG_***_REPORT, re.IGNORECASE)
 diuren_pot = on_regex(REG_POT)
+mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -98,7 +100,7 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     }]
     await bot.send(event, at_mem, at_sender=False)
 
-
+'''
 @***_index.handle()
 async def ***_index(bot: Bot, event: GroupMessageEvent):
     ret = str(event.get_message())
@@ -108,25 +110,25 @@ async def ***_index(bot: Bot, event: GroupMessageEvent):
         ***_man_nick = ***_mans['card']
         await data_source.set_***_to_dict(***_man, ***_man_nick)
         msg = [{
-        'type': 'reply',
-        'data': {
-            'id': event.message_id
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '你的***-1 '
-        }
-    }, {
-        'type': 'at',
-        'data': {
-            'qq': ***_man
-        }
-    }]
+            'type': 'reply',
+            'data': {
+                'id': event.message_id
+            }
+        }, {
+            'type': 'text',
+            'data': {
+                'text': '你的***-1 '
+            }
+        }, {
+            'type': 'at',
+            'data': {
+                'qq': ***_man
+            }
+        }]
         await bot.send(event, msg, at_sender=True)
     else:
         pass
-
+'''
 
 @diuren_pot.handle()
 async def diuren_pot(bot: Bot, event: MessageEvent):
@@ -142,6 +144,46 @@ async def diuren_pot(bot: Bot, event: MessageEvent):
         }
     }]
     await bot.send(event, at_mem, at_sender=False)
+
+
+@mc_diu.handle()
+async def mc_diu(bot: Bot, event: MessageEvent):
+    if event.get_user_id() == str(data_source.mem_dicts['***']):
+        msg = [{
+            'type': 'text',
+            'data': {
+                'text': '出来恰金拱门！🍟\n'
+            }
+        }, {
+            'type': 'at',
+            'data': {
+                'qq': data_source.mem_dicts['***']
+            }
+        }, {
+            'type': 'at',
+            'data': {
+                'qq': data_source.mem_dicts['***']
+            }
+        }, {
+            'type': 'at',
+            'data': {
+                'qq': data_source.mem_dicts['***']
+            }
+        }]
+        await bot.send(event, msg, at_sender=False)
+    else:
+        ret = [{
+            'type': 'text',
+            'data': {
+                'text': '不许丢！🍟🍟🍟 \n'
+            }
+        }, {
+            'type': 'at',
+            'data': {
+                'qq': event.get_user_id()
+            }
+        }]
+        await bot.send(event, ret, at_sender=False)
 
 
 @***_report.handle()
