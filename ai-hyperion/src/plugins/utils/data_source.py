@@ -89,7 +89,7 @@ def weather_get(city: str) -> str:
             ret = '接口异常'
     else:
         ret = city + ' ∉ {城市}'
-    return ret
+    return ret.strip()
 
 
 async def covid_get_vaccinations():
