@@ -16,7 +16,7 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 BOT_QNUM = ***
 REG_QUESHI = '(确实|qs|有一说一|yysy)'
-REG_DIUREN = '^(丢***|丢***|丢***|丢***|丢***|丢***|丢***|丢***|***)$'
+REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
 REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
 REG_***_REPORT = '^(***排行|***ph|kk***)$'
@@ -62,8 +62,20 @@ async def _diuren(bot: Bot, event: MessageEvent):
                 'text': ' 好逊哦，丢哪个胖 '
             }
         }]
+    elif msg == '***':
+        at_mem = [{
+            'type': 'at',
+            'data': {
+                'qq': data_source.mem_dicts['***']
+            }
+        }, {
+            'type': 'text',
+            'data': {
+                'text': ' 丢人'
+            }
+        }]
     else:
-        num = data_source.mem_dicts[msg]
+        num = data_source.mem_dicts[msg[1:]]
         at_mem = [{
             'type': 'at',
             'data': {
