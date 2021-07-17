@@ -104,19 +104,36 @@ async def do_something(bot: Bot):
     await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)
 '''
 
-async def cron_daily_news():
+'''
+截至xyueyri
+----------------
+中国内地已接种新冠疫苗 137 亿针，每百人接种 123456 剂次。
+
+全国31个省级行政区和新疆生产建设宾团共报告新增确诊0人。
+'''
+
+
+async def cron_daily_coin():
     group_id = ***
     bot = nonebot.get_bots()['***']
     ret = await data_source.get_coin_volume()
     await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
 
 
-async def cron_daily_coin():
+async def cron_daily_news():
     group_id = ***
     bot = nonebot.get_bots()['***']
-    ret = data_source.rss_get_news(target)
+    ret = data_source.rss_get_news('药闻')
     await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
 
 
-scheduler.add_job(cron_daily_coin, "cron", hour=8, id="coins")
-scheduler.add_job(cron_daily_news, "cron", hour=7, minute=30, id="news")
+async def cron_daily_covid():
+    group_id = ***
+    bot = nonebot.get_bots()['***']
+    ret = await data_source.covid_get_vaccinations()
+    await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+
+
+scheduler.add_job(cron_daily_news, "cron", hour=8, id="news")
+scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=30, id="coins")
+scheduler.add_job(cron_daily_covid, "cron", hour=7, id="covid")

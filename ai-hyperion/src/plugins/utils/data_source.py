@@ -68,7 +68,7 @@ def coin_get_price(coin_type: str) -> str:
 def rss_get_news(target: str) -> str:
     try:
         dicts = rss_news.get_news(target, rss_news.rss_sources[target][0])
-    except:
+    except rss_news.RequestError:
         ret = '接口异常'
     else:
         ret = rss_news.construct_string(dicts)
