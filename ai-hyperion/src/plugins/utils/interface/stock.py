@@ -66,6 +66,7 @@ def get_latest_price(stock_code: str) -> list:
 
 
 def draw_k_line_chart(k_data: list):
+    # todo
     pass
 
 
