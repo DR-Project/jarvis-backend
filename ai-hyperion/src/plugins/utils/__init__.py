@@ -2,8 +2,8 @@ import nonebot
 
 from .config import Config
 from nonebot import get_driver, require
-from nonebot.plugin import on_regex, on_command, on_keyword
-from nonebot.adapters.cqhttp import Bot, MessageEvent, GroupMessageEvent
+from nonebot.plugin import on_regex, on_command
+from nonebot.adapters.cqhttp import Bot, MessageEvent
 
 import re
 
@@ -104,19 +104,28 @@ async def do_something(bot: Bot):
     await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)
 '''
 
-async def cron_daily_news():
+
+async def cron_daily_coin():
     group_id = ***
     bot = nonebot.get_bots()['***']
     ret = await data_source.get_coin_volume()
     await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
 
 
-async def cron_daily_coin():
+async def cron_daily_news():
     group_id = ***
     bot = nonebot.get_bots()['***']
-    ret = data_source.rss_get_news(target)
+    ret = data_source.rss_get_news('药闻')
     await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
 
 
-scheduler.add_job(cron_daily_coin, "cron", hour=8, id="coins")
-scheduler.add_job(cron_daily_news, "cron", hour=7, minute=30, id="news")
+async def cron_daily_covid():
+    group_id = ***
+    bot = nonebot.get_bots()['***']
+    ret = await data_source.covid_get_vaccinations()
+    await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+
+
+scheduler.add_job(cron_daily_news, "cron", hour=8, id="news")
+scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=30, id="coins")
+scheduler.add_job(cron_daily_covid, "cron", hour=7, id="covid")

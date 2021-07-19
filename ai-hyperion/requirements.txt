@@ -12,3 +12,4 @@ pandas
 # ----------------------------------
 # add by Judy on 17 July 2021
 baostock
+psutil
