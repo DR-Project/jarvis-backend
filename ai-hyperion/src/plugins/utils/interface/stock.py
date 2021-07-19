@@ -54,7 +54,7 @@ def _get_7_days_before():
     return date_before_seven_days
 
 
-def get_latest_price(stock_code: str):
+def get_latest_price(stock_code: str) -> list:
     """
 
     :param stock_code:
