@@ -32,11 +32,13 @@ def get_k_data(stock_code: str):
 
     bs.login()
 
-    rs = bs.query_history_k_data_plus("sh.600000",
+    rs = bs.query_history_k_data_plus(stock_code,
                                       "date,code,open,high,low,close,preclose,volume,amount,adjustflag,turn,"
-                                      "tradestatus,pctChg,isST",
+                                      "tradestatus,pctChg,pbMRQ",
                                       start_date=date_before_seven_days.__str__(), end_date=now_date.__str__(),
                                       frequency="d", adjustflag="3")
+
+    bs.logout()
 
     return rs.data
 
@@ -52,9 +54,20 @@ def _get_7_days_before():
     return date_before_seven_days
 
 
+def get_latest_price(stock_code: str):
+    """
+
+    :param stock_code:
+    :return: 返回一个列表。从0开始，按顺序为。0，日期；1，股票代码；2，开盘价；3，最高价；4，最低价；5，收盘价；6，前收盘价；7，成交量（累计，单位：股）；
+    8，成交额（单位：人民币元）；9，复权状态(1：后复权， 2：前复权，3：不复权）；10，换手率；11，交易状态(1：正常交易 0：停牌）
+    12，张跌幅（百分比）；13，市净率；
+    """
+    return get_k_data(stock_code)[-1]
+
+
 def draw_k_line_chart(k_data: list):
     pass
 
 
 if __name__ == '__main__':
-    print(get_k_data('sh.600519'))
+    print(get_latest_price('sh.000001'))
