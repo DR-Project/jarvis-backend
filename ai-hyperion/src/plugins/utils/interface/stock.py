@@ -9,7 +9,11 @@ class QueryOccurException(Exception):
     pass
 
 
-def get_stock_price(stock_name: str = None, stock_code: str = None):
+class NoParamsException(Exception):
+    pass
+
+
+def _get_stock_code(stock_name: str = None, stock_code: str = None):
     if stock_code or stock_name:
         bs.login()
 
@@ -24,7 +28,7 @@ def get_stock_price(stock_name: str = None, stock_code: str = None):
             return stock_code
 
 
-def get_k_data(stock_code: str):
+def _get_k_data(stock_code: str):
 
     now_date = datetime.date.today()
 
@@ -54,7 +58,7 @@ def _get_7_days_before():
     return date_before_seven_days
 
 
-def get_latest_price(stock_code: str) -> list:
+def _get_latest_price(stock_code: str) -> list:
     """
 
     :param stock_code:
@@ -62,7 +66,20 @@ def get_latest_price(stock_code: str) -> list:
     8，成交额（单位：人民币元）；9，复权状态(1：后复权， 2：前复权，3：不复权）；10，换手率；11，交易状态(1：正常交易 0：停牌）
     12，张跌幅（百分比）；13，市净率；
     """
-    return get_k_data(stock_code)[-1]
+    return _get_k_data(stock_code)[-1]
+
+
+def stock_controller(stock_name: str = None, stock_code: str = None):
+    if stock_code or stock_name:
+
+        if stock_code:
+            return _get_latest_price(stock_code)
+        else:
+            code = _get_stock_code(stock_name=stock_name)
+            return _get_latest_price(code)
+
+    else:
+        raise NoParamsException('至少需要传入一个参数')
 
 
 def draw_k_line_chart(k_data: list):
@@ -70,5 +87,5 @@ def draw_k_line_chart(k_data: list):
     pass
 
 
-if __name__ == '__main__':
-    print(get_latest_price('sh.000001'))
+# if __name__ == '__main__':
+#     print(get_latest_price('sh.000001'))
