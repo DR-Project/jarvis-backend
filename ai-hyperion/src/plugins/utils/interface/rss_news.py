@@ -47,8 +47,6 @@ def get_news(target: str, quantity: int) -> dict:
 
 def construct_string(msg: dict) -> str:
     """
-
-    :param target: rss source name
     :param msg:  msg is a dict from upstream method
     :return: the message that will forward to QQ
     """
@@ -58,8 +56,6 @@ def construct_string(msg: dict) -> str:
     date = time.strftime('%m月%d日', time.localtime())
     ret = date + ' ' + target + '\n\n'
     num = 0
-
-    # print(type(date))
 
     for item in msg['item']:
         title = item['title']
@@ -72,13 +68,13 @@ def construct_string(msg: dict) -> str:
 
 
 rss_sources = {
-    '药闻': [8,'https://a.jiemian.com/index.php?m=article&a=rss'],
+    '药闻': [8, 'https://a.jiemian.com/index.php?m=article&a=rss'],
     '热搜': [15, 'https://rsshub.app/weibo/search/hot'],
     'TESTNEWS': [10, 'https://rsshub.app/thepaper/featured']
 }
 
 
-if __name__ == '__main__':
-    msg = get_news('药闻', 5)
-    print(construct_string(msg))
+# if __name__ == '__main__':
+#     msg = get_news('药闻', 5)
+#     print(construct_string(msg))
 
