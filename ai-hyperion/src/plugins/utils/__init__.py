@@ -106,24 +106,26 @@ async def do_something(bot: Bot):
 
 
 async def cron_daily_coin():
-    group_id = ***
-    bot = nonebot.get_bots()['***']
     ret = await data_source.get_coin_volume()
-    await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+    await _scheduler_controller(ret)
 
 
 async def cron_daily_news():
-    group_id = ***
-    bot = nonebot.get_bots()['***']
-    ret = data_source.rss_get_news('药闻')
-    await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+
+    ret_1 = data_source.rss_get_news('药闻')
+    await _scheduler_controller(ret_1)
 
 
 async def cron_daily_covid():
-    group_id = ***
-    bot = nonebot.get_bots()['***']
     ret = await data_source.covid_get_vaccinations()
-    await bot.send_group_msg(group_id=group_id, message=ret, auto_escape=True)
+    await _scheduler_controller(ret)
+
+
+async def _scheduler_controller(message: str):
+    groups = [***, ***]
+    bot = nonebot.get_bots()['***']
+    for group_id in groups:
+        await bot.send_group_msg(group_id=group_id, message=message, auto_escape=True)
 
 
 scheduler.add_job(cron_daily_news, "cron", hour=8, id="news")
