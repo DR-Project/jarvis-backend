@@ -7,6 +7,7 @@ from .interface import rss_news
 from .interface import weather
 from .interface import assignment_ddl
 from .interface import covid
+from .interface import stock
 
 import time
 
@@ -149,6 +150,12 @@ async def get_coin_volume() -> str:
 
 async def set_***_count(***_man: int) -> None:
     pass
+
+
+async def get_stock(stock_name: str = None, stock_code: str = None):
+    ret = stock.stock_controller(stock_name=stock_name, stock_code=stock_code)
+    # fixme
+    return ret
 
 
 ''' >>>>>> Exp Function <<<<<< '''
