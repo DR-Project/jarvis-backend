@@ -1,3 +1,4 @@
+import asyncio
 import nonebot
 
 from .config import Config
@@ -19,7 +20,7 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 REG_TRAFFIC = '^(查流量|魔法|Magic|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
             'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
-            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)$'
+            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)'  # fixme
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
@@ -50,9 +51,37 @@ async def _traffic(bot: Bot, event: MessageEvent):
 
 @cryptocoin.handle()
 async def _cryptocoin(bot: Bot, event: MessageEvent):
-    coin_type = event.get_plaintext().upper()
-    ret = data_source.coin_get_price(coin_type)
-    await bot.send(event, ret, at_sender=False)
+    message = event.get_plaintext()
+    if message.count('*') > 1:
+        await bot.send(event, '语法错误', at_sender=False)
+        return
+
+    if '*' not in message:
+        coin_type = message.upper()
+        ret = data_source.coin_get_price(coin_type)
+        await bot.send(event, ret, at_sender=False)
+
+    else:
+        coin_type, loop_times = message.split('*')
+
+        if not loop_times.isnumeric():
+            await bot.send(event, '语法错误', at_sender=False)
+            return
+
+        if loop_times < 1:
+            await bot.send(event, '语法错误', at_sender=False)
+            return
+
+        if loop_times > 8:
+            await bot.send(event, '复读次数过多，会被封号 ', at_sender=False)
+            return
+
+        for _ in range(loop_times):
+            coin_type = coin_type.upper()
+            ret = data_source.coin_get_price(coin_type)
+            await bot.send(event, ret, at_sender=False)
+            if _ > 0:
+                await asyncio.sleep(30)
 
 
 @mars_news.handle()
