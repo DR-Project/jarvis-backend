@@ -1,3 +1,5 @@
+import asyncio
+
 import nonebot
 
 from .config import Config
@@ -18,8 +20,8 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 REG_TRAFFIC = '^(查流量|魔法|Magic|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
-            'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
-            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)$'
+           'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
+           'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)$'
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
@@ -37,7 +39,6 @@ weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
 covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
-
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -96,6 +97,7 @@ async def _exp_cryptocoin(bot: Bot, event: MessageEvent):
     ret = data_source.coin_exp_get_price(instrument_id)
     await bot.send(event, ret, at_sender=False)
 
+
 '''
 @driver.on_bot_connect
 async def do_something(bot: Bot):
@@ -111,7 +113,6 @@ async def cron_daily_coin():
 
 
 async def cron_daily_news():
-
     ret_1 = data_source.rss_get_news('药闻')
     await _scheduler_controller(ret_1)
 
@@ -119,6 +120,27 @@ async def cron_daily_news():
 async def cron_daily_covid():
     ret = await data_source.covid_get_vaccinations()
     await _scheduler_controller(ret)
+
+
+async def corn_daily_weather():
+    gugu_door_cities = ['广州', '珠海', '东莞', '佛山', ]
+    researcher_cities = ['广州', '北京', '深圳', '上海', '乌海', '梅州', '吉林', ]
+
+    bot = nonebot.get_bots().get('***')
+
+    for city in gugu_door_cities:
+        target = city + '天气'
+        ret = data_source.weather_get(target)
+        await bot.send_group_msg(group_id=***, message=ret, auto_escape=True)
+        if gugu_door_cities.index(city) != len(gugu_door_cities) - 1:
+            await asyncio.sleep(30)
+
+    for city in researcher_cities:
+        target = city + '天气'
+        ret = data_source.weather_get(target)
+        await bot.send_group_msg(group_id=***, message=ret, auto_escape=True)
+        if researcher_cities.index(city) != len(researcher_cities) - 1:
+            await asyncio.sleep(30)
 
 
 async def _scheduler_controller(message: str):
@@ -131,3 +153,4 @@ async def _scheduler_controller(message: str):
 scheduler.add_job(cron_daily_news, "cron", hour=8, id="news")
 scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=30, id="coins")
 scheduler.add_job(cron_daily_covid, "cron", hour=7, id="covid")
+scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=30, id='weather')
