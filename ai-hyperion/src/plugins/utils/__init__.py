@@ -162,6 +162,11 @@ async def cron_daily_covid():
     await _scheduler_controller(ret)
 
 
+async def cron_daily_stock():
+    ret = await data_source.get_stock(stock_code='sh.000001')
+    await _scheduler_controller(ret)
+
+
 async def corn_daily_weather():
     gugu_door_cities = ['广州', '珠海', '东莞', '佛山', ]
     researcher_cities = ['广州', '北京', '深圳', '上海', '乌海', '梅州', '吉林', ]
@@ -194,3 +199,4 @@ scheduler.add_job(cron_daily_news, "cron", hour=8, id="news")
 scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=30, id="coins")
 scheduler.add_job(cron_daily_covid, "cron", hour=7, id="covid")
 scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=30, id='weather')
+scheduler.add_job(cron_daily_stock, 'cron', hour=15, minute=15, id='stock')
