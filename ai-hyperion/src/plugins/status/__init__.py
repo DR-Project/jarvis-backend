@@ -10,12 +10,14 @@
 """
 __author__ = "yanyongyu"
 
+import datetime
+
 from nonebot import get_driver, on_command, on_notice
 from nonebot.adapters.cqhttp import PokeNotifyEvent, Bot, MessageEvent
 from nonebot.typing import T_State
 
 from .config import Config
-from .data_source import cpu_status, per_cpu_status, memory_status, disk_usage
+from .data_source import cpu_status, per_cpu_status, memory_status, disk_usage, uptime
 from ..settings.manager import is_permission_valid
 
 global_config = get_driver().config
@@ -51,6 +53,10 @@ def send_status(user_id: str) -> list:
             data.append("Disk:")
             for k, v in disk_usage().items():
                 data.append(f"  {k}: {int(v.percent):02d}%")
+        
+        if status_config.server_status_uptime:
+            f_uptime = datetime.timedelta(seconds=uptime())
+            data.append(f"Uptime: {str(f_uptime)}")
 
         return data
 
