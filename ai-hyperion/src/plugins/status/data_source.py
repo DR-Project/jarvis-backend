@@ -10,9 +10,9 @@
 """
 __author__ = "yanyongyu"
 
-from typing import List, Dict
+import time, psutil
 
-import psutil
+from typing import List, Dict
 
 
 def cpu_status() -> float:
@@ -33,6 +33,10 @@ def disk_usage() -> Dict[str, psutil._common.sdiskusage]:
         d.mountpoint: psutil.disk_usage(d.mountpoint) for d in disk_parts
     }
     return disk_usages
+
+
+def uptime() -> float:
+    return time.time() - psutil.boot_time()
 
 
 if __name__ == "__main__":
