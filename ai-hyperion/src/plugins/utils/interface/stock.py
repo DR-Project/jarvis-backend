@@ -21,8 +21,7 @@ def _get_stock_code(stock_name: str = None, stock_code: str = None):
             rs = bs.query_stock_basic(code_name=stock_name)
             if rs.error_code == '0' and len(rs.data) >= 1:
                 return rs.data[0][0]
-            else:
-                raise QueryOccurException('查询股票代码出现错误')
+            raise QueryOccurException('查询股票代码出现错误')
         else:
             bs.logout()
             return stock_code
@@ -74,16 +73,14 @@ def stock_controller(stock_name: str = None, stock_code: str = None):
 
         if stock_code:
             return _get_latest_price(stock_code)
-        else:
-            code = _get_stock_code(stock_name=stock_name)
-            return _get_latest_price(code)
+        code = _get_stock_code(stock_name=stock_name)
+        return _get_latest_price(code)
 
     else:
         raise NoParamsException('至少需要传入一个参数')
 
 
 def draw_k_line_chart(k_data: list):
-    # todo
     pass
 
 
