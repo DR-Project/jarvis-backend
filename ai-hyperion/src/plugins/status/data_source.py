@@ -35,11 +35,12 @@ def disk_usage() -> Dict[str, psutil._common.sdiskusage]:
     return disk_usages
 
 
-def uptime() -> float:
-    return time.time() - psutil.boot_time()
+def uptime() -> int:
+    return int(time.time() - psutil.boot_time())
 
 
 if __name__ == "__main__":
     print(cpu_status())
     print(memory_status())
     print(disk_usage())
+    print(uptime())
