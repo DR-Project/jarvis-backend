@@ -1,3 +1,4 @@
+from nonebot.adapters.cqhttp.event import Sender
 from .config import Config
 
 from nonebot import get_driver, require
@@ -22,6 +23,7 @@ REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
 REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
+REG_DIU_ALL = '^(全体丢人)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -34,6 +36,7 @@ plus1s = on_regex(REG_PLUS1S)
 ***_report = on_regex(REG_***_REPORT, re.IGNORECASE)
 diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
+diu_all = on_regex(REG_DIU_ALL)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -43,6 +46,22 @@ async def _queshi(bot: Bot, event: MessageEvent):
     if (data_source.to_be_or_not_be(30)):
         text = '确实'
         await bot.send(event, text, at_sender=False)
+
+
+@diu_all.handle()
+async def _diu_all(bot: Bot, event: GroupMessageEvent):
+    if event.sender.role != 'member':
+        msg = [{
+            'type': 'at',
+            'data': {
+                'qq': 'all'
+            }
+        }]
+        bot_status:Sender = await bot.get_group_member_info(group_id = event.group_id, user_id=***)
+        if bot_status['role'] != 'member':
+            await bot.send(event, msg, at_sender=False)
+            return
+    await bot.send(event, '权限不足', at_sender=False)
 
 
 @diuren.handle()
