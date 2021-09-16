@@ -7,6 +7,7 @@ from .interface import rss_news
 from .interface import weather
 from .interface import assignment_ddl
 from .interface import covid
+from .interface import stock
 
 import time
 
@@ -150,6 +151,18 @@ async def get_coin_volume() -> str:
 async def set_***_count(***_man: int) -> None:
     pass
 
+
+async def get_stock(stock_name: str = None, stock_code: str = None):
+    try:
+        data = stock.stock_controller(stock_name=stock_name, stock_code=stock_code)
+        ret = data[1] + '\n' + \
+        '开盘：' + data[2] + '\n' + \
+        '收盘：' + data[5] + '\n' + \
+        '最高：' + data[5] + '\n' + \
+        '涨跌幅：' + str(round(float(data[12]), 3)) + '%'
+    except Exception:
+        ret = 'Unknow Error'
+    return ret
 
 ''' >>>>>> Exp Function <<<<<< '''
 
