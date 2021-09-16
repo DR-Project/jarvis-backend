@@ -26,7 +26,7 @@ REG_WEATHER = '^.*(天气)$'
 REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
 REG_COVID_VACC = 'COVID'
-STOCK = '暂定'  # fixme
+STOCK = 'STOCK'
 
 # Register Event
 
@@ -38,7 +38,7 @@ weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
 covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
-stock = on_regex(STOCK)
+stock = on_command(STOCK)
 
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
@@ -90,9 +90,12 @@ async def hotcoin(bot: Bot, event: MessageEvent):
 
 
 @stock.handle()
-async def woyebuzhidao(bot: Bot, event: MessageEvent):
-    ret = await data_source.get_stock(stock_code='sh.000001')
-    # fixme
+async def stock(bot: Bot, event: MessageEvent):
+    msg = event.get_plaintext()
+    if 'sh' in msg:
+        ret = await data_source.get_stock(stock_code=msg)
+    else:
+        ret = await data_source.get_stock(stock_name=msg)
     await bot.send(event, str(ret), at_sender=False)
 
 

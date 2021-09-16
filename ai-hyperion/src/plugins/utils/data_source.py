@@ -153,10 +153,16 @@ async def set_***_count(***_man: int) -> None:
 
 
 async def get_stock(stock_name: str = None, stock_code: str = None):
-    ret = stock.stock_controller(stock_name=stock_name, stock_code=stock_code)
-    # fixme
+    try:
+        data = stock.stock_controller(stock_name=stock_name, stock_code=stock_code)
+    except:
+        'Unknow Error'
+    ret = data[1] + '\n' + \
+        '开盘：' + data[2] + '\n' + \
+        '收盘：' + data[5] + '\n' + \
+        '最高：' + data[5] + '\n' + \
+        '涨跌幅：' + str(round(float(data[12]), 3)) + '%'
     return ret
-
 
 ''' >>>>>> Exp Function <<<<<< '''
 
