@@ -20,7 +20,7 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 REG_TRAFFIC = '^(查流量|魔法|Magic|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
             'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
-            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)'  # fixme
+            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)\**([0-9]*)*$'  # fixme
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
@@ -68,6 +68,8 @@ async def _cryptocoin(bot: Bot, event: MessageEvent):
             await bot.send(event, '语法错误', at_sender=False)
             return
 
+        loop_times = int(loop_times)
+
         if loop_times < 1:
             await bot.send(event, '语法错误', at_sender=False)
             return
@@ -80,8 +82,8 @@ async def _cryptocoin(bot: Bot, event: MessageEvent):
             coin_type = coin_type.upper()
             ret = data_source.coin_get_price(coin_type)
             await bot.send(event, ret, at_sender=False)
-            if _ > 0:
-                await asyncio.sleep(30)
+            if _ != loop_times - 1:
+                await asyncio.sleep(5)
 
 
 @mars_news.handle()
