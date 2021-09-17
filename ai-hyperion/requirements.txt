@@ -6,3 +6,11 @@ xmltodict
 pypinyin
 Pillow
 psutil
+# ---------------------------------
+# add by Judy on 13rd July 2021
+# tushare abandoned on 17th July 2021
+pandas
+# ----------------------------------
+# add by Judy on 17 July 2021
+baostock
+psutil
