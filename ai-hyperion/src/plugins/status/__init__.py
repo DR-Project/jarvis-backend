@@ -10,7 +10,6 @@
 """
 __author__ = "yanyongyu"
 
-import datetime
 
 from nonebot import get_driver, on_command, on_notice
 from nonebot.adapters.cqhttp import PokeNotifyEvent, Bot, MessageEvent
@@ -55,8 +54,7 @@ def send_status(user_id: str) -> list:
                 data.append(f"  {k}: {int(v.percent):02d}%")
         
         if status_config.server_status_uptime:
-            f_uptime = datetime.timedelta(seconds=uptime())
-            data.append(f"Uptime: {str(f_uptime)}")
+            data.append(f"Uptime: {uptime()}")
 
         return data
 
