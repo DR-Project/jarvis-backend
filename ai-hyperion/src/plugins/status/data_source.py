@@ -65,7 +65,8 @@ def time_format(timestamp: int, preset='std') -> str:
     if preset == 'std':
         return (f'{str(days).zfill(2)}:{str(hours).zfill(2)}:'
                 f'{str(minutes).zfill(2)}:{str(seconds).zfill(2)}')
-    elif preset == 'zh':
+
+    if preset == 'zh':
         result = []
         if days:
             result.append(f'{days}天')
@@ -78,7 +79,7 @@ def time_format(timestamp: int, preset='std') -> str:
 
             return ''.join(result)
 
-    elif preset == 'en':
+    if preset == 'en':
         return str(datetime.timedelta(seconds=timestamp))
 
 
