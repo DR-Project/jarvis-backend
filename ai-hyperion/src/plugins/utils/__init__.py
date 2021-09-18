@@ -102,8 +102,7 @@ async def _weather(bot: Bot, event: MessageEvent):
 
 @ass_ddl.handle()
 async def _ass_ddl(bot: Bot, event: MessageEvent):
-    ret = data_source.ddl_get()
-    await bot.send(event, ret, at_sender=False)
+    await bot.send(event, '此功能已下线', at_sender=False)
 
 
 @covid_vacc.handle()
