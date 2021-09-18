@@ -169,7 +169,7 @@ async def cron_daily_stock():
 
 async def corn_daily_weather():
     gugu_door_cities = ['广州', '珠海', '东莞', '佛山', ]
-    researcher_cities = ['广州', '北京', '深圳', '上海', '乌海', '梅州', '吉林', ]
+    researcher_cities = ['广州', '北京', '深圳', '上海', '乌海', '梅州', '吉林', '杭州', '长春']：wq
 
     bot = nonebot.get_bots().get('***')
 
