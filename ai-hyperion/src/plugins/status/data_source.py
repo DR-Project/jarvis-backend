@@ -56,6 +56,9 @@ def time_format(timestamp: int, preset='std') -> str:
 
     返回：
     - `str`：格式化的时间信息
+
+    代码来源：
+    https://github.com/jks15satoshi/nonebot_plugin_cooldown
     """
     days = abs(timestamp) // 86400
     hours = (abs(timestamp) - days * 86400) // 3600
