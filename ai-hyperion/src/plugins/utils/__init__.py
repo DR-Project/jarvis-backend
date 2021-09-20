@@ -1,3 +1,5 @@
+import datetime
+
 import nonebot
 import asyncio
 import re
@@ -173,7 +175,10 @@ async def cron_daily_stock():
         await _scheduler_controller('今天是 %s，A股休市' % today)
         return
 
-    ret = await data_source.get_stock(stock_code='sh.000001')
+    now = datetime.datetime.now()
+    today = '%d年%d月%d日' % (now.year, now.month, now.day)
+    msg = await data_source.get_stock(stock_code='sh.000001')
+    ret = '今天是' + today + '\n' + msg
     await _scheduler_controller(ret)
 
 
