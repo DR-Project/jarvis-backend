@@ -83,7 +83,7 @@ async def _cryptocoin(bot: Bot, event: MessageEvent):
             ret = data_source.coin_get_price(coin_type)
             await bot.send(event, ret, at_sender=False)
             if _ != loop_times - 1:
-                await asyncio.sleep(5)
+                await asyncio.sleep(30)
 
 
 @mars_news.handle()
