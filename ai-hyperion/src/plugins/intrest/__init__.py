@@ -1,13 +1,15 @@
-from nonebot.adapters.cqhttp.event import Sender
-from .config import Config
+import random
+import re
 
 from nonebot import get_driver, require
-from nonebot.plugin import on_regex, on_keyword
-from nonebot.adapters.cqhttp import Bot, MessageEvent, GroupMessageEvent
-
-import random, re
+from nonebot.adapters import Bot
+from nonebot.adapters import Message
+from nonebot.adapters.cqhttp import MessageEvent, GroupMessageEvent
+from nonebot.adapters.cqhttp.event import Sender
+from nonebot.plugin import on_regex
 
 from . import data_source
+from .config import Config
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -24,6 +26,7 @@ REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人)$'
+todo = '暂定'  # todo
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -37,6 +40,7 @@ plus1s = on_regex(REG_PLUS1S)
 diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
+ten_times_diu = on_regex(todo)  # todo
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -57,11 +61,50 @@ async def _diu_all(bot: Bot, event: GroupMessageEvent):
                 'qq': 'all'
             }
         }]
-        bot_status:Sender = await bot.get_group_member_info(group_id = event.group_id, user_id=***)
+        bot_status: Sender = await bot.get_group_member_info(group_id=event.group_id, user_id=***)
         if bot_status['role'] != 'member':
             await bot.send(event, msg, at_sender=False)
             return
     await bot.send(event, '权限不足', at_sender=False)
+
+
+@ten_times_diu.handle()
+async def _diu_ten(bot: Bot, event: GroupMessageEvent):
+    group_member_list = await bot.get_group_member_list(group_id=event.group_id)
+    owner_id = [x.get('user_id') for x in group_member_list if x.get('role') == 'owner']
+    rest_members = random.sample(group_member_list, 9)
+    diu = []
+    for member in rest_members:
+        diu.append({
+            'type': 'at',
+            'data': {
+                'qq': member.get('user_id')
+            }
+        })
+
+    prefix = {
+        'type': 'text',
+        'data': {
+            'text': '你抽的十连结果是: \n'
+        }
+    }
+
+    suffix = [{
+        'type': 'text',
+        'data': {
+            'text': '\n\n**其中你抽到的SSR的是: '
+        }
+    }, {
+        'type': 'at',
+        'data': {
+            'qq': owner_id[0]
+        }
+    }]
+
+    diu.insert(0, prefix)
+    ret = diu + suffix
+
+    await bot.send(event, ret, at_sender=False)
 
 
 @diuren.handle()
@@ -131,6 +174,7 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     }]
     await bot.send(event, at_mem, at_sender=False)
 
+
 '''
 @***_index.handle()
 async def ***_index(bot: Bot, event: GroupMessageEvent):
@@ -160,6 +204,7 @@ async def ***_index(bot: Bot, event: GroupMessageEvent):
     else:
         pass
 '''
+
 
 @diuren_pot.handle()
 async def diuren_pot(bot: Bot, event: MessageEvent):
