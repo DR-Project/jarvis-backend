@@ -71,7 +71,7 @@ async def _diu_all(bot: Bot, event: GroupMessageEvent):
 
 @driver.on_bot_connect
 async def _roll_ssr(bot: Bot):
-    groups = [***]
+    groups = [***, ***]
     for group in groups:
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
