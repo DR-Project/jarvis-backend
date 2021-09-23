@@ -1,19 +1,20 @@
 import random
 import re
 
+import nonebot
 from nonebot import get_driver, require
-from nonebot.adapters import Bot
-from nonebot.adapters import Message
-from nonebot.adapters.cqhttp import MessageEvent, GroupMessageEvent
+from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot, MessageSegment
 from nonebot.adapters.cqhttp.event import Sender
 from nonebot.plugin import on_regex
 
 from . import data_source
 from .config import Config
+from .data import SSR_DICT
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
 scheduler = require('nonebot_plugin_apscheduler').scheduler
+driver = nonebot.get_driver()
 
 # Constant List
 
@@ -68,43 +69,137 @@ async def _diu_all(bot: Bot, event: GroupMessageEvent):
     await bot.send(event, '权限不足', at_sender=False)
 
 
+@driver.on_bot_connect
+async def _roll_ssr(bot: Bot):
+    groups = [***]
+    for group in groups:
+        bot: Bot = nonebot.get_bot(str(BOT_QNUM))
+        members = await bot.get_group_member_list(group_id=group)
+        ssr_id = random.choice(members).get('user_id')
+
+        # generating SSR
+        SSR_DICT[group] = ssr_id
+
+        message = Message([
+            {
+                'type': 'text',
+                'data': {
+                    'text': '本群的SSR已更新，新的SSR是： '
+                }
+            },
+            {
+                'type': 'at',
+                'data': {
+                    'qq': ssr_id
+                }
+            }
+        ])
+        await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
+
+
+@scheduler.scheduled_job('cron', id='roll_ssr', hour=0)
+async def update_ssr():
+    if not SSR_DICT:
+        return
+
+    bot: Bot = nonebot.get_bot(str(BOT_QNUM))
+    for group in SSR_DICT.keys():
+        members = await bot.get_group_member_list(group_id=group)
+        ssr_id = random.choice(members).get('user_id')
+
+        # update SSR
+        SSR_DICT[group] = ssr_id
+
+        message = Message([
+            {
+                'type': 'text',
+                'data': {
+                    'text': '本群今天的SSR是：'
+                }
+            }, {
+                'type': 'at',
+                'data': {
+                    'qq': ssr_id
+                }
+            }
+        ])
+        await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
+
+
 @ten_times_diu.handle()
 async def _diu_ten(bot: Bot, event: GroupMessageEvent):
-    group_member_list = await bot.get_group_member_list(group_id=event.group_id)
-    owner_id = [x.get('user_id') for x in group_member_list if x.get('role') == 'owner']
-    rest_members = random.sample(group_member_list, 9)
+    weights_all_normal_member = 99.995
+    group_id = event.group_id
+    group_member_list = await bot.get_group_member_list(group_id=group_id)
+    ssr_id = SSR_DICT.get(group_id)
+    member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
+
+    counts_member_without_ssr = len(member_ids)
+    weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
+    weights = [weights_each_normal_member for _ in range(len(member_ids))]
+
+    member_ids.append(ssr_id)
+    weights.append(0.0005)
+    rest_members = random.choices(member_ids, weights=weights, k=10)
+
     diu = []
     for member in rest_members:
         diu.append({
-            'type': 'at',
+            'type': 'text',
             'data': {
-                'qq': member.get('user_id')
+                'text': '@%s' % ([x.get('card') for x in group_member_list if x.get('user_id') == member][0])
             }
         })
 
     prefix = {
         'type': 'text',
         'data': {
-            'text': '你抽的十连结果是: \n'
+            'text': '你抽的十连结果是: \n\n'
         }
     }
-
-    suffix = [{
-        'type': 'text',
-        'data': {
-            'text': '\n\n**其中你抽到的SSR的是: '
-        }
-    }, {
-        'type': 'at',
-        'data': {
-            'qq': owner_id[0]
-        }
-    }]
-
     diu.insert(0, prefix)
-    ret = diu + suffix
+    message = Message(diu)
 
-    await bot.send(event, ret, at_sender=False)
+    # judge
+    if ssr_id in rest_members:
+
+        suffix = Message([
+            {
+                'type': 'text',
+                'data': {
+                    'text': '\n\n**其中你抽到的SSR的是: '
+                }
+            }, {
+                'type': 'at',
+                'data': {
+                    'qq': ssr_id
+                }
+            }])
+
+        reply = Message({
+            'type': 'reply',
+            'date': {
+                'id': event.message_id
+            }
+        })
+        ret = reply + diu + suffix
+        await bot.send(event, ret, at_sender=False)
+
+        if ssr_id == event.user_id:
+            extra = Message([
+                {
+                    'type': 'reply',
+                    'data': {
+                        'id': event.message_id
+                    }
+                }, {
+                    'type': 'text',
+                    'data': {
+                        'text': '没想到吧！！！SSR竟然是你自己'
+                    }
+                }])
+            message = Message(extra)
+            await bot.send(event, message, at_sender=True)
 
 
 @diuren.handle()
