@@ -3,6 +3,7 @@ import re
 
 import nonebot
 from nonebot import get_driver, require
+from nonebot.log import logger
 from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot, MessageSegment
 from nonebot.adapters.cqhttp.event import Sender
 from nonebot.plugin import on_regex
@@ -93,6 +94,7 @@ async def _roll_ssr(bot: Bot):
                 }
             }
         ])
+        logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
 
@@ -122,6 +124,7 @@ async def update_ssr():
                 }
             }
         ])
+        logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
 
@@ -129,6 +132,7 @@ async def update_ssr():
 async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     weights_all_normal_member = 99.995
     group_id = event.group_id
+    logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100-weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
     ssr_id = SSR_DICT.get(group_id)
     member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
@@ -137,6 +141,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
 
     if not counts_member_without_ssr >= 10:
         await bot.send(event, '该群人数不足', at_sender=True)
+        logger.debug('群成员不足，正在退出该方法...')
         return
 
     weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
@@ -145,6 +150,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     member_ids.append(ssr_id)
     weights.append(0.0005)
     rest_members = random.choices(member_ids, weights=weights, k=10)
+    logger.info('群[group_id=%s]的[qq=%d]正在抽取十连，结果已经产生 %s' % (group_id, event.user_id, str(rest_members)))
 
     diu = []
     for member in rest_members:
@@ -166,6 +172,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     # judge
     if ssr_id in rest_members:
 
+        logger.info('群[group_id=%s]的[qq=%d]已成功抽取到 SSR[qq=%d]' % (group_id, event.user_id, ssr_id))
         suffix = Message([
             {
                 'type': 'text',
