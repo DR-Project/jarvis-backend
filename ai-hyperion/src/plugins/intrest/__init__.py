@@ -73,7 +73,6 @@ async def _diu_all(bot: Bot, event: GroupMessageEvent):
 async def _roll_ssr(bot: Bot):
     groups = [***]
     for group in groups:
-        bot: Bot = nonebot.get_bot(str(BOT_QNUM))
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
 
