@@ -158,7 +158,6 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
         }
     }
     diu.insert(0, prefix)
-    message = Message(diu)
 
     # judge
     if ssr_id in rest_members:
