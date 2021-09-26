@@ -4,8 +4,7 @@ import re
 import nonebot
 from nonebot import get_driver, require
 from nonebot.log import logger
-from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot, MessageSegment
-from nonebot.adapters.cqhttp.event import Sender
+from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot
 from nonebot.plugin import on_regex
 
 from . import data_source
