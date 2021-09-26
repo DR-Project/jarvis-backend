@@ -280,6 +280,75 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     await bot.send(event, at_mem, at_sender=False)
 
 
+@single_diu.handle()
+async def _single_diu(bot: Bot, event: GroupMessageEvent):
+    weights_all_normal_member = 99.995
+    group_id = event.group_id
+    logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
+    group_member_list = await bot.get_group_member_list(group_id=group_id)
+    ssr_id = SSR_DICT.get(group_id)
+    member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
+
+    counts_member_without_ssr = len(member_ids)
+    weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
+    weights = [weights_each_normal_member for _ in range(len(member_ids))]
+
+    member_ids.append(ssr_id)
+    weights.append(100 - weights_all_normal_member)
+    rest_members = random.choices(member_ids, weights=weights)[0]
+    logger.info('群[group_id=%s]的[qq=%d]正在单抽，结果已经产生 %s' % (group_id, event.user_id, rest_members))
+
+    ssr_message = Message({
+        'type': 'text',
+        'data': {
+            'text': '@%s' % ([x.get('card') for x in group_member_list if x.get('user_id') == rest_members][0])
+        }
+    })
+
+    prefix = Message({
+        'type': 'text',
+        'data': {
+            'text': '你抽的单抽结果是: '
+        }
+    })
+
+    result = Message({
+        'type': 'text',
+        'data': {
+            'text': '\n\n你没有抽到SSR哦'
+        }
+    })
+
+    if ssr_id == rest_members:
+        result = Message({
+            'type': 'text',
+            'data': {
+                'text': '\n\n你成功抽到SSR了！'
+            }
+        })
+
+    reply = Message({
+        'type': 'reply',
+        'data': {
+            'id': event.message_id
+        }
+    })
+
+    message = reply + prefix + ssr_message + result
+    await bot.send(event, message, at_sender=True)
+
+    if ssr_id == event.user_id:
+        extra = Message({
+            'type': 'text',
+            'data': {
+                'text': '没想到吧 SSR 竟然是你自己'
+            }
+        })
+
+        ret = reply + extra
+        await bot.send(event, ret, at_sender=True)
+
+
 '''
 @***_index.handle()
 async def ***_index(bot: Bot, event: GroupMessageEvent):
