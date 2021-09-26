@@ -29,8 +29,8 @@ REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人)$'
-todo = '十连丢人 | 十连单抽 | 十连 | 十连抽'  # todo
-todo2 = '单抽'  # todo
+REG_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
+REG_TEN_GACHA = '^(单抽)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -44,8 +44,8 @@ plus1s = on_regex(REG_PLUS1S)
 diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
-ten_times_diu = on_regex(todo, block=True)  # todo
-single_diu = on_regex(todo2)  # todo
+ten_times_diu = on_regex(REG_TEN_GACHA)
+single_diu = on_regex(REG_GACHA)  # todo
 
 ''' >>>>>> Just for fun <<<<<< '''
 
