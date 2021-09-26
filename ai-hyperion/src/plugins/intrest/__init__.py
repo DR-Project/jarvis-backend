@@ -144,7 +144,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
         diu.append({
             'type': 'text',
             'data': {
-                'text': '\n@%s' % ([x.get('card') if x.get('card') else x.get('user_id') for x in group_member_list if
+                'text': '\n@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
                                     x.get('user_id') == member][0])
             }
         })
@@ -297,7 +297,7 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     ssr_message = Message({
         'type': 'text',
         'data': {
-            'text': '@%s' % ([x.get('card') if x.get('card') else x.get('user_id') for x in group_member_list if
+            'text': '@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
                               x.get('user_id') == rest_members][0])
         }
     })
