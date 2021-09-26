@@ -150,7 +150,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
         diu.append({
             'type': 'text',
             'data': {
-                'text': '\n@%s' % ([x.get('card') if x.get('card') else x.get('user_id') for x in group_member_list if
+                'text': '\n@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
                                     x.get('user_id') == member][0])
             }
         })
@@ -165,8 +165,8 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     diu_message = Message(diu)
 
     # judge
+    # 抽到SSR
     if ssr_id in rest_members:
-
         logger.info('群[group_id=%s]的[qq=%d]已成功抽取到 SSR[qq=%d]' % (group_id, event.user_id, ssr_id))
         suffix = Message([
             {
@@ -190,10 +190,8 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
         ret = reply + diu_message + suffix
         await bot.send(event, ret, at_sender=False)
         logger.info('消息已发送 %s' % str(ret))
-    else:
-        await bot.send(event, diu_message, at_sender=False)
-        logger.info('消息已发送 %s' % str(diu_message))
 
+        # 抽到SSR并且SSR是自己
         if ssr_id == event.user_id:
             extra = Message([
                 {
@@ -210,6 +208,10 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
             message = Message(extra)
             await bot.send(event, message, at_sender=True)
             logger.info('消息已发送 %s' % str(message))
+    # 没抽到SSR
+    else:
+        await bot.send(event, diu_message, at_sender=False)
+        logger.info('消息已发送 %s' % str(diu_message))
 
 
 @diuren.handle()
@@ -301,7 +303,7 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     ssr_message = Message({
         'type': 'text',
         'data': {
-            'text': '@%s' % ([x.get('card') if x.get('card') else x.get('user_id') for x in group_member_list if
+            'text': '@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
                               x.get('user_id') == rest_members][0])
         }
     })
@@ -338,7 +340,7 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     message = reply + prefix + ssr_message + result
     await bot.send(event, message, at_sender=True)
 
-    if ssr_id == event.user_id:
+    if ssr_id == event.user_id and ssr_id == rest_members:
         extra = Message({
             'type': 'text',
             'data': {
