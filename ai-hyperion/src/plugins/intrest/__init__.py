@@ -43,6 +43,7 @@ diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(todo)  # todo
+single_diu = on_regex(todo2)  # todo
 
 ''' >>>>>> Just for fun <<<<<< '''
 
