@@ -29,7 +29,7 @@ REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人)$'
-todo = '十连丢人 | 十连单抽'  # todo
+todo = '十连丢人 | 十连单抽 | 十连 | 十连抽'  # todo
 todo2 = '单抽'  # todo
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
@@ -119,7 +119,7 @@ async def update_ssr():
 async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     weights_all_normal_member = 99.995
     group_id = event.group_id
-    logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100-weights_all_normal_member) + '%')
+    logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
     ssr_id = SSR_DICT.get(group_id)
     member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
@@ -144,14 +144,15 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
         diu.append({
             'type': 'text',
             'data': {
-                'text': '@%s' % ([x.get('card') for x in group_member_list if x.get('user_id') == member][0])
+                'text': '\n@%s' % ([x.get('card') if x.get('card') else x.get('user_id') for x in group_member_list if
+                                    x.get('user_id') == member][0])
             }
         })
 
     prefix = {
         'type': 'text',
         'data': {
-            'text': '你抽的十连结果是: \n\n'
+            'text': '你抽的十连结果是: \n'
         }
     }
     diu.insert(0, prefix)
@@ -294,7 +295,8 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     ssr_message = Message({
         'type': 'text',
         'data': {
-            'text': '@%s' % ([x.get('card') for x in group_member_list if x.get('user_id') == rest_members][0])
+            'text': '@%s' % ([x.get('card') if x.get('card') else x.get('user_id') for x in group_member_list if
+                              x.get('user_id') == rest_members][0])
         }
     })
 
