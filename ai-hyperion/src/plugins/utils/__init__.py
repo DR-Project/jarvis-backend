@@ -1,3 +1,5 @@
+import datetime
+
 import nonebot
 import asyncio
 import re
@@ -8,6 +10,7 @@ from nonebot.plugin import on_regex, on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent
 
 from . import data_source
+from .interface.chinese_holiday import is_public_holiday, Holiday
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -18,8 +21,8 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 REG_TRAFFIC = '^(查流量|魔法|Magic|CXLL)$'
 REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
-            'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
-            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)\**([0-9]*)*$'
+           'BCH|BSV|DOT|ATOM|UNI|ZEC|SUSHI|DASH|OKB|OKT|' + \
+           'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)\**([0-9]*)*$'
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.*(天气)$'
@@ -162,7 +165,20 @@ async def cron_daily_covid():
 
 
 async def cron_daily_stock():
-    ret = await data_source.get_stock(stock_code='sh.000001')
+    holiday = is_public_holiday()
+    if isinstance(holiday, Holiday):
+        await _scheduler_controller('今天是 %s，A股休市' % holiday.name)
+        return
+
+    if holiday in (6, 7):
+        today = '星期六' if holiday == 6 else '星期天'
+        await _scheduler_controller('今天是 %s，A股休市' % today)
+        return
+
+    now = datetime.datetime.now()
+    today = '%d年%d月%d日' % (now.year, now.month, now.day)
+    msg = await data_source.get_stock(stock_code='sh.000001')
+    ret = '今天是' + today + '\n' + msg
     await _scheduler_controller(ret)
 
 
