@@ -85,7 +85,7 @@ async def _roll_ssr(bot: Bot):
         message = Message({
             'type': 'text',
             'data': {
-                'text': 'SSR小游戏已上线，可以发「十连丢人」或者「单抽」 {{debug: @%s}}' % ssr_id
+                'text': 'SSR小游戏已上线，可以发「十连丢人」或者「单抽」'
             }
         })
         logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
