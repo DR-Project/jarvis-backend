@@ -4,8 +4,7 @@ import re
 import nonebot
 from nonebot import get_driver, require
 from nonebot.log import logger
-from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot, MessageSegment
-from nonebot.adapters.cqhttp.event import Sender
+from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot
 from nonebot.plugin import on_regex
 
 from . import data_source
@@ -52,7 +51,7 @@ single_diu = on_regex(REG_GACHA)  # todo
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: MessageEvent):
-    if (data_source.to_be_or_not_be(30)):
+    if data_source.to_be_or_not_be(30):
         text = '确实'
         await bot.send(event, text, at_sender=False)
 
@@ -60,13 +59,13 @@ async def _queshi(bot: Bot, event: MessageEvent):
 @diu_all.handle()
 async def _diu_all(bot: Bot, event: GroupMessageEvent):
     if event.sender.role != 'member':
-        msg = [{
+        msg = Message({
             'type': 'at',
             'data': {
                 'qq': 'all'
             }
-        }]
-        bot_status: Sender = await bot.get_group_member_info(group_id=event.group_id, user_id=***)
+        })
+        bot_status = await bot.get_group_member_info(group_id=event.group_id, user_id=***)
         if bot_status['role'] != 'member':
             await bot.send(event, msg, at_sender=False)
             return
@@ -245,7 +244,7 @@ async def _diuren(bot: Bot, event: MessageEvent):
         }]
     else:
         num = data_source.mem_dicts[msg[1:]]
-        at_mem = [{
+        at_mem = Message([{
             'type': 'at',
             'data': {
                 'qq': num
@@ -255,20 +254,20 @@ async def _diuren(bot: Bot, event: MessageEvent):
             'data': {
                 'text': ' 丢人 '
             }
-        }]
+        }])
     await bot.send(event, at_mem, at_sender=False)
 
 
 @random_diuren.handle()
 async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
-    mem_list = await bot.get_group_member_list(group_id=gid, self_id=BOT_QNUM)
+    mem_list = await bot.get_group_member_list(group_id=gid)
     lists = []
     for i in mem_list:
         lists.append(i['user_id'])
     lists.remove(BOT_QNUM)
     luck_dog = random.sample(lists, 1)[0]
-    at_mem = [{
+    at_mem = Message([{
         'type': 'at',
         'data': {
             'qq': luck_dog
@@ -278,7 +277,7 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
         'data': {
             'text': ' 丢人 '
         }
-    }]
+    }])
     await bot.send(event, at_mem, at_sender=False)
 
 
@@ -385,7 +384,7 @@ async def ***_index(bot: Bot, event: GroupMessageEvent):
 
 @diuren_pot.handle()
 async def diuren_pot(bot: Bot, event: MessageEvent):
-    at_mem = [{
+    at_mem = Message([{
         'type': 'at',
         'data': {
             'qq': ***
@@ -395,14 +394,14 @@ async def diuren_pot(bot: Bot, event: MessageEvent):
         'data': {
             'text': ' 出来挨打 '
         }
-    }]
+    }])
     await bot.send(event, at_mem, at_sender=False)
 
 
 @mc_diu.handle()
 async def mc_diu(bot: Bot, event: MessageEvent):
     if event.get_user_id() == str(data_source.mem_dicts['***']):
-        msg = [{
+        msg = Message([{
             'type': 'text',
             'data': {
                 'text': '出来恰金拱门！🍟\n'
@@ -422,10 +421,10 @@ async def mc_diu(bot: Bot, event: MessageEvent):
             'data': {
                 'qq': data_source.mem_dicts['***']
             }
-        }]
+        }])
         await bot.send(event, msg, at_sender=False)
     else:
-        ret = [{
+        ret = Message([{
             'type': 'text',
             'data': {
                 'text': '不许丢！🍟🍟🍟 \n'
@@ -435,7 +434,7 @@ async def mc_diu(bot: Bot, event: MessageEvent):
             'data': {
                 'qq': event.get_user_id()
             }
-        }]
+        }])
         await bot.send(event, ret, at_sender=False)
 
 
