@@ -20,6 +20,7 @@ driver = nonebot.get_driver()
 # Constant List
 
 BOT_QNUM = ***
+GROUPS = [***, ***]
 REG_QUESHI = '(确实|qs|有一说一|yysy)'
 REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
@@ -28,7 +29,8 @@ REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人)$'
-todo = '暂定'  # todo
+todo = '十连丢人 | 十连单抽'  # todo
+todo2 = '单抽'  # todo
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -73,28 +75,19 @@ async def _diu_all(bot: Bot, event: GroupMessageEvent):
 
 @driver.on_bot_connect
 async def _roll_ssr(bot: Bot):
-    groups = [***, ***]
-    for group in groups:
+    for group in GROUPS:
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
 
         # generating SSR
         SSR_DICT[group] = ssr_id
 
-        message = Message([
-            {
-                'type': 'text',
-                'data': {
-                    'text': '本群的SSR已更新，新的SSR是： '
-                }
-            },
-            {
-                'type': 'at',
-                'data': {
-                    'qq': ssr_id
-                }
+        message = Message({
+            'type': 'text',
+            'data': {
+                'text': 'SSR小游戏已上线，可以发「十连丢人」或者「单抽」 {{debug: @%s}}' % ssr_id
             }
-        ])
+        })
         logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
@@ -112,19 +105,12 @@ async def update_ssr():
         # update SSR
         SSR_DICT[group] = ssr_id
 
-        message = Message([
-            {
-                'type': 'text',
-                'data': {
-                    'text': '本群今天的SSR是：'
-                }
-            }, {
-                'type': 'at',
-                'data': {
-                    'qq': ssr_id
-                }
+        message = Message({
+            'type': 'text',
+            'data': {
+                'text': '本群今天的SSR已重置'
             }
-        ])
+        })
         logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
@@ -149,7 +135,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     weights = [weights_each_normal_member for _ in range(len(member_ids))]
 
     member_ids.append(ssr_id)
-    weights.append(0.0005)
+    weights.append(100 - weights_all_normal_member)
     rest_members = random.choices(member_ids, weights=weights, k=10)
     logger.info('群[group_id=%s]的[qq=%d]正在抽取十连，结果已经产生 %s' % (group_id, event.user_id, str(rest_members)))
 
@@ -169,6 +155,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
         }
     }
     diu.insert(0, prefix)
+    diu_message = Message(diu)
 
     # judge
     if ssr_id in rest_members:
@@ -193,8 +180,12 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
                 'id': event.message_id
             }
         })
-        ret = reply + diu + suffix
+        ret = reply + diu_message + suffix
         await bot.send(event, ret, at_sender=False)
+        logger.info('消息已发送 %s' % str(ret))
+    else:
+        await bot.send(event, diu_message, at_sender=False)
+        logger.info('消息已发送 %s' % str(diu_message))
 
         if ssr_id == event.user_id:
             extra = Message([
@@ -211,6 +202,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
                 }])
             message = Message(extra)
             await bot.send(event, message, at_sender=True)
+            logger.info('消息已发送 %s' % str(message))
 
 
 @diuren.handle()
