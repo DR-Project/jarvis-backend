@@ -29,8 +29,8 @@ REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人)$'
-REG_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
-REG_TEN_GACHA = '^(单抽)$'
+REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
+REG_GACHA = '^(单抽)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
