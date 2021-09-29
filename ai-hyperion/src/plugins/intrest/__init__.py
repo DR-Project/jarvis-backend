@@ -51,7 +51,7 @@ single_diu = on_regex(REG_GACHA)  # todo
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: MessageEvent):
-    if data_source.to_be_or_not_be(30):
+    if data_source.to_be_or_not_be(10):
         text = '确实'
         await bot.send(event, text, at_sender=False)
 
