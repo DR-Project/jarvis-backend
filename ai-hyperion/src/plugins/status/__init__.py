@@ -57,6 +57,7 @@ def send_status(user_id: str) -> list:
             data.append(f"Uptime: {uptime()}")
 
         return data
+    return ['Permission Denied. Please contact administrator. ']
 
 
 @group_poke.handle()
