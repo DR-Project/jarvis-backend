@@ -1,4 +1,5 @@
 import datetime
+import random
 
 import nonebot
 import asyncio
@@ -208,10 +209,11 @@ async def _scheduler_controller(message: str):
     bot = nonebot.get_bots()['***']
     for group_id in groups:
         await bot.send_group_msg(group_id=group_id, message=message, auto_escape=True)
+        await asyncio.sleep(random.choice([i for i in range(30, 60)]))
 
 
-scheduler.add_job(cron_daily_news, "cron", hour=8, id="news")
-scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=30, id="coins")
-scheduler.add_job(cron_daily_covid, "cron", hour=7, id="covid")
-scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=30, id='weather')
-scheduler.add_job(cron_daily_stock, 'cron', hour=15, minute=15, id='stock')
+scheduler.add_job(cron_daily_news, "cron", hour=8, minute=2, id="news")
+scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=32, id="coins")
+scheduler.add_job(cron_daily_covid, "cron", hour=7, minute=2, id="covid")
+scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=32, id='weather')
+scheduler.add_job(cron_daily_stock, 'cron', hour=15, minute=17, id='stock')
