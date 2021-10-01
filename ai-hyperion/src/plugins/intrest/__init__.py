@@ -46,7 +46,7 @@ diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(REG_TEN_GACHA)
-single_diu = on_regex(REG_GACHA)  # todo
+single_diu = on_regex(REG_GACHA)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
