@@ -1,3 +1,4 @@
+import asyncio
 import random
 import re
 
@@ -20,6 +21,7 @@ driver = nonebot.get_driver()
 
 BOT_QNUM = ***
 GROUPS = [***, ***]
+TEN_GACHA_SWITCH = False
 REG_QUESHI = '(确实|qs|有一说一|yysy|么|吗|呢|？)'
 REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
@@ -44,7 +46,7 @@ diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(REG_TEN_GACHA)
-single_diu = on_regex(REG_GACHA)  # todo
+single_diu = on_regex(REG_GACHA)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -91,7 +93,7 @@ async def _roll_ssr(bot: Bot):
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
 
-@scheduler.scheduled_job('cron', id='roll_ssr', hour=0)
+@scheduler.scheduled_job('cron', id='roll_ssr', hour=0, minute=2)
 async def update_ssr():
     if not SSR_DICT:
         return
@@ -112,10 +114,15 @@ async def update_ssr():
         })
         logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
+        await asyncio.sleep(random.choice([i for i in range(30, 60)]))
 
 
 @ten_times_diu.handle()
 async def _diu_ten(bot: Bot, event: GroupMessageEvent):
+
+    if not TEN_GACHA_SWITCH:
+        await bot.send(event, '以应对风控，十连功能暂时关闭，单抽概率提升')
+        return
     # SSR概率 为 100 - weights_all_normal_member
     weights_all_normal_member = 99.995
     group_id = event.group_id
@@ -283,7 +290,7 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
 
 @single_diu.handle()
 async def _single_diu(bot: Bot, event: GroupMessageEvent):
-    weights_all_normal_member = 99.995
+    weights_all_normal_member = 99.95
     group_id = event.group_id
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
