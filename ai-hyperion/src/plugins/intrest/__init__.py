@@ -22,14 +22,14 @@ driver = nonebot.get_driver()
 BOT_QNUM = ***
 GROUPS = [***, ***]
 TEN_GACHA_SWITCH = False
-REG_QUESHI = '(确实|qs|有一说一|yysy)'
+REG_QUESHI = '(确实|qs|有一说一|yysy|么|吗|呢|？)'
 REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
-REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜).*'
+REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜|江|泽).*'
 REG_***_REPORT = '^(***排行|***ph|kk***)$'
 REG_***_INDEX = '.*'
 REG_POT = '***'
-REG_DIU_ALL = '^(全体丢人)$'
+REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
 REG_GACHA = '^(单抽)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
@@ -53,7 +53,7 @@ single_diu = on_regex(REG_GACHA)
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: MessageEvent):
-    if data_source.to_be_or_not_be(30):
+    if data_source.to_be_or_not_be(10):
         text = '确实'
         await bot.send(event, text, at_sender=False)
 
