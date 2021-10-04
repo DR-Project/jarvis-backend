@@ -4,6 +4,7 @@ import re
 
 import nonebot
 from nonebot import get_driver, require
+from nonebot.config import Env
 from nonebot.log import logger
 from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot
 from nonebot.plugin import on_regex
@@ -76,6 +77,9 @@ async def _diu_all(bot: Bot, event: GroupMessageEvent):
 
 @driver.on_bot_connect
 async def _roll_ssr(bot: Bot):
+    if Env().environment == 'dev':
+        logger.debug('当前配置环境配置为dev。跳过 roll_ssr 功能')
+        return
     for group in GROUPS:
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
