@@ -23,6 +23,7 @@ driver = nonebot.get_driver()
 BOT_QNUM = ***
 GROUPS = [***, ***]
 TEN_GACHA_SWITCH = False
+SSR_ODDS = 1  # percent '1' means 1%
 REG_QUESHI = '(确实|qs|有一说一|yysy|么|吗|呢|？)'
 REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
@@ -128,7 +129,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
         await bot.send(event, '以应对风控，十连功能暂时关闭，单抽概率提升')
         return
     # SSR概率 为 100 - weights_all_normal_member
-    weights_all_normal_member = 99.995
+    weights_all_normal_member = 100 - SSR_ODDS
     group_id = event.group_id
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
@@ -294,7 +295,7 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
 
 @single_diu.handle()
 async def _single_diu(bot: Bot, event: GroupMessageEvent):
-    weights_all_normal_member = 99.95
+    weights_all_normal_member = 100 - SSR_ODDS
     group_id = event.group_id
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
