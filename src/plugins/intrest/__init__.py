@@ -7,7 +7,7 @@ from nonebot import get_driver, require
 from nonebot.config import Env
 from nonebot.log import logger
 from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot
-from nonebot.plugin import on_regex,  on_command
+from nonebot.plugin import on_regex, on_command
 
 from . import data_source
 from .config import Config
