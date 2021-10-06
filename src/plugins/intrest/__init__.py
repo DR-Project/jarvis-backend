@@ -106,6 +106,28 @@ async def update_ssr():
 
     bot: Bot = nonebot.get_bot(str(BOT_QNUM))
     for group in SSR_DICT.keys():
+
+        # 如果一整天都没有人使用过抽奖功能，则不发送此统计
+        if SSR_STATISTICS:
+
+            group_data: dict = SSR_STATISTICS.get(group)
+            logger.debug(group_data)
+
+            ret = ['当前群的抽奖统计：']
+            order = 1
+
+            sorted_group_data = sorted(group_data.items(), key=lambda x: x[1]['total'])
+            for user_data in sorted_group_data:
+                total, lucky = user_data[1].get('total'), user_data[1].get('lucky')
+                probability = lucky / total * 100 if lucky else 0
+                user_info = await bot.get_group_member_info(group_id=group, user_id=user_data[0])
+                ret.append('\n%d. @%s 抽奖%d次, 抽中%d次, 实际概率%s%%' % (order, user_info.get('nickname'), total, lucky,
+                                                                 '{:.2f}'.format(probability)))
+
+            message = Message('\n'.join(ret))
+            await ssr_statistics.send(message)
+            SSR_STATISTICS.clear()
+
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
 
