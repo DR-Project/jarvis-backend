@@ -63,6 +63,7 @@ def send_status(user_id: str) -> list:
 @group_poke.handle()
 async def _group_poke(bot: Bot, event: PokeNotifyEvent, state: T_State) -> bool:
     lsp = event.get_user_id()
-    if isinstance(event, PokeNotifyEvent):
+    print(event.is_tome)
+    if isinstance(event, PokeNotifyEvent) and event.is_tome():
         data = send_status(lsp)
         await bot.send(event, '\n'.join(data), at_sender=False)
