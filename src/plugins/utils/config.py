@@ -2,7 +2,7 @@ from pydantic import BaseSettings
 
 
 class Config(BaseSettings):
-    # Your Config Here
+    caiyun_apikey = '***'
 
     class Config:
         extra = "ignore"
