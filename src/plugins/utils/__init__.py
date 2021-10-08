@@ -1,4 +1,5 @@
 import datetime
+import json
 import random
 
 import nonebot
@@ -9,9 +10,9 @@ from nonebot.rule import Rule
 from nonebot.typing import T_State
 
 from .config import Config
-from nonebot import get_driver, require
-from nonebot.plugin import on_regex, on_command
-from nonebot.adapters.cqhttp import Bot, MessageEvent
+from nonebot import get_driver, require, logger
+from nonebot.plugin import on_regex, on_command, on_message
+from nonebot.adapters.cqhttp import Bot, MessageEvent, Event
 
 from . import data_source
 from .interface.chinese_holiday import is_public_holiday, Holiday
@@ -135,6 +136,23 @@ async def _weather(bot: Bot, event: MessageEvent):
 @ass_ddl.handle()
 async def _ass_ddl(bot: Bot, event: MessageEvent):
     await bot.send(event, '此功能已下线', at_sender=False)
+
+
+@xxx.handle()
+async def _xxx(bot: Bot, event: MessageEvent):
+    reply = event.reply
+    if not reply:
+        logger.info('reply is empty')
+        return
+
+    json_message = reply.message[1].get('data').get('data')
+    location = json.loads(json_message).get('meta').get('Location.Search')
+    logger.debug(location)
+
+    lat, log = location.get('lat'), location.get('lng')
+
+    await xxx.send('(%s, %s)' % (lat, log))
+    await xxx.send('你的天气是：2000摄氏度')
 
 
 @covid_vacc.handle()
