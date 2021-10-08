@@ -1,5 +1,11 @@
 import csv
 import httpx
+from nonebot import get_driver
+
+from src.plugins.utils.config import Config
+
+global_config = get_driver().config
+config = Config(**global_config.dict())
 
 
 class NoDefineException(Exception):
@@ -20,7 +26,8 @@ class Location:
 def _get_weather(location: Location, hourly_steps=24) -> dict:
     lat, lng = location.get_coordinate()
 
-    url = 'https://api.caiyunapp.com/v2.5/%s/%s,%s/hourly.json?hourlysteps=%s' % (caiyun_apikey, lng, lat, hourly_steps)
+    url = 'https://api.caiyunapp.com/v2.5/%s/%s,%s/hourly.json?hourlysteps=%s' % (config.caiyun_apikey, lng, lat,
+                                                                                  hourly_steps)
 
     res = httpx.get(url)
 
