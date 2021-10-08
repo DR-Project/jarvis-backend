@@ -128,6 +128,7 @@ async def _mars_news(bot: Bot, event: MessageEvent):
 
 @weather.handle()
 async def _weather(bot: Bot, event: MessageEvent):
+    # todo: change into new version
     target = event.get_plaintext()
     ret = data_source.weather_get(target)
     await bot.send(event, ret, at_sender=False)
@@ -237,7 +238,7 @@ async def corn_daily_weather():
 
     for city in gugu_door_cities:
         target = city + '天气'
-        ret = data_source.weather_get(target)
+        ret = data_source.weather_get(target)  # todo
         await bot.send_group_msg(group_id=***, message=ret, auto_escape=True)
         if gugu_door_cities.index(city) != len(gugu_door_cities) - 1:
             await asyncio.sleep(30)
