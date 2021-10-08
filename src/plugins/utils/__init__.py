@@ -5,6 +5,9 @@ import nonebot
 import asyncio
 import re
 
+from nonebot.rule import Rule
+from nonebot.typing import T_State
+
 from .config import Config
 from nonebot import get_driver, require
 from nonebot.plugin import on_regex, on_command
@@ -43,6 +46,31 @@ ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
 covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
 stock = on_command(STOCK)
+
+
+# rule checker
+def weather_condition_checker():
+    async def _checker(bot: Bot, event: Event, state: T_State) -> bool:
+        """
+        自定义规则检查器
+        1. 是一个 回复 消息
+        2. 原消息是一个小程序
+        3. 小程序是一个地图 且该地图是 腾讯地图
+        4. 消息的正文中出现 天气 两个字
+        """
+        if hasattr(event, 'reply') and event.is_tome():
+            # 在这个位置写入你的判断代码
+            if '天气' in event.get_plaintext():
+                _ = [x for x in event.reply.message if x.type == 'json'][0]
+                message = _.get('data').get('data')
+                data = json.loads(message)
+                if data.get('app') == 'com.tencent.map':
+                    return True
+    return Rule(_checker)
+# rule checker
+
+
+xxx = on_message(rule=weather_condition_checker())   # todo: fix var name
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
