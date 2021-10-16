@@ -29,7 +29,6 @@ REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
 REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜|江|泽).*'
 REG_***_REPORT = '^(***排行|***ph|kk***)$'
-REG_***_INDEX = '.*'
 REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
@@ -42,7 +41,6 @@ queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
 diuren = on_regex(REG_DIUREN, re.IGNORECASE)
 plus1s = on_regex(REG_PLUS1S)
-***_index = on_regex(REG_***_INDEX)
 ***_report = on_regex(REG_***_REPORT, re.IGNORECASE)
 diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
@@ -363,37 +361,6 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
         await bot.send(event, ret, at_sender=True)
 
 
-'''
-@***_index.handle()
-async def ***_index(bot: Bot, event: GroupMessageEvent):
-    ret = str(event.get_message())
-    ***_man = event.get_user_id()
-    if ret.find('7f7177d2d24a93f532bac50ccfd02f70') != -1:
-        ***_mans = await bot.get_group_member_info(group_id=event.group_id, user_id=***_man)
-        ***_man_nick = ***_mans['card']
-        await data_source.set_***_to_dict(***_man, ***_man_nick)
-        msg = [{
-            'type': 'reply',
-            'data': {
-                'id': event.message_id
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': '你的***-1 '
-            }
-        }, {
-            'type': 'at',
-            'data': {
-                'qq': ***_man
-            }
-        }]
-        await bot.send(event, msg, at_sender=True)
-    else:
-        pass
-'''
-
-
 @diuren_pot.handle()
 async def diuren_pot(bot: Bot, event: MessageEvent):
     at_mem = Message([{
@@ -460,10 +427,3 @@ async def ***_report(bot: Bot, event: MessageEvent):
 async def plus1s(bot: Bot, event: MessageEvent):
     msg = '+1s'
     await bot.send(event, msg, at_sender=False)
-
-
-async def ***_clear():
-    data_source.mem_***s = {}
-
-
-scheduler.add_job(***_clear, "cron", hour=0, id="***s")
