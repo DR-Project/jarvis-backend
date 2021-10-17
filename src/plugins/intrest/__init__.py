@@ -34,7 +34,7 @@ REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
 REG_GACHA = '^(单抽)$'
-REG_GACHA_STATISTICS = '抽奖统计'  # todo
+REG_GACHA_STATISTICS = '^(gachadata|抽奖统计)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -50,7 +50,7 @@ mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(REG_TEN_GACHA)
 single_diu = on_regex(REG_GACHA)
-ssr_statistics = on_regex(REG_GACHA_STATISTICS)  # todo: fix reg
+ssr_statistics = on_regex(REG_GACHA_STATISTICS, re.IGNORECASE)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -122,7 +122,7 @@ async def update_ssr():
                 total, lucky = user_data[1].get('total'), user_data[1].get('lucky')
                 probability = lucky / total * 100 if lucky else 0
                 user_info = await bot.get_group_member_info(group_id=group, user_id=user_data[0])
-                ret.append('\n%d. @%s 抽奖%d次, 抽中%d次, 实际概率%s%%' % (order, user_info.get('nickname'), total, lucky,
+                ret.append('\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
                                                                  '{:.2f}'.format(probability)))
 
             message = Message('\n'.join(ret))
@@ -157,7 +157,7 @@ async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
         await ssr_statistics.send('自机器人上线以来，还没有人进行过抽奖。')
         return
 
-    ret = ['当前群的抽奖统计：']
+    ret = ['当前群组的抽奖统计：']
     order = 1
 
     sorted_group_data = sorted(group_data.items(), key=lambda x: x[1]['total'])
@@ -165,8 +165,8 @@ async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
         total, lucky = user_data[1].get('total'), user_data[1].get('lucky')
         probability = lucky / total * 100 if lucky else 0
         user_info = await bot.get_group_member_info(group_id=group_id, user_id=user_data[0])
-        ret.append('\n%d. @%s 抽奖%d次, 抽中%d次, 实际概率%s%%' % (order, user_info.get('nickname'), total, lucky,
-                                                         '{:.2f}'.format(probability)))
+        ret.append('\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
+                                                                 '{:.2f}'.format(probability)))
     ret_message = '\n'.join(ret)
     logger.debug(ret_message)
     message = Message(ret_message)
