@@ -34,7 +34,7 @@ REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
 REG_GACHA = '^(单抽)$'
-REG_SSR_LOOKUP = 'ShowSSR'  # todo： fix reg
+REG_SSR_LOOKUP = '^(showssr|查看SSR)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -50,7 +50,7 @@ mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(REG_TEN_GACHA)
 single_diu = on_regex(REG_GACHA)
-lookup_ssr = on_command(REG_SSR_LOOKUP)  # todo: double check
+lookup_ssr = on_regex(REG_SSR_LOOKUP, re.IGNORECASE)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -93,10 +93,10 @@ async def _roll_ssr(bot: Bot):
         message = Message({
             'type': 'text',
             'data': {
-                'text': 'SSR小游戏已上线，可以发「单抽」进行抽奖 或者「%s」查看当前群的SSR是谁' % REG_SSR_LOOKUP
+                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % REG_SSR_LOOKUP
             }
         })
-        logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
+        logger.info('群[group_id=%d]的 SSR 已经更新，新的 SSR 是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
 
