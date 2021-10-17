@@ -7,7 +7,7 @@ from nonebot import get_driver, require
 from nonebot.config import Env
 from nonebot.log import logger
 from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot
-from nonebot.plugin import on_regex
+from nonebot.plugin import on_regex, on_command
 
 from . import data_source
 from .config import Config
@@ -33,6 +33,7 @@ REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
 REG_GACHA = '^(单抽)$'
+REG_SSR_LOOKUP = '^(showssr|查看SSR)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -47,6 +48,7 @@ mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(REG_TEN_GACHA)
 single_diu = on_regex(REG_GACHA)
+lookup_ssr = on_regex(REG_SSR_LOOKUP, re.IGNORECASE)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -89,11 +91,25 @@ async def _roll_ssr(bot: Bot):
         message = Message({
             'type': 'text',
             'data': {
-                'text': 'SSR小游戏已上线，可以发「十连丢人」或者「单抽」'
+                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % REG_SSR_LOOKUP
             }
         })
-        logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
+        logger.info('群[group_id=%d]的 SSR 已经更新，新的 SSR 是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
+
+
+@lookup_ssr.handle()
+async def _lookup_ssr(bot: Bot, event: GroupMessageEvent):
+    if Env().environment == 'dev':
+        logger.debug('当前配置环境配置为dev。跳过 lookup_ssr 功能')
+        await lookup_ssr.send(Message('目前机器人所处于开发环境，不支持此功能'))
+        return
+    group_id = event.group_id
+    ssr_id = SSR_DICT[group_id]
+    ssr_info = await bot.get_group_member_info(group_id=group_id, user_id=ssr_id)
+
+    message = Message('当前群的SSR是 @%s' % (ssr_info.get('card') if ssr_info.get('card') else ssr_info.get('nickname')))
+    await lookup_ssr.finish(message)
 
 
 @scheduler.scheduled_job('cron', id='roll_ssr', hour=0, minute=2)
