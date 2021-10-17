@@ -16,3 +16,4 @@ baostock~=0.8.8
 psutil
 pydantic~=1.8.2
 httpx~=0.18.2
+nonebot-plugin-russian

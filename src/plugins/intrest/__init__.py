@@ -29,12 +29,12 @@ REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
 REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜|江|泽).*'
 REG_***_REPORT = '^(***排行|***ph|kk***)$'
-REG_***_INDEX = '.*'
 REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
 REG_GACHA = '^(单抽)$'
 REG_GACHA_STATISTICS = '^(gachadata|抽奖统计)$'
+REG_SSR_LOOKUP = '^(showssr|查看SSR)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
@@ -43,13 +43,13 @@ queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
 diuren = on_regex(REG_DIUREN, re.IGNORECASE)
 plus1s = on_regex(REG_PLUS1S)
-***_index = on_regex(REG_***_INDEX)
 ***_report = on_regex(REG_***_REPORT, re.IGNORECASE)
 diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(REG_TEN_GACHA)
 single_diu = on_regex(REG_GACHA)
+lookup_ssr = on_regex(REG_SSR_LOOKUP, re.IGNORECASE)
 ssr_statistics = on_regex(REG_GACHA_STATISTICS, re.IGNORECASE)
 
 ''' >>>>>> Just for fun <<<<<< '''
@@ -93,11 +93,25 @@ async def _roll_ssr(bot: Bot):
         message = Message({
             'type': 'text',
             'data': {
-                'text': 'SSR小游戏已上线，可以发「十连丢人」或者「单抽」'
+                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % REG_SSR_LOOKUP
             }
         })
-        logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
+        logger.info('群[group_id=%d]的 SSR 已经更新，新的 SSR 是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
+
+
+@lookup_ssr.handle()
+async def _lookup_ssr(bot: Bot, event: GroupMessageEvent):
+    if Env().environment == 'dev':
+        logger.debug('当前配置环境配置为dev。跳过 lookup_ssr 功能')
+        await lookup_ssr.send(Message('目前机器人所处于开发环境，不支持此功能'))
+        return
+    group_id = event.group_id
+    ssr_id = SSR_DICT[group_id]
+    ssr_info = await bot.get_group_member_info(group_id=group_id, user_id=ssr_id)
+
+    message = Message('当前群的SSR是 @%s' % (ssr_info.get('card') if ssr_info.get('card') else ssr_info.get('nickname')))
+    await lookup_ssr.finish(message)
 
 
 @scheduler.scheduled_job('cron', id='roll_ssr', hour=0, minute=2)
@@ -108,7 +122,7 @@ async def update_ssr():
     bot: Bot = nonebot.get_bot(str(BOT_QNUM))
     for group in SSR_DICT.keys():
 
-        # 如果一整天都没有人使用过抽奖功能，则不发送此统计
+        # 如果一整天都没有人使用过抽卡功能，则不发送此统计
         if SSR_STATISTICS:
 
             group_data: dict = SSR_STATISTICS.get(group)
@@ -454,37 +468,6 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
         await bot.send(event, ret, at_sender=True)
 
 
-'''
-@***_index.handle()
-async def ***_index(bot: Bot, event: GroupMessageEvent):
-    ret = str(event.get_message())
-    ***_man = event.get_user_id()
-    if ret.find('7f7177d2d24a93f532bac50ccfd02f70') != -1:
-        ***_mans = await bot.get_group_member_info(group_id=event.group_id, user_id=***_man)
-        ***_man_nick = ***_mans['card']
-        await data_source.set_***_to_dict(***_man, ***_man_nick)
-        msg = [{
-            'type': 'reply',
-            'data': {
-                'id': event.message_id
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': '你的***-1 '
-            }
-        }, {
-            'type': 'at',
-            'data': {
-                'qq': ***_man
-            }
-        }]
-        await bot.send(event, msg, at_sender=True)
-    else:
-        pass
-'''
-
-
 @diuren_pot.handle()
 async def diuren_pot(bot: Bot, event: MessageEvent):
     at_mem = Message([{
@@ -551,10 +534,3 @@ async def ***_report(bot: Bot, event: MessageEvent):
 async def plus1s(bot: Bot, event: MessageEvent):
     msg = '+1s'
     await bot.send(event, msg, at_sender=False)
-
-
-async def ***_clear():
-    data_source.mem_***s = {}
-
-
-scheduler.add_job(***_clear, "cron", hour=0, id="***s")
