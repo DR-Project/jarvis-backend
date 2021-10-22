@@ -181,6 +181,8 @@ async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
         user_info = await bot.get_group_member_info(group_id=group_id, user_id=user_data[0])
         ret.append('\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
                                                                  '{:.2f}'.format(probability)))
+        order += 1
+
     ret_message = '\n'.join(ret)
     logger.debug(ret_message)
     message = Message(ret_message)
