@@ -93,7 +93,7 @@ async def _roll_ssr(bot: Bot):
         message = Message({
             'type': 'text',
             'data': {
-                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % REG_SSR_LOOKUP
+                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % 'showssr|查看SSR'
             }
         })
         logger.info('群[group_id=%d]的 SSR 已经更新，新的 SSR 是[qq=%d]' % (group, ssr_id))
