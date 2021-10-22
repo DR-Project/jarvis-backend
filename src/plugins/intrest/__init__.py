@@ -174,7 +174,7 @@ async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
     ret = ['当前群组的抽奖统计：']
     order = 1
 
-    sorted_group_data = sorted(group_data.items(), key=lambda x: x[1]['total'], reverse=True)
+    sorted_group_data = sorted(group_data.items(), key=lambda x: x[1]['lucky'] / x[1]['total'], reverse=True)
 
     for user_data in sorted_group_data:
         total, lucky = user_data[1].get('total'), user_data[1].get('lucky')
