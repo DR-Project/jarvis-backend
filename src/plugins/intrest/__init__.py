@@ -7,11 +7,11 @@ from nonebot import get_driver, require
 from nonebot.config import Env
 from nonebot.log import logger
 from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot
-from nonebot.plugin import on_regex, on_command
+from nonebot.plugin import on_regex
 
 from . import data_source
 from .config import Config
-from .data import SSR_DICT
+from .data import SSR_DICT, SSR_STATISTICS
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -33,6 +33,7 @@ REG_POT = '***'
 REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
 REG_GACHA = '^(单抽)$'
+REG_GACHA_STATISTICS = '^(gachadata|抽奖统计)$'
 REG_SSR_LOOKUP = '^(showssr|查看SSR)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
@@ -49,6 +50,7 @@ diu_all = on_regex(REG_DIU_ALL)
 ten_times_diu = on_regex(REG_TEN_GACHA)
 single_diu = on_regex(REG_GACHA)
 lookup_ssr = on_regex(REG_SSR_LOOKUP, re.IGNORECASE)
+ssr_statistics = on_regex(REG_GACHA_STATISTICS, re.IGNORECASE)
 
 ''' >>>>>> Just for fun <<<<<< '''
 
@@ -91,7 +93,7 @@ async def _roll_ssr(bot: Bot):
         message = Message({
             'type': 'text',
             'data': {
-                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % REG_SSR_LOOKUP
+                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % 'showssr|查看SSR'
             }
         })
         logger.info('群[group_id=%d]的 SSR 已经更新，新的 SSR 是[qq=%d]' % (group, ssr_id))
@@ -119,6 +121,28 @@ async def update_ssr():
 
     bot: Bot = nonebot.get_bot(str(BOT_QNUM))
     for group in SSR_DICT.keys():
+
+        # 如果一整天都没有人使用过抽卡功能，则不发送此统计
+        if SSR_STATISTICS:
+
+            group_data: dict = SSR_STATISTICS.get(group)
+            logger.debug(group_data)
+
+            ret = ['当前群的抽奖统计：']
+            order = 1
+
+            sorted_group_data = sorted(group_data.items(), key=lambda x: x[1]['total'])
+            for user_data in sorted_group_data:
+                total, lucky = user_data[1].get('total'), user_data[1].get('lucky')
+                probability = lucky / total * 100 if lucky else 0
+                user_info = await bot.get_group_member_info(group_id=group, user_id=user_data[0])
+                ret.append('\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
+                                                                 '{:.2f}'.format(probability)))
+
+            message = Message('\n'.join(ret))
+            await ssr_statistics.send(message)
+            SSR_STATISTICS.clear()
+
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
 
@@ -136,9 +160,38 @@ async def update_ssr():
         await asyncio.sleep(random.choice([i for i in range(30, 60)]))
 
 
+@ssr_statistics.handle()
+async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
+    group_id = event.group_id
+    group_data: dict = SSR_STATISTICS.get(group_id)
+    logger.debug(group_data)
+
+    # 还没有人使用SSR 功能
+    if not group_data:
+        await ssr_statistics.send('自机器人上线以来，还没有人进行过抽奖。')
+        return
+
+    ret = ['当前群组的抽奖统计：']
+    order = 1
+
+    sorted_group_data = sorted(group_data.items(), key=lambda x: x[1]['lucky'] / x[1]['total'], reverse=True)
+
+    for user_data in sorted_group_data:
+        total, lucky = user_data[1].get('total'), user_data[1].get('lucky')
+        probability = lucky / total * 100 if lucky else 0
+        user_info = await bot.get_group_member_info(group_id=group_id, user_id=user_data[0])
+        ret.append('\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
+                                                                 '{:.2f}'.format(probability)))
+        order += 1
+
+    ret_message = '\n'.join(ret)
+    logger.debug(ret_message)
+    message = Message(ret_message)
+    await ssr_statistics.send(message)
+
+
 @ten_times_diu.handle()
 async def _diu_ten(bot: Bot, event: GroupMessageEvent):
-
     if not TEN_GACHA_SWITCH:
         await bot.send(event, '以应对风控，十连功能暂时关闭，单抽概率提升')
         return
@@ -311,6 +364,44 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
 async def _single_diu(bot: Bot, event: GroupMessageEvent):
     weights_all_normal_member = 100 - SSR_ODDS
     group_id = event.group_id
+    user_id = event.user_id
+
+    # 机器人重启后第一次使用 或 每日重置后第一次使用 即字典中没有当前群
+    if group_id not in SSR_STATISTICS.keys():
+        total = {
+            'id': user_id,
+            'total': 1,
+            'lucky': 0
+        }
+
+        logger.info('群[group_id=%d]的[qq=%d]的中奖次数已经初始化为0' % (group_id, user_id))
+
+        SSR_STATISTICS[group_id] = {
+            user_id: total
+        }
+
+    # 非第一次使用 字典中有群员
+    else:
+        group_data: dict = SSR_STATISTICS[group_id]
+
+        # 该群在机器人重新上线后并非第一次使用抽奖，但是该群的用户 user_id 是第一次使用
+        if user_id not in group_data.keys():
+            group_data[user_id] = {
+                'id': user_id,
+                'total': 1,
+                'lucky': 0
+            }
+            logger.info('群[group_id=%d]的[qq=%d]的中奖次数已经初始化为0' % (group_id, user_id))
+
+        # 该群的该成员不是第一次使用次功能 即字典中已经有该群员的数据了 即可以获取 total 字段直接自加
+        else:
+            group_data[user_id]['total'] += 1
+
+        SSR_STATISTICS[group_id] = group_data
+
+    logger.info('[qq=%d]在群[group_id=%d]已使用%d次单抽功能' % (user_id, group_id,
+                                                      SSR_STATISTICS[group_id][user_id]['total']))
+
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
     ssr_id = SSR_DICT.get(group_id)
@@ -348,6 +439,9 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     })
 
     if ssr_id == rest_members:
+        SSR_STATISTICS[group_id][user_id]['lucky'] += 1
+        logger.info('[qq=%d]在群[group_id=%d]已抽到%d次SSR')
+
         result = Message({
             'type': 'text',
             'data': {
