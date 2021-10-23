@@ -1,1 +1,3 @@
 SSR_DICT = {}
+
+SSR_STATISTICS = {}
