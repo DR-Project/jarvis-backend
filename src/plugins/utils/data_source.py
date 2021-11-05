@@ -80,14 +80,14 @@ def weather_get(address: str) -> str:
     address = address[:-2].strip()
 
     location = caiyun_weather.get_location(address)
-    address_text = '%s%s' % (address, '' if '市' in address or '区' in address
-                                            or '省' in address else location.location_type)
 
     line = '---------------'
     source = '以上数据来自彩云天气™️'
 
     if location:
         try:
+            address_text = '%s%s' % (address, '' if '市' in address or '区' in address
+                                                    or '省' in address else location.location_type)
             weather_text = caiyun_weather.process_weather_data(location, hourly_steps=12)
             ret = '[%s天气]%s\n%s\n%s' % (address_text, weather_text, line, source)
         except caiyun_weather.NoDefineException:
