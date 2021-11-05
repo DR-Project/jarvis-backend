@@ -7,6 +7,8 @@ from ..config import Config
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
+DIR_WEATHER_CITIES = '/src/plugins/utils/data/'
+
 
 class NoDefineException(Exception):
     """
@@ -91,9 +93,8 @@ def get_location(address: str) -> Location:
 
 
 def _get_file() -> str:
-    # todo: fix file path
     import os
-    file = os.getcwd() + '/src/plugins/utils/data/' + 'china_cities.csv'
+    file = os.getcwd() + DIR_WEATHER_CITIES + 'china_cities.csv'
     return file
 
 
