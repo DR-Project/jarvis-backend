@@ -4,7 +4,6 @@ from typing import List
 from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
-from .interface import weather
 from .interface import assignment_ddl
 from .interface import covid
 from .interface import stock
