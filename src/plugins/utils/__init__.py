@@ -12,9 +12,10 @@ from nonebot.typing import T_State
 from .config import Config
 from nonebot import get_driver, require, logger
 from nonebot.plugin import on_regex, on_command, on_message
-from nonebot.adapters.cqhttp import Bot, MessageEvent, Event
+from nonebot.adapters.cqhttp import Bot, MessageEvent, Event, Message
 
 from . import data_source
+from .interface.caiyun_weather import process_weather_data, Location
 from .interface.chinese_holiday import is_public_holiday, Holiday
 
 global_config = get_driver().config
@@ -30,7 +31,7 @@ REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)\**([0-9]*)*$'
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
-REG_WEATHER = '^.*(天气)$'
+REG_WEATHER = '^.*(天气)$'  # todo: fix reg
 REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
 REG_COVID_VACC = 'COVID'
@@ -59,9 +60,9 @@ def weather_condition_checker():
         3. 小程序是一个地图 且该地图是 腾讯地图
         4. 消息的正文中出现 天气 两个字
         """
-        if hasattr(event, 'reply') and event.is_tome():
+        if hasattr(event, 'reply'):
             # 在这个位置写入你的判断代码
-            if '天气' in event.get_plaintext():
+            if '天气' == event.get_plaintext():
                 _ = [x for x in event.reply.message if x.type == 'json'][0]
                 message = _.get('data').get('data')
                 data = json.loads(message)
@@ -71,7 +72,7 @@ def weather_condition_checker():
 # rule checker
 
 
-xxx = on_message(rule=weather_condition_checker())   # todo: fix var name
+xxx = on_message(rule=weather_condition_checker())
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -128,7 +129,6 @@ async def _mars_news(bot: Bot, event: MessageEvent):
 
 @weather.handle()
 async def _weather(bot: Bot, event: MessageEvent):
-    # todo: change into new version
     target = event.get_plaintext()
     ret = data_source.weather_get(target)
     await bot.send(event, ret, at_sender=False)
@@ -150,10 +150,20 @@ async def _xxx(bot: Bot, event: MessageEvent):
     location = json.loads(json_message).get('meta').get('Location.Search')
     logger.debug(location)
 
-    lat, log = location.get('lat'), location.get('lng')
+    location_object = Location(location.get('lat'), location.get('lng'))
 
-    await xxx.send('(%s, %s)' % (lat, log))
-    await xxx.send('你的天气是：2000摄氏度')
+    line = '---------------'
+    source = '以上数据来自彩云天气™️'
+
+    weather_message = Message({
+        'type': 'text',
+        'data': {
+            'text': '\n%s\n%s\n%s' % (process_weather_data(location_object, hourly_steps=4),
+                                      line, source)
+        }
+    })
+
+    await xxx.finish(weather_message, at_sender=True)
 
 
 @covid_vacc.handle()
@@ -238,7 +248,7 @@ async def corn_daily_weather():
 
     for city in gugu_door_cities:
         target = city + '天气'
-        ret = data_source.weather_get(target)  # todo
+        ret = data_source.weather_get(target)
         await bot.send_group_msg(group_id=***, message=ret, auto_escape=True)
         if gugu_door_cities.index(city) != len(gugu_door_cities) - 1:
             await asyncio.sleep(30)

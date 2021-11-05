@@ -17,12 +17,19 @@ class NoDefineException(Exception):
 
 
 class Location:
-    def __init__(self, lat, lng):
+    def __init__(self, lat, lng, location_type=''):
         self.lat = lat
         self.lng = lng
+        self.location_type = location_type
+
+        if location_type in ('c', 'd'):
+            self.location_type = '市' if location_type == 'c' else '区'
 
     def get_coordinate(self):
         return self.lat, self.lng
+
+    def get_type(self):
+        return self.location_type
 
 
 def _get_weather(location: Location, hourly_steps=24) -> dict:
@@ -58,18 +65,16 @@ def process_weather_data(location: Location, hourly_steps):
     temperature_max, temperature_min = weather_data.get('temperature_max'), weather_data.get('temperature_min')
 
     ret = [
-        weather_data.get('forecast_keypoint'),
+        '%s，' % weather_data.get('forecast_keypoint'),
         '气温 %s到%s°C，' % (temperature_min, temperature_max),
         '空气质量%s。' % weather_data.get('max_air_quality')
     ]
 
-    print(''.join(ret))
-    return ret
+    return ''.join(ret)
 
 
-def get_location(address: str) -> Location:
-    file = 'C:\\Users\\ljd69\\PycharmProjects\\Ai-Hyperion\\src\\plugins\\utils\\data\\china_cities.csv'
-    # todo: fix file path
+def get_location(address: str) -> [Location, None]:
+    file = _get_file()
 
     with open(file, encoding='utf-8') as csv_file:
         _ = csv.DictReader(csv_file)
@@ -78,26 +83,30 @@ def get_location(address: str) -> Location:
         for row in _:
             china_cities_coordinate.append(row)
 
-        tmp = [x for x in china_cities_coordinate if address in x.get('district')]
+        tmp, location_type = [x for x in china_cities_coordinate if address in x.get('district')], 'd'
         if not tmp:
             for i in china_cities_coordinate:
                 if address in i.get('city'):
-                    tmp = i
+                    tmp, location_type = i, 'c'
                     break
+
+        if not tmp:
+            return None
+
+        if address in ('香港', '澳门'):
+            location_type = ''
+
+        if '台湾' in address:
+            location_type = '省'
 
         if isinstance(tmp, list):
             tmp = tmp[0]
 
         lat, lng = tmp.get('lat'), tmp.get('lng')
-        return Location(lat, lng)
+        return Location(lat, lng, location_type)
 
 
 def _get_file() -> str:
     import os
     file = os.getcwd() + DIR_WEATHER_CITIES + 'china_cities.csv'
     return file
-
-
-if __name__ == '__main__':
-    coordinate = get_location('广州')
-    print(_get_weather(coordinate))
