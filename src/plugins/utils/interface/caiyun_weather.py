@@ -2,7 +2,7 @@ import csv
 import httpx
 from nonebot import get_driver
 
-from src.plugins.utils.config import Config
+from ..config import Config
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
