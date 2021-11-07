@@ -1,0 +1,1 @@
+GET https://api.caiyunapp.com/v2.5/{{caiyun}}/113.3612,23.12468/hourly.json?hourlysteps=6

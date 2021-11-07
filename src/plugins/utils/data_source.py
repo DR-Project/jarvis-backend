@@ -4,10 +4,10 @@ from typing import List
 from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
-from .interface import weather
 from .interface import assignment_ddl
 from .interface import covid
 from .interface import stock
+from .interface import caiyun_weather
 
 import time
 
@@ -76,21 +76,25 @@ def rss_get_news(target: str) -> str:
     return ret
 
 
-def weather_get(city: str) -> str:
-    city = city[:-2].strip()
-    city_list = []
-    city_list.append(city)
+def weather_get(address: str) -> str:
+    address = address[:-2].strip()
 
-    if weather.china_city_validator(city + '市'):
+    location = caiyun_weather.get_location(address)
+
+    line = '---------------'
+    source = '以上数据来自彩云天气™️'
+
+    if location:
         try:
-            ret = weather.get_finally_weather(city_list)
-        except weather.NoDefineException:
-            ret = '城市天气不存在'
-        except:
+            address_text = '%s%s' % (address, '' if '市' in address or '区' in address
+                                                    or '省' in address else location.location_type)
+            weather_text = caiyun_weather.process_weather_data(location, hourly_steps=12)
+            ret = '[%s天气]%s\n%s\n%s' % (address_text, weather_text, line, source)
+        except caiyun_weather.NoDefineException:
             ret = '接口异常'
     else:
-        ret = city + ' ∉ {城市}'
-    return ret.strip()
+        ret = '我的记忆体无法回答这个问题'
+    return ret
 
 
 async def covid_get_vaccinations():
@@ -156,13 +160,14 @@ async def get_stock(stock_name: str = None, stock_code: str = None):
     try:
         data = stock.stock_controller(stock_name=stock_name, stock_code=stock_code)
         ret = data[1] + '\n' + \
-        '开盘：' + data[2] + '\n' + \
-        '收盘：' + data[5] + '\n' + \
-        '最高：' + data[5] + '\n' + \
-        '涨跌幅：' + str(round(float(data[12]), 3)) + '%'
+              '开盘：' + data[2] + '\n' + \
+              '收盘：' + data[5] + '\n' + \
+              '最高：' + data[5] + '\n' + \
+              '涨跌幅：' + str(round(float(data[12]), 3)) + '%'
     except Exception:
         ret = 'Unknow Error'
     return ret
+
 
 ''' >>>>>> Exp Function <<<<<< '''
 

@@ -1,16 +1,21 @@
 import datetime
+import json
 import random
 
 import nonebot
 import asyncio
 import re
 
+from nonebot.rule import Rule
+from nonebot.typing import T_State
+
 from .config import Config
-from nonebot import get_driver, require
-from nonebot.plugin import on_regex, on_command
-from nonebot.adapters.cqhttp import Bot, MessageEvent
+from nonebot import get_driver, require, logger
+from nonebot.plugin import on_regex, on_command, on_message
+from nonebot.adapters.cqhttp import Bot, MessageEvent, Event, Message
 
 from . import data_source
+from .interface.caiyun_weather import process_weather_data, Location
 from .interface.chinese_holiday import is_public_holiday, Holiday
 
 global_config = get_driver().config
@@ -26,7 +31,7 @@ REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
            'BTT|FLOW|AE|SHIB|BCD|NANO|WAVES|XCH|TRX|JWT|WIN)\**([0-9]*)*$'
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
-REG_WEATHER = '^.*(天气)$'
+REG_WEATHER = '^.+(天气)$'
 REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
 REG_COVID_VACC = 'COVID'
@@ -43,6 +48,31 @@ ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
 covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
 stock = on_command(STOCK)
+
+
+# rule checker
+def weather_condition_checker():
+    async def _checker(bot: Bot, event: Event, state: T_State) -> bool:
+        """
+        自定义规则检查器
+        1. 是一个 回复 消息
+        2. 原消息是一个小程序
+        3. 小程序是一个地图 且该地图是 腾讯地图
+        4. 消息的正文中出现 天气 两个字
+        """
+        if hasattr(event, 'reply'):
+            # 在这个位置写入你的判断代码
+            if '天气' == event.get_plaintext():
+                _ = [x for x in event.reply.message if x.type == 'json'][0]
+                message = _.get('data').get('data')
+                data = json.loads(message)
+                if data.get('app') == 'com.tencent.map':
+                    return True
+    return Rule(_checker)
+# rule checker
+
+
+xxx = on_message(rule=weather_condition_checker())
 
 ''' >>>>>> Core Function for Utils <<<<<< '''
 
@@ -107,6 +137,33 @@ async def _weather(bot: Bot, event: MessageEvent):
 @ass_ddl.handle()
 async def _ass_ddl(bot: Bot, event: MessageEvent):
     await bot.send(event, '此功能已下线', at_sender=False)
+
+
+@xxx.handle()
+async def _xxx(bot: Bot, event: MessageEvent):
+    reply = event.reply
+    if not reply:
+        logger.info('reply is empty')
+        return
+
+    json_message = reply.message[1].get('data').get('data')
+    location = json.loads(json_message).get('meta').get('Location.Search')
+    logger.debug(location)
+
+    location_object = Location(location.get('lat'), location.get('lng'))
+
+    line = '---------------'
+    source = '以上数据来自彩云天气™️'
+
+    weather_message = Message({
+        'type': 'text',
+        'data': {
+            'text': '\n%s\n%s\n%s' % (process_weather_data(location_object, hourly_steps=4),
+                                      line, source)
+        }
+    })
+
+    await xxx.finish(weather_message, at_sender=True)
 
 
 @covid_vacc.handle()
