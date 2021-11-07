@@ -59,7 +59,7 @@ def _get_weather(location: Location, hourly_steps=24) -> dict:
 
 
 def process_weather_data(location: Location, hourly_steps):
-    # todo: you can move this method to __init__.py replace original(old) one
+
     weather_data = _get_weather(location, hourly_steps)
 
     temperature_max, temperature_min = weather_data.get('temperature_max'), weather_data.get('temperature_min')
