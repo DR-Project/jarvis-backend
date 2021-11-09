@@ -97,7 +97,7 @@ def construct_string(msg: dict) -> str:
         raise InstrumentNotExistException('币对不存在')
 
     # init variable
-    price = dynamic_decimal(float(msg['last']))
+    price = float(msg['last'])
     product_id = msg['product_id']
     open_utc8 = float(msg['open_utc8'])
     change_percent = round((price - open_utc8) / open_utc8 * 100, 2)
@@ -107,7 +107,7 @@ def construct_string(msg: dict) -> str:
     base = instrument_id[1]
     # print(change_percent)
 
-    ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{price}' + ' ' + f'{base}' + '，对比今日开盘价涨幅为 ' \
+    ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{dynamic_decimal(price)}' + ' ' + f'{base}' + '，对比今日开盘价涨幅为 ' \
           + f'{change_percent}' + '%。 '
     # abandoned
     # ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'
