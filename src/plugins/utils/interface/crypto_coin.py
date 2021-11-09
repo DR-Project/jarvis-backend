@@ -97,7 +97,7 @@ def construct_string(msg: dict) -> str:
         raise InstrumentNotExistException('币对不存在')
 
     # init variable
-    price = float(msg['last'])
+    price = dynamic_decimal(float(msg['last']))
     product_id = msg['product_id']
     open_utc8 = float(msg['open_utc8'])
     change_percent = round((price - open_utc8) / open_utc8 * 100, 2)
