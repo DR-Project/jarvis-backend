@@ -190,7 +190,7 @@ def construct_string_instead(payload: dict) -> str:
     # init variable
     coin = payload['coin']
     base = payload['base']
-    last = payload['price']
+    last = dynamic_decimal(payload['price'])
     change_percent = payload['change_percent']
 
     ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{last}' + ' ' + f'{base}' + '，24小时涨幅为 ' \
@@ -391,6 +391,26 @@ async def volume_controller(time: str, limit: int) -> dict:
     """
     ret = await process_data(time, limit)
 
+    return ret
+
+
+def dynamic_decimal(price: float) -> str:
+    if price >= 10:
+        ret = str('%.2f' % price)
+    elif price < 15 and price > 0.01:
+        ret = str('%.4f' % price)
+    elif price < 0.15 and price > 0.0001:
+        ret = str('%.6f' % price)
+    elif price < 0.00015 and price > 0.000001:
+        ret = str('%.8f' % price)
+    elif price < 0.0000015 and price > 0.00000001:
+        ret = str('%.12f' % price)
+    elif price < 0.000000015 and price > 0.0000000001:
+        ret = str('%.14f' % price)
+    elif price is None:
+        ret = price
+    else:
+        ret = str(price)
     return ret
 
 
