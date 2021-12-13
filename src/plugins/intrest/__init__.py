@@ -21,7 +21,7 @@ driver = nonebot.get_driver()
 # Constant List
 
 BOT_QNUM = ***
-GROUPS = [***, ***]
+GROUPS = [***, ***, ***]
 TEN_GACHA_SWITCH = False
 SSR_ODDS = 1  # percent '1' means 1%
 REG_QUESHI = '(确实|qs|有一说一|yysy|么|吗|呢|？)'
