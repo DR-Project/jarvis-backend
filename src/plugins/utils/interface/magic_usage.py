@@ -19,8 +19,8 @@ def get_usage() -> List[Dict[str, Any]]:
     }
 
     magic_info = {
-        'fork-02': 'Helios',
-        'fork-01': 'Hyperion'
+        '***': 'dl-01 😅',
+        'helios': 'dl-02 🤔'
     }
 
     params = [param_1, param_2]
