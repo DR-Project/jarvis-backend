@@ -91,12 +91,14 @@ def get_price(instrument_id: str) -> dict:
     return msg.get('data')
 
 
-def construct_string(msg: dict) -> str:
+def construct_string(msg: list or dict) -> str:
     """
 
     :param msg:  msg is a dict from upstream method
     :return: the message that will forward to QQ
     """
+    if isinstance(msg, list):
+        msg = msg[0]
 
     if 'last' not in msg:
         raise InstrumentNotExistException('币对不存在')
