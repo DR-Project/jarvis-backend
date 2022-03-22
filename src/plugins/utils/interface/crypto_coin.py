@@ -58,10 +58,14 @@ def get_price(instrument_id: str) -> dict:
     :return: the key message to the upstream
     """
 
-    url = 'https://www.okex.com/api/spot/v3/instruments/' + f'{instrument_id}' + '/ticker'
+    url = 'https://www.okx.com/api/v5/market/ticker'
 
     # for test to raise Exception
     # url = 'www.test404domain.cc'
+
+    params = {
+        'instId': instrument_id
+    }
 
     proxies = {
         # 部署到服务器或者容器里面之后 需要修改为对应的
@@ -70,7 +74,7 @@ def get_price(instrument_id: str) -> dict:
     }
 
     try:
-        r = httpx.get(url, proxies=proxies)
+        r = httpx.get(url, params=params, proxies=proxies)
     except httpx.RequestError:
         raise Exception('Interface Error / 接口异常')
     else:
@@ -81,25 +85,28 @@ def get_price(instrument_id: str) -> dict:
         'okex': payload['data']['constituents'][0],
         'price': payload['data']['last']
     }'''
-    # print(json.dumps(msg))
 
-    return msg
+    if msg.get('code') != '0':
+        raise NoDefineException('Interface Error / 接口异常')
+    return msg.get('data')
 
 
-def construct_string(msg: dict) -> str:
+def construct_string(msg: list or dict) -> str:
     """
 
     :param msg:  msg is a dict from upstream method
     :return: the message that will forward to QQ
     """
+    if isinstance(msg, list):
+        msg = msg[0]
 
     if 'last' not in msg:
         raise InstrumentNotExistException('币对不存在')
 
     # init variable
     price = float(msg['last'])
-    product_id = msg['product_id']
-    open_utc8 = float(msg['open_utc8'])
+    product_id = msg['instId']
+    open_utc8 = float(msg['sodUtc8'])
     change_percent = round((price - open_utc8) / open_utc8 * 100, 2)
 
     instrument_id = product_id.split('-')
@@ -109,8 +116,6 @@ def construct_string(msg: dict) -> str:
 
     ret = '现在' + f'{coin}' + '的价格是1 ' + f'{coin}' + ' = ' + f'{dynamic_decimal(price)}' + ' ' + f'{base}' + '，对比今日开盘价涨幅为 ' \
           + f'{change_percent}' + '%。 '
-    # abandoned
-    # ret = '现在BTC单位价格为 ' f'{price}' + ' USDT，折合美元价格为 ' + f'{usd_price}' + ' USD 。'
 
     return ret
 
