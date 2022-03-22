@@ -86,7 +86,7 @@ def get_price(instrument_id: str) -> dict:
         'price': payload['data']['last']
     }'''
 
-    if msg.get('code') != "0":
+    if msg.get('code') != '0':
         raise NoDefineException('Interface Error / 接口异常')
     return msg.get('data')
 
