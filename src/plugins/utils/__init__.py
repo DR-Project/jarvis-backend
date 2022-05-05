@@ -225,7 +225,7 @@ async def cron_daily_covid():
 
 async def cron_currency():
     ret = _currency()
-    await _scheduler_controller(ret)
+    await _currency_scheduler_controller(ret)
 
 
 async def cron_daily_stock():
@@ -268,6 +268,14 @@ async def corn_daily_weather():
 
 
 async def _scheduler_controller(message: str):
+    groups = [***, ***]
+    bot = nonebot.get_bots()['***']
+    for group_id in groups:
+        await bot.send_group_msg(group_id=group_id, message=message, auto_escape=True)
+        await asyncio.sleep(random.choice([i for i in range(30, 60)]))
+
+
+async def _currency_scheduler_controller(message: str):
     groups = [***, ***]
     bot = nonebot.get_bots()['***']
     for group_id in groups:
