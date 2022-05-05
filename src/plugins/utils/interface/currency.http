@@ -1,0 +1,1 @@
+GET https://api.fastforex.io/fetch-all?from=CNY&api_key=demo

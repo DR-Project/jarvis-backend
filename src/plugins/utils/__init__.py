@@ -17,6 +17,7 @@ from nonebot.adapters.cqhttp import Bot, MessageEvent, Event, Message
 from . import data_source
 from .interface.caiyun_weather import process_weather_data, Location
 from .interface.chinese_holiday import is_public_holiday, Holiday
+from .interface.currency import get_rate
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -222,6 +223,11 @@ async def cron_daily_covid():
     await _scheduler_controller(ret)
 
 
+async def cron_currency():
+    ret = _currency()
+    await _currency_scheduler_controller(ret)
+
+
 async def cron_daily_stock():
     holiday = is_public_holiday()
     if isinstance(holiday, Holiday):
@@ -269,8 +275,55 @@ async def _scheduler_controller(message: str):
         await asyncio.sleep(random.choice([i for i in range(30, 60)]))
 
 
+async def _currency_scheduler_controller(message: str):
+    groups = [***, ***]
+    bot = nonebot.get_bots()['***']
+    for group_id in groups:
+        await bot.send_group_msg(group_id=group_id, message=message, auto_escape=True)
+        await asyncio.sleep(random.choice([i for i in range(30, 60)]))
+
+
+def _currency():
+    rate_results = get_rate()
+
+    # 美元
+    usd_to_cny = round(1/rate_results.get('USD'), 5)
+    # 英镑
+    gbp_to_cny = round(1/rate_results.get('GBP'), 3)
+    # 欧元
+    eur_to_cny = round(1/rate_results.get('EUR'), 3)
+    # 澳大利亚元
+    aud_to_cny = round(1/rate_results.get('AUD'), 3)
+    # 瑞士法郎
+    chf_to_cny = round(1/rate_results.get('CHF'), 3)
+    # 港元
+    hkd_to_cny = round(1/rate_results.get('HKD'), 3)
+    # 日元
+    cny_to_jpy = round(rate_results.get('JPY'), 3)
+    # 俄罗斯卢布
+    rub_to_cny = round(rate_results.get('RUB'), 3)
+    # 乌克兰格里夫纳
+    cny_to_uah = round(rate_results.get('UAH'), 3)
+
+    cny_to_cnh = round(rate_results.get('CNH'), 3)
+
+    ret = '💰 在岸人民币汇率 💰\n\n¥ 1 (CNY) = ¥ ' + f'{cny_to_cnh}' + ' (CNH)\n\n1 美元 ≈ ¥ ' + f'{usd_to_cny}' +\
+          '\n1 英镑 ≈ ¥ ' + f'{gbp_to_cny}' + '\n1 欧元 ' + '≈ ¥ ' + f'{eur_to_cny}' + '\n1 澳大利亚元 ≈ ¥ ' +\
+          f'{aud_to_cny}' + '\n1 瑞士法郎 ≈ ¥ ' + f'{chf_to_cny}' + '\n1 港元 ≈ ¥ ' + f'{hkd_to_cny}' +\
+          '\n1 日元 ≈ ¥ ' + f'{cny_to_jpy}' + '\n\n¥ 1 ≈ ' + f'{rub_to_cny}' + ' 俄罗斯卢布\n¥ 1 ≈ ' + f'{cny_to_uah}' +\
+          ' 乌克兰格里夫纳 '
+
+    return ret
+
+
 scheduler.add_job(cron_daily_news, "cron", hour=8, minute=2, id="news")
 scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=32, id="coins")
 scheduler.add_job(cron_daily_covid, "cron", hour=7, minute=2, id="covid")
 scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=32, id='weather')
 scheduler.add_job(cron_daily_stock, 'cron', hour=15, minute=17, id='stock')
+
+# currency
+scheduler.add_job(cron_currency, 'cron', hour=0, minute=1, id='currency1')
+scheduler.add_job(cron_currency, 'cron', hour=10, minute=1, id='currency2')
+scheduler.add_job(cron_currency, 'cron', hour=15, minute=1, id='currency3')
+scheduler.add_job(cron_currency, 'cron', hour=21, minute=1, id='currency4')
