@@ -315,7 +315,7 @@ scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=32, id='weather')
 scheduler.add_job(cron_daily_stock, 'cron', hour=15, minute=17, id='stock')
 
 # currency
-scheduler.add_job(cron_currency(), 'cron', hour=0, minute=1, id='currency1')
-scheduler.add_job(cron_currency(), 'cron', hour=10, minute=1, id='currency2')
-scheduler.add_job(cron_currency(), 'cron', hour=15, minute=1, id='currency3')
-scheduler.add_job(cron_currency(), 'cron', hour=21, minute=1, id='currency4')
+scheduler.add_job(cron_currency, 'cron', hour=0, minute=1, id='currency1')
+scheduler.add_job(cron_currency, 'cron', hour=10, minute=1, id='currency2')
+scheduler.add_job(cron_currency, 'cron', hour=15, minute=1, id='currency3')
+scheduler.add_job(cron_currency, 'cron', hour=21, minute=1, id='currency4')
