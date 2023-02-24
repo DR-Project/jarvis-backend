@@ -12,7 +12,7 @@ from nonebot.typing import T_State
 from .config import Config
 from nonebot import get_driver, require, logger
 from nonebot.plugin import on_regex, on_command, on_message
-from nonebot.adapters.cqhttp import Bot, MessageEvent, Event, Message
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Event, Message
 
 from . import data_source
 from .interface.caiyun_weather import process_weather_data, Location

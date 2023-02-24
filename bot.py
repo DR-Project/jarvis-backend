@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import nonebot
-from nonebot.adapters.cqhttp import Bot as CQHTTPBot
+from nonebot.adapters.onebot.v11 import Adapter as OneBot_V11_Adapter
 
 # Custom your logger
 # 
@@ -16,22 +16,23 @@ from nonebot.adapters.cqhttp import Bot as CQHTTPBot
 # You can pass some keyword args config to init function
 nonebot.init(apscheduler_config={
     "apscheduler.timezone": "Asia/Shanghai"
-    })
+})
 app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
-driver.register_adapter("cqhttp", CQHTTPBot)
+driver.register_adapter(OneBot_V11_Adapter)
 
 nonebot.load_builtin_plugins()
-nonebot.load_from_toml("pyproject.toml")
+# nonebot.load_from_toml("pyproject.toml")
 
 # Modify some config / config depends on loaded configs
 # 
 # config = driver.config
 # do something...
 
+# Discard by author, on longer used anymore
 # Plugin testing for front-end
-nonebot.load_plugin("nonebot_plugin_test")
+# nonebot.load_plugin("nonebot_plugin_test")
 
 if __name__ == "__main__":
     nonebot.logger.warning("Always use `nb run` to start the bot instead of manually running!")

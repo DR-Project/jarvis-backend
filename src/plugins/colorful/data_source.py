@@ -1,10 +1,9 @@
 import json
-import httpx
-import os, random
+import os
+import random
 from typing import List
 
 from .interface import lolicon
-
 
 SWITCH_FLAG = False
 PROT_B64 = 'base64://'

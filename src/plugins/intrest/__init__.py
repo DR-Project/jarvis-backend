@@ -6,7 +6,7 @@ import nonebot
 from nonebot import get_driver, require
 from nonebot.config import Env
 from nonebot.log import logger
-from nonebot.adapters.cqhttp import Message, MessageEvent, GroupMessageEvent, Bot
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent, Bot
 from nonebot.plugin import on_regex
 
 from . import data_source
