@@ -12,7 +12,7 @@ __author__ = "yanyongyu"
 
 
 from nonebot import get_driver, on_command, on_notice
-from nonebot.adapters.cqhttp import PokeNotifyEvent, Bot, MessageEvent
+from nonebot.adapters.onebot.v11 import PokeNotifyEvent, Bot, MessageEvent
 from nonebot.typing import T_State
 
 from .config import Config

@@ -2,8 +2,7 @@ from .config import Config
 
 from nonebot import get_driver
 from nonebot.plugin import on_regex
-from nonebot.adapters.cqhttp import Bot, MessageEvent
-from nonebot.adapters.cqhttp import GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 
 from . import data_source
 
