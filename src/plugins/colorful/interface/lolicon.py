@@ -38,13 +38,13 @@ def get_lolicon() -> dict:
         'r18': '0'
     }
 
-    proxies = {
-        'http://': 'http://localhost:7890',
-        'https://': 'http://localhost:7890'
-    }
+    # proxies = {
+    #     'http://': 'http://localhost:7890',
+    #     'https://': 'http://localhost:7890'
+    # }
 
     try:
-        r = httpx.get(url, params=param, timeout=45,proxies=proxies)
+        r = httpx.get(url, params=param, timeout=45)
 
     except httpx.RequestError:
 
@@ -60,13 +60,13 @@ def get_lolicon() -> dict:
 
 
 def dump_img(url: str) -> bytes:
-    proxies = {
-        'http://': 'http://localhost:7890',
-        'https://': 'http://localhost:7890'
-    }
+    # proxies = {
+    #     'http://': 'http://localhost:7890',
+    #     'https://': 'http://localhost:7890'
+    # }
 
     try:
-        r = httpx.get(url, proxies=proxies)
+        r = httpx.get(url)
     except httpx.RequestError:
         raise ImageRequestError('接口异常')
     except httpx.ReadTimeout:
