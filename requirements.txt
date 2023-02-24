@@ -1,18 +1,18 @@
 nb-cli
-nonebot-plugin-test
-nonebot-adapter-cqhttp
+nonebot2
+nonebot-test
 nonebot-plugin-apscheduler
-xmltodict~=0.12.0
-pypinyin~=0.42.0
-Pillow~=8.3.2
-psutil~=5.8.0
+nonebot-adapter-onebot
+xmltodict
+pypinyin
+Pillow
+psutil
 # ---------------------------------
 # add by Judy on 13rd July 2021
 # tushare abandoned on 17th July 2021
-pandas~=1.3.3
+# pandas~=1.3.3
 # ----------------------------------
 # add by Judy on 17 July 2021
-baostock~=0.8.8
-psutil
-pydantic~=1.8.2
-httpx~=0.18.2
+baostock
+pydantic
+httpx
