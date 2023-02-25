@@ -31,7 +31,7 @@ nonebot.load_builtin_plugins()
 
 # Discard by author, on longer used anymore
 # Plugin testing for front-end
-# nonebot.load_plugin("nonebot_plugin_test")
+nonebot.load_plugin("src")
 
 if __name__ == "__main__":
     nonebot.logger.warning("Always use `nb run` to start the bot instead of manually running!")
