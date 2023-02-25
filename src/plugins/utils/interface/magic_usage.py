@@ -13,17 +13,16 @@ def get_usage() -> List[Dict[str, Any]]:
         'api_key': '***'
     }
 
-    param_2 = {
-        'veid': '***',
-        'api_key': '***'
-    }
+    # param_2 = {
+    #     'veid': '***',
+    #     'api_key': '***'
+    # }
 
     magic_info = {
-        '***': 'dl-01 😅',
-        'helios': 'dl-02 🤔'
+        '***': '***'
     }
 
-    params = [param_1, param_2]
+    params = [param_1]
     ret = []
     try:
         for param in params:

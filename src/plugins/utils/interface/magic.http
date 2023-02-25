@@ -1,4 +1,5 @@
-GET https://api.64clouds.com/v1/getServiceInfo?veid={{veid}}&api_key={{api_key}}
-Accept: application/json
+GET https://api.64clouds.com/v1/getServiceInfo?veid=***&api_key=***
+
 
 ###
+GET https://api.64clouds.com/v1/getServiceInfo?veid=***&api_key=***

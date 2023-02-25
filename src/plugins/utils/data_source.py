@@ -1,11 +1,8 @@
-import asyncio
 from typing import List
 
 from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
-from .interface import assignment_ddl
-from .interface import covid
 from .interface import stock
 from .interface import caiyun_weather
 
@@ -28,11 +25,11 @@ def magic_construct_string(lists: List[dict]) -> str:
     now = time.strftime(pattern, time.localtime(time.time()))
     prefix = '截至今日' + now + '\n' + '----------------\n'
     for i in lists:
-        prefix += '🖥️ ' + i['node_name'] + '\n' + '已用' + \
+        prefix += '🖥️\n' + i['node_name'] + ' 已用' + \
                   str(round(i['data_counter'] / 1024 / 1024 / 1024, 2)) + 'GiB' + \
                   '，剩余' + str(round((1 - i['data_counter'] / i['plan_monthly_data']), 2) * 100) + '%\n' + \
                   '重置时间为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '\n'
-    prefix += '💸 Sponsor\n' + '@又是白云蓝天的一天'
+    prefix += '----------------\n' + '🪧 现诚招猫猫服务器 Sponsor \n有意者请与 ******🐔 联系'
     return prefix.strip()
 
 
@@ -95,47 +92,6 @@ def weather_get(address: str) -> str:
     else:
         ret = '我的记忆体无法回答这个问题'
     return ret
-
-
-async def covid_get_vaccinations():
-    data = await covid.get_china_num()
-    date = data['date']
-    count = data['total_vaccinations']
-
-    new_cases = int(data['new_cases'])
-    total_vaccinations_per_hundred = data['total_vaccinations_per_hundred']
-    count = float(count) / 10000 / 10000
-
-    ret = '截至 ' + date + '\n----------------' + '\n\n中国内地已接种新冠疫苗 ' + str(round(count, 2)) + ' 亿剂次，每百人接种 ' + \
-          str(total_vaccinations_per_hundred) + ' 剂次。 \n\n' + '全国31个省级行政区和新疆生产建设兵团共报告新增确诊 ' + f'{new_cases}' + ' 人。'
-
-    return ret
-
-
-def ddl_get() -> str:
-    # assignments_display = assignments[:3]
-
-    ret = ''
-    pattern = '%Y年%m月%d日 %H:%M'
-
-    assignments = assignment_ddl.sort_assignment(
-        assignment_ddl.convert_date(assignment_ddl.get_assignment(assignment_ddl.get_course())))
-
-    for assignment in assignments:
-        # init variable
-        course_name = assignment['course_name']
-        course_code = assignment['course_code']
-        deadline = assignment['ddl']
-        assignment_name = assignment['name']
-
-        ddl = time.strftime(pattern, time.localtime(deadline))
-        now = time.time()
-
-        if now <= deadline:
-            ret += f'{course_code}' + ' ' + f'{course_name}' + ' ' + f'{assignment_name}' + '\n' \
-                   + f'{ddl}' + '\n\n'
-
-    return ret[:-2]
 
 
 async def get_coin_volume() -> str:

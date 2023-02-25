@@ -17,7 +17,6 @@ from nonebot.adapters.onebot.v11 import Adapter as OneBot_V11_Adapter
 nonebot.init(apscheduler_config={
     "apscheduler.timezone": "Asia/Shanghai"
 })
-app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
 driver.register_adapter(OneBot_V11_Adapter)
@@ -32,7 +31,8 @@ nonebot.load_builtin_plugins()
 
 # Discard by author, on longer used anymore
 # Plugin testing for front-end
-# nonebot.load_plugin("nonebot_plugin_test")
+nonebot.load_plugin("src")
+nonebot.load_plugin("nonebot_plugin_russian")
 
 if __name__ == "__main__":
     nonebot.logger.warning("Always use `nb run` to start the bot instead of manually running!")

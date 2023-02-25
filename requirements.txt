@@ -1,6 +1,4 @@
 nb-cli
-nonebot2
-nonebot-test
 nonebot-plugin-apscheduler
 nonebot-adapter-onebot
 xmltodict
@@ -16,3 +14,4 @@ psutil
 baostock
 pydantic
 httpx
+nonebot2[websockets]

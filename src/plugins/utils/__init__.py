@@ -6,6 +6,7 @@ import nonebot
 import asyncio
 import re
 
+from nonebot.params import CommandArg
 from nonebot.rule import Rule
 from nonebot.typing import T_State
 
@@ -33,9 +34,7 @@ REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.+(天气)$'
-REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
-REG_COVID_VACC = 'COVID'
 STOCK = 'STOCK'
 
 # Register Event
@@ -45,9 +44,7 @@ cryptocoin = on_regex(REG_COIN, re.IGNORECASE)
 hotcoin = on_regex(REG_HOTCOIN)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
-ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
-covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
 stock = on_command(STOCK)
 
 
@@ -69,7 +66,10 @@ def weather_condition_checker():
                 data = json.loads(message)
                 if data.get('app') == 'com.tencent.map':
                     return True
+
     return Rule(_checker)
+
+
 # rule checker
 
 
@@ -81,63 +81,60 @@ xxx = on_message(rule=weather_condition_checker())
 @traffic.handle()
 async def _traffic(bot: Bot, event: MessageEvent):
     ret = data_source.magic_get_usage()
-    await bot.send(event, ret, at_sender=False)
+    await traffic.finish(ret)
 
 
 @cryptocoin.handle()
 async def _cryptocoin(bot: Bot, event: MessageEvent):
     message = event.get_plaintext()
-    if message.count('*') > 1:
-        await bot.send(event, '语法错误', at_sender=False)
-        return
 
+    # 消息中含有多个星号
+    if message.count('*') > 1:
+        await cryptocoin.finish('语法错误')
+
+    # 没有星号，即查询单词
     if '*' not in message:
         coin_type = message.upper()
         ret = data_source.coin_get_price(coin_type)
-        await bot.send(event, ret, at_sender=False)
+        await cryptocoin.finish(ret)
 
-    else:
-        coin_type, loop_times = message.split('*')
+    # 剩下即为 查询多次
 
-        if not loop_times.isnumeric():
-            await bot.send(event, '语法错误', at_sender=False)
-            return
+    # 以星号分割，前面为币种，后面为次数
+    coin_type, loop_times = message.split('*')
 
-        loop_times = int(loop_times)
+    # 次数为非法数字
+    if not loop_times.isnumeric():
+        await cryptocoin.finish('语法错误')
 
-        if loop_times < 1:
-            await bot.send(event, '语法错误', at_sender=False)
-            return
+    loop_times = int(loop_times)
 
-        if loop_times > 8:
-            await bot.send(event, '复读次数过多，会被封号 ', at_sender=False)
-            return
+    if loop_times < 1:
+        await cryptocoin.finish('语法错误')
 
-        for _ in range(loop_times):
-            coin_type = coin_type.upper()
-            ret = data_source.coin_get_price(coin_type)
-            await bot.send(event, ret, at_sender=False)
-            if _ != loop_times - 1:
-                await asyncio.sleep(30)
+    if loop_times > 8:
+        await cryptocoin.finish('语法错误')
+
+    for _ in range(loop_times):
+        coin_type = coin_type.upper()
+        ret = data_source.coin_get_price(coin_type)
+        await cryptocoin.finish(ret)
+        if _ != loop_times - 1:
+            await asyncio.sleep(30)
 
 
 @mars_news.handle()
 async def _mars_news(bot: Bot, event: MessageEvent):
     target = event.get_plaintext()
     ret = data_source.rss_get_news(target)
-    await bot.send(event, ret, at_sender=False)
+    await mars_news.finish(ret)
 
 
 @weather.handle()
 async def _weather(bot: Bot, event: MessageEvent):
     target = event.get_plaintext()
     ret = data_source.weather_get(target)
-    await bot.send(event, ret, at_sender=False)
-
-
-@ass_ddl.handle()
-async def _ass_ddl(bot: Bot, event: MessageEvent):
-    await bot.send(event, '此功能已下线', at_sender=False)
+    await weather.finish(ret)
 
 
 @xxx.handle()
@@ -145,7 +142,7 @@ async def _xxx(bot: Bot, event: MessageEvent):
     reply = event.reply
     if not reply:
         logger.info('reply is empty')
-        return
+        await xxx.finish()
 
     json_message = reply.message[1].get('data').get('data')
     location = json.loads(json_message).get('meta').get('Location.Search')
@@ -156,47 +153,35 @@ async def _xxx(bot: Bot, event: MessageEvent):
     line = '---------------'
     source = '以上数据来自彩云天气™️'
 
-    weather_message = Message({
-        'type': 'text',
-        'data': {
-            'text': '\n%s\n%s\n%s' % (process_weather_data(location_object, hourly_steps=4),
-                                      line, source)
-        }
-    })
+    weather_message = '\n%s\n%s\n%s' % (process_weather_data(location_object, hourly_steps=4), line, source)
 
     await xxx.finish(weather_message, at_sender=True)
 
 
-@covid_vacc.handle()
-async def _covid_vacc(bot: Bot, event: MessageEvent):
-    ret = await data_source.covid_get_vaccinations()
-    await bot.send(event, ret, at_sender=False)
-
-
 @hotcoin.handle()
-async def hotcoin(bot: Bot, event: MessageEvent):
+async def _hotcoin(bot: Bot, event: MessageEvent):
     ret = await data_source.get_coin_volume()
-    await bot.send(event, ret, at_sender=False)
+    await hotcoin.finish(ret)
 
 
 @stock.handle()
-async def stock(bot: Bot, event: MessageEvent):
-    msg = event.get_plaintext()
+async def _stock(message: Message = CommandArg()):
+    msg = str(message)
     if 'sh' in msg:
         ret = await data_source.get_stock(stock_code=msg)
     else:
         ret = await data_source.get_stock(stock_name=msg)
-    await bot.send(event, str(ret), at_sender=False)
+    await stock.finish(str(ret))
 
 
 ''' >>>>>> EXP Function for Utils <<<<<< '''
 
 
 @exp_cryptocoin.handle()
-async def _exp_cryptocoin(bot: Bot, event: MessageEvent):
-    instrument_id = event.get_plaintext().upper()
+async def _exp_cryptocoin(message: Message = CommandArg()):
+    instrument_id = str(message)
     ret = data_source.coin_exp_get_price(instrument_id)
-    await bot.send(event, ret, at_sender=False)
+    await exp_cryptocoin.finish(ret)
 
 
 '''
@@ -216,11 +201,6 @@ async def cron_daily_coin():
 async def cron_daily_news():
     ret_1 = data_source.rss_get_news('药闻')
     await _scheduler_controller(ret_1)
-
-
-async def cron_daily_covid():
-    ret = await data_source.covid_get_vaccinations()
-    await _scheduler_controller(ret)
 
 
 async def cron_currency():
@@ -287,17 +267,17 @@ def _currency():
     rate_results = get_rate()
 
     # 美元
-    usd_to_cny = round(1/rate_results.get('USD'), 5)
+    usd_to_cny = round(1 / rate_results.get('USD'), 5)
     # 英镑
-    gbp_to_cny = round(1/rate_results.get('GBP'), 3)
+    gbp_to_cny = round(1 / rate_results.get('GBP'), 3)
     # 欧元
-    eur_to_cny = round(1/rate_results.get('EUR'), 3)
+    eur_to_cny = round(1 / rate_results.get('EUR'), 3)
     # 澳大利亚元
-    aud_to_cny = round(1/rate_results.get('AUD'), 3)
+    aud_to_cny = round(1 / rate_results.get('AUD'), 3)
     # 瑞士法郎
-    chf_to_cny = round(1/rate_results.get('CHF'), 3)
+    chf_to_cny = round(1 / rate_results.get('CHF'), 3)
     # 港元
-    hkd_to_cny = round(1/rate_results.get('HKD'), 3)
+    hkd_to_cny = round(1 / rate_results.get('HKD'), 3)
     # 日元
     cny_to_jpy = round(rate_results.get('JPY'), 3)
     # 俄罗斯卢布
@@ -307,10 +287,10 @@ def _currency():
 
     cny_to_cnh = round(rate_results.get('CNH'), 3)
 
-    ret = '💰 在岸人民币汇率 💰\n\n¥ 1 (CNY) = ¥ ' + f'{cny_to_cnh}' + ' (CNH)\n\n1 美元 ≈ ¥ ' + f'{usd_to_cny}' +\
-          '\n1 英镑 ≈ ¥ ' + f'{gbp_to_cny}' + '\n1 欧元 ' + '≈ ¥ ' + f'{eur_to_cny}' + '\n1 澳大利亚元 ≈ ¥ ' +\
-          f'{aud_to_cny}' + '\n1 瑞士法郎 ≈ ¥ ' + f'{chf_to_cny}' + '\n1 港元 ≈ ¥ ' + f'{hkd_to_cny}' +\
-          '\n1 日元 ≈ ¥ ' + f'{cny_to_jpy}' + '\n\n¥ 1 ≈ ' + f'{rub_to_cny}' + ' 俄罗斯卢布\n¥ 1 ≈ ' + f'{cny_to_uah}' +\
+    ret = '💰 在岸人民币汇率 💰\n\n¥ 1 (CNY) = ¥ ' + f'{cny_to_cnh}' + ' (CNH)\n\n1 美元 ≈ ¥ ' + f'{usd_to_cny}' + \
+          '\n1 英镑 ≈ ¥ ' + f'{gbp_to_cny}' + '\n1 欧元 ' + '≈ ¥ ' + f'{eur_to_cny}' + '\n1 澳大利亚元 ≈ ¥ ' + \
+          f'{aud_to_cny}' + '\n1 瑞士法郎 ≈ ¥ ' + f'{chf_to_cny}' + '\n1 港元 ≈ ¥ ' + f'{hkd_to_cny}' + \
+          '\n1 日元 ≈ ¥ ' + f'{cny_to_jpy}' + '\n\n¥ 1 ≈ ' + f'{rub_to_cny}' + ' 俄罗斯卢布\n¥ 1 ≈ ' + f'{cny_to_uah}' + \
           ' 乌克兰格里夫纳 '
 
     return ret
@@ -318,7 +298,6 @@ def _currency():
 
 scheduler.add_job(cron_daily_news, "cron", hour=8, minute=2, id="news")
 scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=32, id="coins")
-scheduler.add_job(cron_daily_covid, "cron", hour=7, minute=2, id="covid")
 scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=32, id='weather')
 scheduler.add_job(cron_daily_stock, 'cron', hour=15, minute=17, id='stock')
 
