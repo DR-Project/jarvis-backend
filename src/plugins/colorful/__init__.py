@@ -28,7 +28,7 @@ color_flag = on_regex(REG_COLORFLAG)
 
 @colorful.handle()
 async def _colorful(bot: Bot, event: MessageEvent):
-    lsp = event.get_user_id()
+    lsp = event.user_id
 
     if data_source.permission_valid(lsp):
         ret = await data_source.get_colorful(lsp)

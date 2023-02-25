@@ -1,7 +1,7 @@
 import json
 import os
 import random
-from typing import List
+from typing import List, Union
 
 from .interface import lolicon
 
@@ -110,7 +110,7 @@ def get_creep_path() -> str:
     return PROT_FILE + img_dir + luck_dog
 
 
-def permission_valid(user: str) -> bool:
+def permission_valid(user: Union[int, str]) -> bool:
     return user in get_manager(get_file())
 
 
