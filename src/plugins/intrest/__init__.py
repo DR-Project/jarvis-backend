@@ -75,6 +75,7 @@ async def _roll_ssr(bot: Bot):
     if Env().environment == 'dev':
         logger.debug('当前配置环境配置为dev。跳过 roll_ssr 功能')
         return
+
     for group in global_config.gacha_groups:
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
@@ -353,7 +354,7 @@ async def diuren_pot(bot: Bot, event: GroupMessageEvent):
 async def mc_diu(bot: Bot, event: GroupMessageEvent):
     # 不是目标群
     if event.group_id != ***:
-        mc_diu.destroy()
+        await mc_diu.finish()
 
     # 是***
     if event.user_id == data_source.mem_dicts['***']:
