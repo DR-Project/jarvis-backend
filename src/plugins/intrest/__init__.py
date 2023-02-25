@@ -184,6 +184,10 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     # SSR概率 为 100 - weights_all_normal_member
     weights_all_normal_member = 100 - SSR_ODDS
     group_id = event.group_id
+    user_id = event.user_id
+
+    # 机器人重启后第一次使用 或 每日重置后第一次使用 即字典中没有当前群
+
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
     ssr_id = SSR_DICT.get(group_id)
@@ -212,6 +216,34 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     for member in rest_members:
         diu.append('\n@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
                                x.get('user_id') == member][0]))
+        if group_id not in SSR_STATISTICS.keys():
+            total = {
+                'id': user_id,
+                'total': 1,
+                'lucky': 0
+            }
+
+            SSR_STATISTICS[group_id] = {
+                user_id: total
+            }
+        else:
+            group_data: dict = SSR_STATISTICS[group_id]
+
+            # 该群在机器人重新上线后并非第一次使用抽奖，但是该群的用户 user_id 是第一次使用
+            if user_id not in group_data.keys():
+                group_data[user_id] = {
+                    'id': user_id,
+                    'total': 1,
+                    'lucky': 0
+                }
+
+            else:
+                group_data[user_id]['total'] += 1
+
+            SSR_STATISTICS[group_id] = group_data
+
+        if ssr_id == member:
+            SSR_STATISTICS[group_id][user_id]['lucky'] += 1
 
     prefix = '你抽的十连结果是: \n'
 
@@ -320,17 +352,17 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
 
     member_ids.append(ssr_id)
     weights.append(100 - weights_all_normal_member)
-    rest_members = random.choices(member_ids, weights=weights)[0]
+    rest_member = random.choices(member_ids, weights=weights)[0]
     logger.info('群[group_id=%s]的[qq=%d]正在单抽，结果已经产生 %s' % (group_id, event.user_id, rest_members))
 
     ssr_message = '@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
-                            x.get('user_id') == rest_members][0])
+                            x.get('user_id') == rest_member][0])
 
     prefix = '你抽的单抽结果是: '
 
     result = '\n\n你没有抽到SSR哦'
 
-    if ssr_id == rest_members:
+    if ssr_id == rest_member:
         SSR_STATISTICS[group_id][user_id]['lucky'] += 1
         logger.info(
             '[qq=%d]在群[group_id=%d]已抽到%d次SSR' % (user_id, group_id, SSR_STATISTICS[group_id][user_id]['lucky']))
@@ -340,18 +372,18 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     message = prefix + ssr_message + result
     await single_diu.send(message, at_sender=True)
 
-    if ssr_id == event.user_id and ssr_id == rest_members:
+    if ssr_id == event.user_id and ssr_id == rest_member:
         await single_diu.finish('没想到吧 SSR 竟然是你自己', reply_message=True)
 
 
 @diuren_pot.handle()
-async def diuren_pot(bot: Bot, event: GroupMessageEvent):
+async def _diuren_pot(bot: Bot, event: GroupMessageEvent):
     if event.group_id in (***, ***):
         await diuren_pot.finish(Message([MessageSegment.at(data_source.mem_dicts.get('***')), ' 出来挨打 ']))
 
 
 @mc_diu.handle()
-async def mc_diu(bot: Bot, event: GroupMessageEvent):
+async def _mc_diu(bot: Bot, event: GroupMessageEvent):
     # 不是目标群
     if event.group_id != ***:
         await mc_diu.finish()
@@ -368,12 +400,12 @@ async def mc_diu(bot: Bot, event: GroupMessageEvent):
 
 
 @***_report.handle()
-async def ***_report(bot: Bot, event: GroupMessageEvent):
+async def _***_report(bot: Bot, event: GroupMessageEvent):
     msg = data_source.get_***_report()
     await ***_report.finish(msg)
 
 
 @plus1s.handle()
-async def plus1s(bot: Bot, event: MessageEvent):
+async def _plus1s(bot: Bot, event: MessageEvent):
     msg = '+1s'
     await plus1s.finish(msg)
