@@ -1,4 +1,5 @@
 import asyncio
+import json
 import random
 import re
 
@@ -6,7 +7,7 @@ import nonebot
 from nonebot import get_driver, require
 from nonebot.config import Env
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent, Bot
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent, Bot, MessageSegment
 from nonebot.plugin import on_regex
 
 from . import data_source
@@ -56,26 +57,22 @@ ssr_statistics = on_regex(REG_GACHA_STATISTICS, re.IGNORECASE)
 
 
 @queshi.handle()
-async def _queshi(bot: Bot, event: MessageEvent):
+async def _queshi(bot: Bot, event: GroupMessageEvent):
     if data_source.to_be_or_not_be(10):
-        text = '确实'
-        await bot.send(event, text, at_sender=False)
+        logger.info('成功击中')
+        await queshi.finish('确实')
+    logger.info('没有击中')
 
 
 @diu_all.handle()
 async def _diu_all(bot: Bot, event: GroupMessageEvent):
     if event.sender.role != 'member':
-        msg = Message({
-            'type': 'at',
-            'data': {
-                'qq': 'all'
-            }
-        })
-        bot_status = await bot.get_group_member_info(group_id=event.group_id, user_id=***)
-        if bot_status['role'] != 'member':
-            await bot.send(event, msg, at_sender=False)
-            return
-    await bot.send(event, '权限不足', at_sender=False)
+        msg = MessageSegment.at('all')
+        bot_status = await bot.get_group_member_info(group_id=event.group_id, user_id=global_config.bot_qq,
+                                                     no_cache=True)
+        if bot_status['role'] != 'member':  # 不是member，说明是管理员或者群主
+            await diu_all.finish(msg)
+    await diu_all.finish('权限不足')
 
 
 @driver.on_bot_connect
@@ -90,12 +87,8 @@ async def _roll_ssr(bot: Bot):
         # generating SSR
         SSR_DICT[group] = ssr_id
 
-        message = Message({
-            'type': 'text',
-            'data': {
-                'text': '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % 'showssr|查看SSR'
-            }
-        })
+        message = '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % 'showssr|查看SSR'
+
         logger.info('群[group_id=%d]的 SSR 已经更新，新的 SSR 是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
@@ -104,13 +97,13 @@ async def _roll_ssr(bot: Bot):
 async def _lookup_ssr(bot: Bot, event: GroupMessageEvent):
     if Env().environment == 'dev':
         logger.debug('当前配置环境配置为dev。跳过 lookup_ssr 功能')
-        await lookup_ssr.send(Message('目前机器人所处于开发环境，不支持此功能'))
+        await lookup_ssr.finish('目前机器人所处于开发环境，不支持此功能')
         return
     group_id = event.group_id
     ssr_id = SSR_DICT[group_id]
     ssr_info = await bot.get_group_member_info(group_id=group_id, user_id=ssr_id)
 
-    message = Message('当前群的SSR是 @%s' % (ssr_info.get('card') if ssr_info.get('card') else ssr_info.get('nickname')))
+    message = '当前群的SSR是 @%s' % (ssr_info.get('card') if ssr_info.get('card') else ssr_info.get('nickname'))
     await lookup_ssr.finish(message)
 
 
@@ -119,7 +112,7 @@ async def update_ssr():
     if not SSR_DICT:
         return
 
-    bot: Bot = nonebot.get_bot(str(BOT_QNUM))
+    bot: Bot = nonebot.get_bot()
     for group in SSR_DICT.keys():
 
         # 如果一整天都没有人使用过抽卡功能，则不发送此统计
@@ -136,12 +129,14 @@ async def update_ssr():
                 total, lucky = user_data[1].get('total'), user_data[1].get('lucky')
                 probability = lucky / total * 100 if lucky else 0
                 user_info = await bot.get_group_member_info(group_id=group, user_id=user_data[0])
-                ret.append('\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
-                                                                 '{:.2f}'.format(probability)))
+                ret.append(
+                    '\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
+                                                                        '{:.2f}'.format(probability)))
 
             message = Message('\n'.join(ret))
-            await ssr_statistics.send(message)
+            await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
             SSR_STATISTICS.clear()
+            logger.info('今天的统计结果是： %s' % json.dumps(SSR_STATISTICS))
 
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
@@ -149,12 +144,7 @@ async def update_ssr():
         # update SSR
         SSR_DICT[group] = ssr_id
 
-        message = Message({
-            'type': 'text',
-            'data': {
-                'text': '本群今天的SSR已重置'
-            }
-        })
+        message = '本群今天的SSR已重置'
         logger.info('群[group_id=%d]的SSR已经更新，新的SSR是[qq=%d]' % (group, ssr_id))
         await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
         await asyncio.sleep(random.choice([i for i in range(30, 60)]))
@@ -181,7 +171,7 @@ async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
         probability = lucky / total * 100 if lucky else 0
         user_info = await bot.get_group_member_info(group_id=group_id, user_id=user_data[0])
         ret.append('\n%d. @%s 共抽卡%d次, 其中SSR %d次, 概率为%s%%' % (order, user_info.get('nickname'), total, lucky,
-                                                                 '{:.2f}'.format(probability)))
+                                                                       '{:.2f}'.format(probability)))
         order += 1
 
     ret_message = '\n'.join(ret)
@@ -193,8 +183,8 @@ async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
 @ten_times_diu.handle()
 async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     if not TEN_GACHA_SWITCH:
-        await bot.send(event, '以应对风控，十连功能暂时关闭，单抽概率提升')
-        return
+        await ten_times_diu.finish('以应对风控，十连功能暂时关闭，单抽概率提升')
+
     # SSR概率 为 100 - weights_all_normal_member
     weights_all_normal_member = 100 - SSR_ODDS
     group_id = event.group_id
@@ -208,9 +198,8 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
 
     # 群成员少于11个不能玩
     if not counts_member_without_ssr >= 10:
-        await bot.send(event, '该群人数不足', at_sender=True)
         logger.debug('群成员不足，正在退出该方法...')
-        return
+        await ten_times_diu.finish('该群人数不足', at_sender=True)
 
     # 非SSR的每个群友被抽中的概率
     weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
@@ -223,118 +212,49 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     rest_members = random.choices(member_ids, weights=weights, k=10)
     logger.info('群[group_id=%s]的[qq=%d]正在抽取十连，结果已经产生 %s' % (group_id, event.user_id, str(rest_members)))
 
-    diu = []
+    diu = Message()
     for member in rest_members:
-        diu.append({
-            'type': 'text',
-            'data': {
-                'text': '\n@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
-                                    x.get('user_id') == member][0])
-            }
-        })
+        diu.append('\n@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
+                               x.get('user_id') == member][0]))
 
-    prefix = {
-        'type': 'text',
-        'data': {
-            'text': '你抽的十连结果是: \n'
-        }
-    }
+    prefix = '你抽的十连结果是: \n'
+
     diu.insert(0, prefix)
-    diu_message = Message(diu)
 
     # judge
     # 抽到SSR
     if ssr_id in rest_members:
         logger.info('群[group_id=%s]的[qq=%d]已成功抽取到 SSR[qq=%d]' % (group_id, event.user_id, ssr_id))
-        suffix = Message([
-            {
-                'type': 'text',
-                'data': {
-                    'text': '\n\n**其中你抽到的SSR的是: '
-                }
-            }, {
-                'type': 'at',
-                'data': {
-                    'qq': ssr_id
-                }
-            }])
+        suffix = Message(['\n\n**其中你抽到的SSR的是: ', MessageSegment.at(ssr_id)])
 
-        reply = Message({
-            'type': 'reply',
-            'date': {
-                'id': event.message_id
-            }
-        })
-        ret = reply + diu_message + suffix
-        await bot.send(event, ret, at_sender=False)
+        ret = diu + suffix
+        await ten_times_diu.send(ret, reply_message=True)
         logger.info('消息已发送 %s' % str(ret))
 
         # 抽到SSR并且SSR是自己
         if ssr_id == event.user_id:
-            extra = Message([
-                {
-                    'type': 'reply',
-                    'data': {
-                        'id': event.message_id
-                    }
-                }, {
-                    'type': 'text',
-                    'data': {
-                        'text': '没想到吧！！！SSR竟然是你自己'
-                    }
-                }])
-            message = Message(extra)
-            await bot.send(event, message, at_sender=True)
-            logger.info('消息已发送 %s' % str(message))
+            extra = '没想到吧！！！SSR竟然是你自己'
+
+            await ten_times_diu.finish(extra, reply_message=True)
+            logger.info('消息已发送 %s' % str(extra))
     # 没抽到SSR
     else:
-        await bot.send(event, diu_message, at_sender=False)
-        logger.info('消息已发送 %s' % str(diu_message))
+        await ten_times_diu.finish(diu)
+        logger.info('消息已发送 %s' % str(diu))
 
 
 @diuren.handle()
-async def _diuren(bot: Bot, event: MessageEvent):
+async def _diuren(bot: Bot, event: GroupMessageEvent):
     msg = event.get_plaintext()
     if msg == '***':
-        num = event.message_id
-        at_mem = [{  # 新加的这个作为测试，没问题的话，就扩展到全部的食用性功能上面
-            'type': 'reply',  # 这里改了一下，更符合逻辑。记得测试,
-            # 如果不行，可能要在原来的基础上，加上这个，就是又要at type 又要reply type
-            'data': {
-                'id': num
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': ' 好逊哦，丢哪个胖 '
-            }
-        }]
-    elif msg == '***':
-        at_mem = [{
-            'type': 'at',
-            'data': {
-                'qq': data_source.mem_dicts['***']
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': ' 丢人'
-            }
-        }]
-    else:
-        num = data_source.mem_dicts[msg[1:]]
-        at_mem = Message([{
-            'type': 'at',
-            'data': {
-                'qq': num
-            }
-        }, {
-            'type': 'text',
-            'data': {
-                'text': ' 丢人 '
-            }
-        }])
-    await bot.send(event, at_mem, at_sender=False)
+        await diuren.finish(' 好逊哦，丢哪个胖 ', reply_message=True)
+
+    if msg == '***':
+        await diuren.finish(Message([MessageSegment.at(data_source.mem_dicts['***']), ' 丢人']))
+
+    # 从 mem_dicts 中选取
+    num = data_source.mem_dicts[msg[1:]]
+    await diuren.finish(Message([MessageSegment.at(num), ' 丢人 ']))
 
 
 @random_diuren.handle()
@@ -346,18 +266,9 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
         lists.append(i['user_id'])
     lists.remove(BOT_QNUM)
     luck_dog = random.sample(lists, 1)[0]
-    at_mem = Message([{
-        'type': 'at',
-        'data': {
-            'qq': luck_dog
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': ' 丢人 '
-        }
-    }])
-    await bot.send(event, at_mem, at_sender=False)
+    at_mem = Message([MessageSegment.at(luck_dog), ' 丢人 '])
+
+    await random_diuren.finish(at_mem)
 
 
 @single_diu.handle()
@@ -399,8 +310,8 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
 
         SSR_STATISTICS[group_id] = group_data
 
-    logger.info('[qq=%d]在群[group_id=%d]已使用%d次单抽功能' % (user_id, group_id,
-                                                      SSR_STATISTICS[group_id][user_id]['total']))
+    logger.info('[qq=%d]在群[group_id=%d]已使用%d次抽奖功能' % (user_id, group_id,
+                                                                SSR_STATISTICS[group_id][user_id]['total']))
 
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
@@ -416,124 +327,56 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     rest_members = random.choices(member_ids, weights=weights)[0]
     logger.info('群[group_id=%s]的[qq=%d]正在单抽，结果已经产生 %s' % (group_id, event.user_id, rest_members))
 
-    ssr_message = Message({
-        'type': 'text',
-        'data': {
-            'text': '@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
-                              x.get('user_id') == rest_members][0])
-        }
-    })
+    ssr_message = '@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
+                            x.get('user_id') == rest_members][0])
 
-    prefix = Message({
-        'type': 'text',
-        'data': {
-            'text': '你抽的单抽结果是: '
-        }
-    })
+    prefix = '你抽的单抽结果是: '
 
-    result = Message({
-        'type': 'text',
-        'data': {
-            'text': '\n\n你没有抽到SSR哦'
-        }
-    })
+    result = '\n\n你没有抽到SSR哦'
 
     if ssr_id == rest_members:
         SSR_STATISTICS[group_id][user_id]['lucky'] += 1
-        logger.info('[qq=%d]在群[group_id=%d]已抽到%d次SSR')
+        logger.info('[qq=%d]在群[group_id=%d]已抽到%d次SSR' % (user_id, group_id, SSR_STATISTICS[group_id][user_id]['lucky']))
 
-        result = Message({
-            'type': 'text',
-            'data': {
-                'text': '\n\n你成功抽到SSR了！'
-            }
-        })
+        result = '\n\n你成功抽到SSR了！'
 
-    reply = Message({
-        'type': 'reply',
-        'data': {
-            'id': event.message_id
-        }
-    })
-
-    message = reply + prefix + ssr_message + result
-    await bot.send(event, message, at_sender=True)
+    message = prefix + ssr_message + result
+    await single_diu.send(message, at_sender=True)
 
     if ssr_id == event.user_id and ssr_id == rest_members:
-        extra = Message({
-            'type': 'text',
-            'data': {
-                'text': '没想到吧 SSR 竟然是你自己'
-            }
-        })
-
-        ret = reply + extra
-        await bot.send(event, ret, at_sender=True)
+        await single_diu.finish('没想到吧 SSR 竟然是你自己', reply_message=True)
 
 
 @diuren_pot.handle()
-async def diuren_pot(bot: Bot, event: MessageEvent):
-    at_mem = Message([{
-        'type': 'at',
-        'data': {
-            'qq': ***
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': ' 出来挨打 '
-        }
-    }])
-    await bot.send(event, at_mem, at_sender=False)
+async def diuren_pot(bot: Bot, event: GroupMessageEvent):
+    if event.group_id in (***, ***):
+        await diuren_pot.finish(Message([MessageSegment.at(data_source.mem_dicts.get('***')), ' 出来挨打 ']))
 
 
 @mc_diu.handle()
-async def mc_diu(bot: Bot, event: MessageEvent):
-    if event.get_user_id() == str(data_source.mem_dicts['***']):
-        msg = Message([{
-            'type': 'text',
-            'data': {
-                'text': '出来恰金拱门！🍟\n'
-            }
-        }, {
-            'type': 'at',
-            'data': {
-                'qq': data_source.mem_dicts['***']
-            }
-        }, {
-            'type': 'at',
-            'data': {
-                'qq': data_source.mem_dicts['***']
-            }
-        }, {
-            'type': 'at',
-            'data': {
-                'qq': data_source.mem_dicts['***']
-            }
-        }])
-        await bot.send(event, msg, at_sender=False)
-    else:
-        ret = Message([{
-            'type': 'text',
-            'data': {
-                'text': '不许丢！🍟🍟🍟 \n'
-            }
-        }, {
-            'type': 'at',
-            'data': {
-                'qq': event.get_user_id()
-            }
-        }])
-        await bot.send(event, ret, at_sender=False)
+async def mc_diu(bot: Bot, event: GroupMessageEvent):
+    # 不是目标群
+    if event.group_id != ***:
+        mc_diu.destroy()
+
+    # 是***
+    if event.user_id == data_source.mem_dicts['***']:
+        msg = Message(['出来恰金拱门！🍟\n', MessageSegment.at(data_source.mem_dicts['***']),
+                       MessageSegment.at(data_source.mem_dicts['***']), MessageSegment.at(data_source.mem_dicts['***'])])
+        await mc_diu.finish(msg)
+
+    # 不是***
+    if event.user_id != data_source.mem_dicts['***']:
+        await mc_diu.finish(Message(['不许丢！🍟🍟🍟 \n', MessageSegment.at(event.user_id)]))
 
 
 @***_report.handle()
-async def ***_report(bot: Bot, event: MessageEvent):
+async def ***_report(bot: Bot, event: GroupMessageEvent):
     msg = data_source.get_***_report()
-    await bot.send(event, msg, at_sender=False)
+    await ***_report.finish(msg)
 
 
 @plus1s.handle()
 async def plus1s(bot: Bot, event: MessageEvent):
     msg = '+1s'
-    await bot.send(event, msg, at_sender=False)
+    await plus1s.finish(msg)
