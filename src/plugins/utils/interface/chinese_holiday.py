@@ -16,7 +16,7 @@ class Holiday:
                % (self.name, self.date, "放假" if self.is_off_day else "不放假")
 
 
-def get_chinese_holidays() -> list[Holiday]:
+def get_chinese_holidays():
     now = datetime.datetime.now()
     current_year = now.year.__str__()
 
