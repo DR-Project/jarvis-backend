@@ -20,10 +20,6 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 driver = nonebot.get_driver()
 
 # Constant List
-
-BOT_QNUM = ***
-GROUPS = [***, ***, ***]
-TEN_GACHA_SWITCH = False
 SSR_ODDS = 1  # percent '1' means 1%
 REG_QUESHI = '(确实|qs|有一说一|yysy|么|吗|呢|？)'
 REG_DIUREN = '***'
@@ -39,7 +35,6 @@ REG_SSR_LOOKUP = '^(showssr|查看SSR)$'
 MC_DIU = '^(丢羊毛|有羊毛了|丢m记)$'
 
 # Register Event
-
 queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
 diuren = on_regex(REG_DIUREN, re.IGNORECASE)
@@ -80,7 +75,7 @@ async def _roll_ssr(bot: Bot):
     if Env().environment == 'dev':
         logger.debug('当前配置环境配置为dev。跳过 roll_ssr 功能')
         return
-    for group in GROUPS:
+    for group in global_config.gacha_groups:
         members = await bot.get_group_member_list(group_id=group)
         ssr_id = random.choice(members).get('user_id')
 
@@ -182,7 +177,7 @@ async def _ssr_statistics(bot: Bot, event: GroupMessageEvent):
 
 @ten_times_diu.handle()
 async def _diu_ten(bot: Bot, event: GroupMessageEvent):
-    if not TEN_GACHA_SWITCH:
+    if not global_config.ten_gacba:
         await ten_times_diu.finish('以应对风控，十连功能暂时关闭，单抽概率提升')
 
     # SSR概率 为 100 - weights_all_normal_member
@@ -264,7 +259,7 @@ async def _random_diuren(bot: Bot, event: GroupMessageEvent):
     lists = []
     for i in mem_list:
         lists.append(i['user_id'])
-    lists.remove(BOT_QNUM)
+    lists.remove(global_config.bot_qq)
     luck_dog = random.sample(lists, 1)[0]
     at_mem = Message([MessageSegment.at(luck_dog), ' 丢人 '])
 
@@ -336,7 +331,8 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
 
     if ssr_id == rest_members:
         SSR_STATISTICS[group_id][user_id]['lucky'] += 1
-        logger.info('[qq=%d]在群[group_id=%d]已抽到%d次SSR' % (user_id, group_id, SSR_STATISTICS[group_id][user_id]['lucky']))
+        logger.info(
+            '[qq=%d]在群[group_id=%d]已抽到%d次SSR' % (user_id, group_id, SSR_STATISTICS[group_id][user_id]['lucky']))
 
         result = '\n\n你成功抽到SSR了！'
 
