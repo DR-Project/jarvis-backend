@@ -17,7 +17,6 @@ from nonebot.adapters.onebot.v11 import Adapter as OneBot_V11_Adapter
 nonebot.init(apscheduler_config={
     "apscheduler.timezone": "Asia/Shanghai"
 })
-app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
 driver.register_adapter(OneBot_V11_Adapter)
