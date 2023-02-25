@@ -1,8 +1,8 @@
 from .config import Config
 
 from nonebot import get_driver
-from nonebot.plugin import on_regex, on_command
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent
+from nonebot.plugin import on_regex
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
 
 import re
 
@@ -46,102 +46,37 @@ help_inlist = on_regex(REG_IN_HELP)
 
 @help_list.handle()
 async def _help_list(bot: Bot, event: MessageEvent):
-    lists = [{
-        'type': 'text',
-        'data': {
-            'text': '✨ 目前可用 API ✨ \n'
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 CXLL -> 查询魔法流量 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 货币代号 -> 加密货币价格 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 热门货币 -> 热门货币市值 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 COVID -> 新冠疫情/疫苗报告 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 药闻 -> 火星警察出动 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 天气 -> 查询城市天气 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 DDL -> FedUni DDL \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 丢人 -> 随机抽取幸运儿 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 丢X -> 唯一指定丢人 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 色来 -> 随机涩图抽卡 \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 指令列表 -> 列出命令 \n',
-        }
-    }]
-    await bot.send(event, lists, at_sender=False)
+    lists = Message()
+    lists.append('✨ 目前可用 API ✨ \n')
+    lists.append('🍭 CXLL -> 查询魔法流量 \n')
+    lists.append('🍭 货币代号 -> 加密货币价格 \n')
+    lists.append('🍭 热门货币 -> 热门货币市值 \n')
+    lists.append('🍭 COVID -> 新冠疫情/疫苗报告 \n')
+    lists.append('🍭 药闻 -> 火星警察出动 \n')
+    lists.append('🍭 天气 -> 查询城市天气 \n')
+    lists.append('🍭 DDL -> FedUni DDL \n')
+    lists.append('🍭 丢人 -> 随机抽取幸运儿 \n')
+    lists.append('🍭 丢X -> 唯一指定丢人 \n')
+    lists.append('🍭 色来 -> 随机涩图抽卡 \n')
+    lists.append('🍭 指令列表 -> 列出命令 \n')
+
+    await help_list.finish(lists)
 
 
 @help_explist.handle()
 async def _help_explist(bot: Bot, event: MessageEvent):
-    lists = [{
-        'type': 'text',
-        'data': {
-            'text': '✨ More API ✨ \n'
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 /ECOIN 币-对 -> 指定币对价格 \n',
-        }
-    }]
-    await bot.send(event, lists, at_sender=False)
+    lists = Message()
+    lists.append('✨ More API ✨ \n')
+    lists.append('🍭 /ECOIN 币-对 -> 指定币对价格 \n')
+
+    await help_explist.finish(lists)
 
 
 @help_inlist.handle()
 async def _help_inlist(bot: Bot, event: MessageEvent):
-    lists = [{
-        'type': 'text',
-        'data': {
-            'text': '✨ Console API ✨ \n'
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 GO-status -> Status GO-CQHTTP \n',
-        }
-    }, {
-        'type': 'text',
-        'data': {
-            'text': '🍭 GO-reload -> Reload GO-CQHTTP \n',
-        }
-    }]
-    await bot.send(event, lists, at_sender=False)
+    lists = Message()
+    lists.append('✨ Console API ✨ \n')
+    lists.append('🍭 GO-status -> Status GO-CQHTTP \n')
+    lists.append('🍭 GO-reload -> Reload GO-CQHTTP \n')
+
+    await help_inlist.finish(lists)
