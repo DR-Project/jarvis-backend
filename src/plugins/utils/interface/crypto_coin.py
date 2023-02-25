@@ -67,14 +67,14 @@ def get_price(instrument_id: str) -> dict:
         'instId': instrument_id
     }
 
-    proxies = {
-        # 部署到服务器或者容器里面之后 需要修改为对应的
-        'http://': 'http://localhost:7890',
-        'https://': 'http://localhost:7890'
-    }
+    # proxies = {
+    #     # 部署到服务器或者容器里面之后 需要修改为对应的
+    #     'http://': 'http://localhost:7890',
+    #     'https://': 'http://localhost:7890'
+    # }
 
     try:
-        r = httpx.get(url, params=params, proxies=proxies)
+        r = httpx.get(url, params=params)
     except httpx.RequestError:
         raise Exception('Interface Error / 接口异常')
     else:
@@ -142,11 +142,11 @@ def get_price_instead(instrument_id: str) -> dict:
     endpoint = '/v1/cryptocurrency/quotes/latest'
     url = 'https://' + host + endpoint
 
-    proxies = {
-        # 部署到服务器或者容器里面之后 需要修改为对应的
-        'http://': 'http://localhost:7890',
-        'https://': 'http://localhost:7890'
-    }
+    # proxies = {
+    #     # 部署到服务器或者容器里面之后 需要修改为对应的
+    #     'http://': 'http://localhost:7890',
+    #     'https://': 'http://localhost:7890'
+    # }
 
     headers = {
         'Accept': 'application / json',
@@ -162,7 +162,7 @@ def get_price_instead(instrument_id: str) -> dict:
     }
 
     try:
-        r = httpx.get(url, params=params, proxies=proxies, headers=headers)
+        r = httpx.get(url, params=params, headers=headers)
     except httpx.RequestError:
         raise RequestError('Request Error')
     except httpx.ReadTimeout:
@@ -292,11 +292,11 @@ async def get_volume(time: str, limit: int) -> str:
     endpoint = '/v1/cryptocurrency/listings/latest'
     url = host + endpoint
 
-    proxies = {
-        # 部署到服务器或者容器里面之后 需要修改为对应的
-        'http://': 'http://localhost:7890',
-        'https://': 'http://localhost:7890'
-    }
+    # proxies = {
+    #     # 部署到服务器或者容器里面之后 需要修改为对应的
+    #     'http://': 'http://localhost:7890',
+    #     'https://': 'http://localhost:7890'
+    # }
 
     headers = {
         'Accept': 'application / json',
@@ -309,7 +309,7 @@ async def get_volume(time: str, limit: int) -> str:
         'limit': limit
     }
 
-    async with httpx.AsyncClient(proxies=proxies, headers=headers, params=params) as client:
+    async with httpx.AsyncClient(headers=headers, params=params) as client:
         try:
             r = await client.get(url)
         except httpx.RequestError:

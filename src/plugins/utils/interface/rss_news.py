@@ -21,14 +21,14 @@ def get_news(target: str, quantity: int) -> dict:
 
     # rss_source = rss_sources[rss_source]
 
-    proxies = {
-            # 部署到服务器或者容器里面之后 需要修改为对应的
-            'http://': 'http://localhost:7890',
-            'https://': 'http://localhost:7890'
-        }
+    # proxies = {
+    #         # 部署到服务器或者容器里面之后 需要修改为对应的
+    #         'http://': 'http://localhost:7890',
+    #         'https://': 'http://localhost:7890'
+    #     }
 
     try:
-        r = httpx.get(rss_sources[target][1], proxies=proxies)
+        r = httpx.get(rss_sources[target][1])
     except httpx.RequestError:
         raise RequestError('Interface Error / 接口异常')
     else:
