@@ -34,7 +34,6 @@ REG_COIN = '^(BTC|EOS|BTG|ADA|DOGE|LTC|ETH|' + \
 REG_HOTCOIN = '(热门货币|hotcoin)'
 REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.+(天气)$'
-REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
 STOCK = 'STOCK'
 
@@ -45,7 +44,6 @@ cryptocoin = on_regex(REG_COIN, re.IGNORECASE)
 hotcoin = on_regex(REG_HOTCOIN)
 mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
-ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
 stock = on_command(STOCK)
 
@@ -137,11 +135,6 @@ async def _weather(bot: Bot, event: MessageEvent):
     target = event.get_plaintext()
     ret = data_source.weather_get(target)
     await weather.finish(ret)
-
-
-@ass_ddl.handle()
-async def _ass_ddl(bot: Bot, event: MessageEvent):
-    await ass_ddl.finish('此功能已下线')
 
 
 @xxx.handle()

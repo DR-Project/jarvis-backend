@@ -1,10 +1,8 @@
-import asyncio
 from typing import List
 
 from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
-from .interface import assignment_ddl
 from .interface import stock
 from .interface import caiyun_weather
 
@@ -94,32 +92,6 @@ def weather_get(address: str) -> str:
     else:
         ret = '我的记忆体无法回答这个问题'
     return ret
-
-
-def ddl_get() -> str:
-    # assignments_display = assignments[:3]
-
-    ret = ''
-    pattern = '%Y年%m月%d日 %H:%M'
-
-    assignments = assignment_ddl.sort_assignment(
-        assignment_ddl.convert_date(assignment_ddl.get_assignment(assignment_ddl.get_course())))
-
-    for assignment in assignments:
-        # init variable
-        course_name = assignment['course_name']
-        course_code = assignment['course_code']
-        deadline = assignment['ddl']
-        assignment_name = assignment['name']
-
-        ddl = time.strftime(pattern, time.localtime(deadline))
-        now = time.time()
-
-        if now <= deadline:
-            ret += f'{course_code}' + ' ' + f'{course_name}' + ' ' + f'{assignment_name}' + '\n' \
-                   + f'{ddl}' + '\n\n'
-
-    return ret[:-2]
 
 
 async def get_coin_volume() -> str:
