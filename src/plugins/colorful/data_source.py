@@ -1,7 +1,9 @@
 import json
 import os
 import random
+
 from typing import List, Union
+from nonebot.adapters.onebot.v11 import MessageSegment, Message
 
 from .interface import lolicon
 
@@ -12,7 +14,7 @@ DIR_MANAGER = '/src/data/'
 DIR_CREEP_IMG = '/src/plugins/colorful/image/creep/'
 
 
-async def get_colorful(lsp: int) -> str:
+async def get_colorful(lsp: int) -> Union[Message, str]:
     msg = lolicon.get_lolicon()[0]
     url = msg['url']
     pid = 'PID: ' + str(msg['pid']) + '\n'
@@ -31,59 +33,12 @@ async def get_colorful(lsp: int) -> str:
 
     b64_img = bit_thread.base64_str
 
-
-    ret = [{
-            'type': 'text',
-            'data': {
-                'text': pid
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': title
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': author
-            }
-        },{
-            'type': 'image',
-            'data': {
-                'file': PROT_B64 + b64_img
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': '来啦来啦！'
-            }
-        },{
-            'type': 'at',
-            'data': {
-                'qq': lsp
-            }
-        }]
-    return ret
+    return Message([pid, title, author, MessageSegment.image(PROT_B64 + b64_img), '来啦来啦！', MessageSegment.at(lsp)])
 
 
-def get_crepper(lsp: int) -> str:
-    ret = [{
-            'type': 'image',
-            'data': {
-                'file': get_creep_path()
-            }
-        },{
-            'type': 'text',
-            'data': {
-                'text': '不许色！'
-            }
-        },{
-            'type': 'at',
-            'data': {
-                'qq': lsp
-            }
-        }]
-    return ret
+def get_crepper(lsp: int) -> Message:
+
+    return Message([MessageSegment.image(get_creep_path()), '不许色！', MessageSegment.at(lsp)])
 
 
 def get_file() -> str:
@@ -95,11 +50,11 @@ def get_file() -> str:
 def get_manager(file: str) -> List[str]:
     with open(file, mode='rb') as f:
         manager_object = f.read()
-    
+
     manager_dict = json.loads(manager_object)
     owners = manager_dict['OWNER']
     admin = manager_dict['ADMIN']
-    return owners +admin
+    return owners + admin
 
 
 def get_creep_path() -> str:

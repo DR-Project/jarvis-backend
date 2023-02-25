@@ -72,9 +72,9 @@ def dump_img(url: str) -> bytes:
     except httpx.ReadTimeout:
         raise ImageReadTimeout('超时')
     else:
-        image = r.content
+        r_image = r.content
 
-    return image
+    return r_image
 
 
 def convert_base64(image: bytes) -> str:
