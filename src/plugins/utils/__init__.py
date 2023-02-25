@@ -35,7 +35,6 @@ REG_NEWS = '^(药闻|热搜|TESTNEWS)$'
 REG_WEATHER = '^.+(天气)$'
 REG_DDL = '^(DDL)$'
 EREG_COIN = 'ECOIN'
-REG_COVID_VACC = 'COVID'
 STOCK = 'STOCK'
 
 # Register Event
@@ -47,7 +46,6 @@ mars_news = on_regex(REG_NEWS)
 weather = on_regex(REG_WEATHER)
 ass_ddl = on_regex(REG_DDL, re.IGNORECASE)
 exp_cryptocoin = on_command(EREG_COIN)
-covid_vacc = on_regex(REG_COVID_VACC, re.IGNORECASE)
 stock = on_command(STOCK)
 
 
@@ -167,12 +165,6 @@ async def _xxx(bot: Bot, event: MessageEvent):
     await xxx.finish(weather_message, at_sender=True)
 
 
-@covid_vacc.handle()
-async def _covid_vacc(bot: Bot, event: MessageEvent):
-    ret = await data_source.covid_get_vaccinations()
-    await bot.send(event, ret, at_sender=False)
-
-
 @hotcoin.handle()
 async def hotcoin(bot: Bot, event: MessageEvent):
     ret = await data_source.get_coin_volume()
@@ -216,11 +208,6 @@ async def cron_daily_coin():
 async def cron_daily_news():
     ret_1 = data_source.rss_get_news('药闻')
     await _scheduler_controller(ret_1)
-
-
-async def cron_daily_covid():
-    ret = await data_source.covid_get_vaccinations()
-    await _scheduler_controller(ret)
 
 
 async def cron_currency():
@@ -318,7 +305,6 @@ def _currency():
 
 scheduler.add_job(cron_daily_news, "cron", hour=8, minute=2, id="news")
 scheduler.add_job(cron_daily_coin, "cron", hour=7, minute=32, id="coins")
-scheduler.add_job(cron_daily_covid, "cron", hour=7, minute=2, id="covid")
 scheduler.add_job(corn_daily_weather, 'cron', hour=8, minute=32, id='weather')
 scheduler.add_job(cron_daily_stock, 'cron', hour=15, minute=17, id='stock')
 

@@ -5,7 +5,6 @@ from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
 from .interface import assignment_ddl
-from .interface import covid
 from .interface import stock
 from .interface import caiyun_weather
 
@@ -94,21 +93,6 @@ def weather_get(address: str) -> str:
             ret = '接口异常'
     else:
         ret = '我的记忆体无法回答这个问题'
-    return ret
-
-
-async def covid_get_vaccinations():
-    data = await covid.get_china_num()
-    date = data['date']
-    count = data['total_vaccinations']
-
-    new_cases = int(data['new_cases'])
-    total_vaccinations_per_hundred = data['total_vaccinations_per_hundred']
-    count = float(count) / 10000 / 10000
-
-    ret = '截至 ' + date + '\n----------------' + '\n\n中国内地已接种新冠疫苗 ' + str(round(count, 2)) + ' 亿剂次，每百人接种 ' + \
-          str(total_vaccinations_per_hundred) + ' 剂次。 \n\n' + '全国31个省级行政区和新疆生产建设兵团共报告新增确诊 ' + f'{new_cases}' + ' 人。'
-
     return ret
 
 
