@@ -20,7 +20,7 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 driver = nonebot.get_driver()
 
 # Constant List
-SSR_ODDS = 1  # percent '1' means 1%
+SSR_ODDS = 5  # percent '1' means 1%
 REG_QUESHI = '(确实|qs|有一说一|yysy|么|吗|呢|？)'
 REG_DIUREN = '***'
 REG_RDIUREN = '^(丢人|diuren|diu)$'
@@ -190,32 +190,39 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
 
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
-    ssr_id = SSR_DICT.get(group_id)
+    ssr_id = SSR_DICT.get(group_id) if Env().environment == 'prod' else ***
     # 获取非SSR群友QQ号
     member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
     # 非SSR群友个数
-    counts_member_without_ssr = len(member_ids)
+    # counts_member_without_ssr = len(member_ids)
 
-    # 群成员少于11个不能玩
-    if not counts_member_without_ssr >= 10:
-        logger.debug('群成员不足，正在退出该方法...')
-        await ten_times_diu.finish('该群人数不足', at_sender=True)
+    # # 群成员少于11个不能玩
+    # if not counts_member_without_ssr >= 10:
+    #     logger.debug('群成员不足，正在退出该方法...')
+    #     await ten_times_diu.finish('该群人数不足', at_sender=True)
 
     # 非SSR的每个群友被抽中的概率
-    weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
+    # weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
+    #
+    # weights = [weights_each_normal_member for _ in range(len(member_ids))]
 
-    weights = [weights_each_normal_member for _ in range(len(member_ids))]
-
-    member_ids.append(ssr_id)
-    weights.append(100 - weights_all_normal_member)
+    # member_ids.append(ssr_id)
+    # weights.append(100 - weights_all_normal_member)
     # 抽取且放回
-    rest_members = random.choices(member_ids, weights=weights, k=10)
-    logger.info('群[group_id=%s]的[qq=%d]正在抽取十连，结果已经产生 %s' % (group_id, event.user_id, str(rest_members)))
+    # rest_members = random.choices(member_ids, weights=weights, k=10)
+
+    bingo_list = []
+    outcome_list = []
 
     diu = Message()
-    for member in rest_members:
+    for _ in range(10):
+        bingo = random.choices([True, False], weights=[SSR_ODDS, weights_all_normal_member])[0]
+        bingo_list.append(bingo)
+        outcome = random.choice(member_ids) if not bingo else ssr_id
+        outcome_list.append(outcome_list)
+
         diu.append('\n@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
-                               x.get('user_id') == member][0]))
+                               x.get('user_id') == outcome][0]))
         if group_id not in SSR_STATISTICS.keys():
             total = {
                 'id': user_id,
@@ -242,16 +249,17 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
 
             SSR_STATISTICS[group_id] = group_data
 
-        if ssr_id == member:
+        if ssr_id == outcome:
             SSR_STATISTICS[group_id][user_id]['lucky'] += 1
 
+    logger.info('群[group_id=%s]的[qq=%d]正在抽取十连，结果已经产生 %s' % (group_id, event.user_id, str(outcome_list)))
     prefix = '你抽的十连结果是: \n'
 
     diu.insert(0, prefix)
 
     # judge
     # 抽到SSR
-    if ssr_id in rest_members:
+    if True in bingo_list:
         logger.info('群[group_id=%s]的[qq=%d]已成功抽取到 SSR[qq=%d]' % (group_id, event.user_id, ssr_id))
         suffix = Message(['\n\n**其中你抽到的SSR的是: ', MessageSegment.at(ssr_id)])
 
@@ -343,26 +351,23 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
 
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
-    ssr_id = SSR_DICT.get(group_id)
+    ssr_id = SSR_DICT.get(group_id) if Env().environment == 'prod' else ***
     member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
 
-    counts_member_without_ssr = len(member_ids)
-    weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
-    weights = [weights_each_normal_member for _ in range(len(member_ids))]
+    bingo = random.choices([True, False], weights=[SSR_ODDS, weights_all_normal_member])[0]
+    outcome_id = random.choice(member_ids) if not bingo else ssr_id
 
-    member_ids.append(ssr_id)
-    weights.append(100 - weights_all_normal_member)
-    rest_member = random.choices(member_ids, weights=weights)[0]
-    logger.info('群[group_id=%s]的[qq=%d]正在单抽，结果已经产生 %s' % (group_id, event.user_id, rest_member))
+    logger.info('群[group_id=%s]的[qq=%d]正在单抽，结果已经产生 %s' % (group_id, event.user_id, outcome_id))
 
     ssr_message = '@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
-                            x.get('user_id') == rest_member][0])
+                            x.get('user_id') == outcome_id][0])
 
     prefix = '你抽的单抽结果是: '
 
     result = '\n\n你没有抽到SSR哦'
 
-    if ssr_id == rest_member:
+    # if ssr_id == rest_member:
+    if bingo:
         SSR_STATISTICS[group_id][user_id]['lucky'] += 1
         logger.info(
             '[qq=%d]在群[group_id=%d]已抽到%d次SSR' % (user_id, group_id, SSR_STATISTICS[group_id][user_id]['lucky']))
@@ -372,7 +377,7 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     message = prefix + ssr_message + result
     await single_diu.send(message, at_sender=True)
 
-    if ssr_id == event.user_id and ssr_id == rest_member:
+    if ssr_id == event.user_id and bingo:
         await single_diu.finish('没想到吧 SSR 竟然是你自己', reply_message=True)
 
 
