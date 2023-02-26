@@ -353,7 +353,7 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
     member_ids.append(ssr_id)
     weights.append(100 - weights_all_normal_member)
     rest_member = random.choices(member_ids, weights=weights)[0]
-    logger.info('群[group_id=%s]的[qq=%d]正在单抽，结果已经产生 %s' % (group_id, event.user_id, rest_members))
+    logger.info('群[group_id=%s]的[qq=%d]正在单抽，结果已经产生 %s' % (group_id, event.user_id, rest_member))
 
     ssr_message = '@%s' % ([x.get('card') if x.get('card') else x.get('nickname') for x in group_member_list if
                             x.get('user_id') == rest_member][0])
