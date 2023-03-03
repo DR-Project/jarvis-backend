@@ -193,23 +193,6 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
     ssr_id = SSR_DICT.get(group_id) if Env().environment == 'prod' else ***
     # 获取非SSR群友QQ号
     member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
-    # 非SSR群友个数
-    # counts_member_without_ssr = len(member_ids)
-
-    # # 群成员少于11个不能玩
-    # if not counts_member_without_ssr >= 10:
-    #     logger.debug('群成员不足，正在退出该方法...')
-    #     await ten_times_diu.finish('该群人数不足', at_sender=True)
-
-    # 非SSR的每个群友被抽中的概率
-    # weights_each_normal_member = counts_member_without_ssr / weights_all_normal_member
-    #
-    # weights = [weights_each_normal_member for _ in range(len(member_ids))]
-
-    # member_ids.append(ssr_id)
-    # weights.append(100 - weights_all_normal_member)
-    # 抽取且放回
-    # rest_members = random.choices(member_ids, weights=weights, k=10)
 
     bingo_list = []
     outcome_list = []
