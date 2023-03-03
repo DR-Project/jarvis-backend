@@ -1,0 +1,8 @@
+GET ***?gid=12345&content=你是谁啊
+x-app-secret: ***
+
+
+###
+GET ***?gid=***&mid=83
+x-app-secret: ***
+
