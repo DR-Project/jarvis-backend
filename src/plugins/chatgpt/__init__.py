@@ -48,7 +48,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     mid = r.json().get('data').get('mid')
     logger.info('收到mid[mid=%s]' % mid)
 
-    for i in range(5):
+    for i in range(10):
         logger.info('等待异步返回回复，第[%d]次轮询' % i)
         await asyncio.sleep(3)
 
