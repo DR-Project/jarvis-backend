@@ -11,6 +11,7 @@ from nonebot.typing import T_State
 
 from .censor import AliyunCensor
 from .config import Config
+from .tg import send_censored_msg
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -47,7 +48,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     mid = r.json().get('data').get('mid')
     logger.info('收到mid[mid=%s]' % mid)
 
-    for i in range(5):
+    for i in range(10):
         logger.info('等待异步返回回复，第[%d]次轮询' % i)
         await asyncio.sleep(3)
 
@@ -80,6 +81,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             censor_msg = regex_gpt.sub(' 寄屁替 ', censor_msg, 999)
 
             if AliyunCensor.is_block(censor_msg):
+                send_censored_msg(censor_msg, message)
                 await chatgpt.finish('内容太过暴力，请先完成相关备案')
 
             logger.info('发送审查后消息，消息是[%s]' % censor_msg)
