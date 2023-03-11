@@ -28,7 +28,7 @@ HEADERS = {
 def auto_reply_condition_checker():
     async def _checker(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
         if not event.is_tome():
-            if to_be_or_not_be(100):
+            if to_be_or_not_be(1):
                 logger.info('[ChatGPT] 自动回复概率 命中')
                 return True
             logger.info('[ChatGPT] 自动回复概率 没有命中')
