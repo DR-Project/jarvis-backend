@@ -6,12 +6,14 @@ import httpx
 import nonebot
 from nonebot import get_driver, on_message, logger
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Event, Message, GroupMessageEvent, MessageSegment
+from nonebot.internal.rule import Rule
 from nonebot.rule import to_me
 from nonebot.typing import T_State
 
 from .censor import AliyunCensor
 from .config import Config
 from .tg import send_censored_msg
+from ..intrest.data_source import to_be_or_not_be
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -23,6 +25,22 @@ HEADERS = {
 }
 
 
+def auto_reply_condition_checker():
+    async def _checker(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
+        if not event.is_tome():
+            if to_be_or_not_be(100):
+                logger.info('[ChatGPT] 自动回复概率 命中')
+                return True
+            logger.info('[ChatGPT] 自动回复概率 没有命中')
+            return False
+
+    return Rule(_checker)
+
+
+auto_reply = on_message(rule=auto_reply_condition_checker())
+
+
+@auto_reply.handle()
 @chatgpt.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     message = str(event.message)

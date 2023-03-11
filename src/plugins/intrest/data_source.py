@@ -44,6 +44,11 @@ def get_***_report() -> str:
 
 
 def to_be_or_not_be(probability: int) -> bool:
+    """
+
+    :param probability: 概率
+    :return: bool
+    """
     if probability >= 100:
         return True
     if probability < 0:
