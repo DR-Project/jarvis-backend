@@ -6,12 +6,18 @@ from nonebot.adapters.onebot.v11 import Adapter as OneBot_V11_Adapter
 
 # Custom your logger
 # 
-# from nonebot.log import logger, default_format
-# logger.add("error.log",
-#            rotation="00:00",
-#            diagnose=False,
-#            level="ERROR",
-#            format=default_format)
+from nonebot.log import logger, default_format
+logger.add(
+        "./logs/latest.log",
+        level='INFO',
+        enqueue=True,
+        rotation="00:00",
+        compression='zip',
+        encoding="utf-8",
+        backtrace=True,
+        diagnose=True,
+        colorize=False,
+    )
 
 # You can pass some keyword args config to init function
 nonebot.init(apscheduler_config={
