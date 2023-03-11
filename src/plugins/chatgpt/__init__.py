@@ -27,8 +27,9 @@ HEADERS = {
 
 def auto_reply_condition_checker():
     async def _checker(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
-        if not event.is_tome():
+        if not event.is_tome() and len(event.get_plaintext()) >= 7:
             if to_be_or_not_be(1):
+                state['addition'] = '\n请在20个字以内回复我'
                 logger.info('[ChatGPT] 自动回复概率 命中')
                 return True
             logger.info('[ChatGPT] 自动回复概率 没有命中')
@@ -42,7 +43,7 @@ auto_reply = on_message(rule=auto_reply_condition_checker())
 
 @auto_reply.handle()
 @chatgpt.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     message = str(event.message)
     group_id = event.group_id
 
@@ -52,7 +53,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
     params = {
         'gid': group_id,
-        'content': message
+        'content': message + state.get('addition', '')
     }
 
     send_url = '***'
