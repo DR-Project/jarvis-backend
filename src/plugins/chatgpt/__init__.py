@@ -28,7 +28,7 @@ HEADERS = {
 def auto_reply_condition_checker():
     async def _checker(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
         if not event.is_tome() and len(event.get_plaintext()) >= 7:
-            if to_be_or_not_be(1):
+            if to_be_or_not_be(1):  # Numbers in brackets are hit probabilities
                 state['addition'] = '\n请在20个字以内回复我'
                 logger.info('[ChatGPT] 自动回复概率 命中')
                 return True
