@@ -1,6 +1,7 @@
 nb-cli
 nonebot-plugin-apscheduler
 nonebot-adapter-onebot
+nonebot-plugin-russian
 xmltodict
 pypinyin
 Pillow
