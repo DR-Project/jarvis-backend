@@ -5,6 +5,7 @@ from nonebot.plugin import on_regex
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 
 from . import data_source
+from ..settings.manager import is_permission_valid
 
 
 global_config = get_driver().config
@@ -30,7 +31,7 @@ color_flag = on_regex(REG_COLORFLAG)
 async def _colorful(bot: Bot, event: MessageEvent):
     lsp = event.user_id
 
-    if data_source.permission_valid(lsp):
+    if is_permission_valid(lsp):
         ret = await data_source.get_colorful(lsp)
     else:
         if data_source.SWITCH_FLAG:
@@ -43,8 +44,8 @@ async def _colorful(bot: Bot, event: MessageEvent):
 @color_flag.handle()
 async def _color_flag(bot: Bot, event: MessageEvent):
     msg = event.get_plaintext()
-    lsp = event.get_user_id()
-    if data_source.permission_valid(lsp):
+    lsp = event.user_id
+    if is_permission_valid(lsp):
         if msg == '涩图ON':
             data_source.SWITCH_FLAG = True
             ret = 'GKD'

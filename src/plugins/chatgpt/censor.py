@@ -8,7 +8,12 @@ from alibabacloud_imageaudit20191230.models import ScanTextResponse
 from alibabacloud_tea_openapi import models as open_api_models
 from alibabacloud_imageaudit20191230 import models as imageaudit_20191230_models
 from alibabacloud_tea_util import models as util_models
-from nonebot import logger
+from nonebot import logger, get_driver
+
+from .config import Config
+
+global_config = get_driver().config
+config = Config(**global_config.dict())
 
 
 class AliyunCensor:
@@ -43,7 +48,7 @@ class AliyunCensor:
     ) -> ScanTextResponse:
         # 工程代码泄露可能会导致AccessKey泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考，建议使用更安全的 STS
         # 方式，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378659.html
-        client = AliyunCensor.create_client('***', '***')
+        client = AliyunCensor.create_client(config.aliyun_access_key, config.aliyun_access_token)
         labels_0 = imageaudit_20191230_models.ScanTextRequestLabels(
             label='politics'
         )

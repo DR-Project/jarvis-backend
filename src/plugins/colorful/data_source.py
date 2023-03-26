@@ -41,32 +41,12 @@ def get_crepper(lsp: int) -> Message:
     return Message([MessageSegment.image(get_creep_path()), '不许色！', MessageSegment.at(lsp)])
 
 
-def get_file() -> str:
-    file = os.getcwd() + DIR_MANAGER + 'manager.json'
-
-    return file
-
-
-def get_manager(file: str) -> List[str]:
-    with open(file, mode='rb') as f:
-        manager_object = f.read()
-
-    manager_dict = json.loads(manager_object)
-    owners = manager_dict['OWNER']
-    admin = manager_dict['ADMIN']
-    return owners + admin
-
-
 def get_creep_path() -> str:
     img_dir = os.getcwd() + DIR_CREEP_IMG
     img_list = os.listdir(img_dir)
     luck_dog = random.sample(img_list, 1)[0]
 
     return PROT_FILE + img_dir + luck_dog
-
-
-def permission_valid(user: Union[int, str]) -> bool:
-    return user in get_manager(get_file())
 
 
 '''if __name__ == '__main__':

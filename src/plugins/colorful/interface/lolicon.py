@@ -5,6 +5,12 @@ from typing import List
 from threading import Thread
 from PIL import Image
 from io import BytesIO
+from nonebot import get_driver
+
+from ..config import Config
+
+global_config = get_driver().config
+config = Config(**global_config.dict())
 
 
 class Base64Convertor(Thread):
@@ -34,7 +40,7 @@ def get_lolicon() -> dict:
     url = 'https://api.lolicon.app/setu/'
 
     param = {
-        'apikey': '***',
+        'apikey': config.lolicon_key,
         'r18': '0'
     }
 

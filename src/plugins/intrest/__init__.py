@@ -22,11 +22,10 @@ driver = nonebot.get_driver()
 # Constant List
 SSR_ODDS = 5  # percent '1' means 1%
 REG_QUESHI = '(确实|qs|有一说一|yysy|么|吗|呢|？)'
-REG_DIUREN = '***'
+REG_DIUREN = config.diuren_keyword
 REG_RDIUREN = '^(丢人|diuren|diu)$'
 REG_PLUS1S = '.*(蛤|蛤蛤|黑框眼镜|江|泽).*'
-REG_***_REPORT = '^(***排行|***ph|kk***)$'
-REG_POT = '***'
+REG_POT = config.big_yellow_keyword
 REG_DIU_ALL = '^(全体丢人|全员丢人|丢全部)$'
 REG_TEN_GACHA = '^(十连丢人|十连单抽|十连|十连抽)$'
 REG_GACHA = '^(单抽)$'
@@ -39,7 +38,6 @@ queshi = on_regex(REG_QUESHI)
 random_diuren = on_regex(REG_RDIUREN)
 diuren = on_regex(REG_DIUREN, re.IGNORECASE)
 plus1s = on_regex(REG_PLUS1S)
-***_report = on_regex(REG_***_REPORT, re.IGNORECASE)
 diuren_pot = on_regex(REG_POT)
 mc_diu = on_regex(MC_DIU, re.IGNORECASE)
 diu_all = on_regex(REG_DIU_ALL)
@@ -190,7 +188,7 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
 
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
-    ssr_id = SSR_DICT.get(group_id) if Env().environment == 'prod' else ***
+    ssr_id = SSR_DICT.get(group_id) if Env().environment == 'prod' else config.admin_qq
     # 获取非SSR群友QQ号
     member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
 
@@ -265,11 +263,11 @@ async def _diu_ten(bot: Bot, event: GroupMessageEvent):
 @diuren.handle()
 async def _diuren(bot: Bot, event: GroupMessageEvent):
     msg = event.get_plaintext()
-    if msg == '***':
-        await diuren.finish(' 好逊哦，丢哪个胖 ', reply_message=True)
+    if msg == config.big_fat_keyword:
+        await diuren.finish(config.diu_fat_message, reply_message=True)
 
-    if msg == '***':
-        await diuren.finish(Message([MessageSegment.at(data_source.mem_dicts['***']), ' 丢人']))
+    if msg == config.magician_keyword:
+        await diuren.finish(Message([MessageSegment.at(data_source.mem_dicts[config.magician_keyword[1:]]), ' 丢人']))
 
     # 从 mem_dicts 中选取
     num = data_source.mem_dicts[msg[1:]]
@@ -334,7 +332,7 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
 
     logger.info('群[group_id=%d] 开始进行十连丢人，SSR的概率是 %f ' % (group_id, 100 - weights_all_normal_member) + '%')
     group_member_list = await bot.get_group_member_list(group_id=group_id)
-    ssr_id = SSR_DICT.get(group_id) if Env().environment == 'prod' else ***
+    ssr_id = SSR_DICT.get(group_id) if Env().environment == 'prod' else config.admin_qq
     member_ids = [x.get('user_id') for x in group_member_list if x.get('user_id') != ssr_id]
 
     bingo = random.choices([True, False], weights=[SSR_ODDS, weights_all_normal_member])[0]
@@ -366,31 +364,26 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
 
 @diuren_pot.handle()
 async def _diuren_pot(bot: Bot, event: GroupMessageEvent):
-    if event.group_id in (***, ***):
-        await diuren_pot.finish(Message([MessageSegment.at(data_source.mem_dicts.get('***')), ' 出来挨打 ']))
+    if event.group_id in config.big_yellow_group_id_set:
+        await diuren_pot.finish(Message([MessageSegment.at(data_source.mem_dicts.get('黄')), ' 出来挨打 ']))
 
 
 @mc_diu.handle()
 async def _mc_diu(bot: Bot, event: GroupMessageEvent):
     # 不是目标群
-    if event.group_id != ***:
+    if event.group_id != config.mc_diu_group_id:
         await mc_diu.finish()
 
-    # 是***
-    if event.user_id == data_source.mem_dicts['***']:
-        msg = Message(['出来恰金拱门！🍟\n', MessageSegment.at(data_source.mem_dicts['***']),
-                       MessageSegment.at(data_source.mem_dicts['***']), MessageSegment.at(data_source.mem_dicts['***'])])
-        await mc_diu.finish(msg)
+        # 是大胖
+        if event.user_id == config.mc_diu_group_id:
+            msg_list = ['出来恰金拱门！🍟\n']
+            for person in config.mc_at_list:
+                msg_list.append(MessageSegment.at(config.mem_dicts[person]))
+            await mc_diu.finish(Message(msg_list))
 
-    # 不是***
-    if event.user_id != data_source.mem_dicts['***']:
-        await mc_diu.finish(Message(['不许丢！🍟🍟🍟 \n', MessageSegment.at(event.user_id)]))
-
-
-@***_report.handle()
-async def _***_report(bot: Bot, event: GroupMessageEvent):
-    msg = data_source.get_***_report()
-    await ***_report.finish(msg)
+        # 不是大胖
+        if event.user_id != config.mc_diu_group_id:
+            await mc_diu.finish(Message(['不许丢！🍟🍟🍟 \n', MessageSegment.at(event.user_id)]))
 
 
 @plus1s.handle()

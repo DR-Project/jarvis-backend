@@ -1,12 +1,17 @@
+import time
+
 from typing import List
+from nonebot import get_driver
 
 from .interface import crypto_coin
 from .interface import magic_usage
 from .interface import rss_news
 from .interface import stock
 from .interface import caiyun_weather
+from .config import Config
 
-import time
+global_config = get_driver().config
+config = Config(**global_config.dict())
 
 
 def magic_get_usage() -> str:
@@ -29,7 +34,7 @@ def magic_construct_string(lists: List[dict]) -> str:
                   str(round(i['data_counter'] / 1024 / 1024 / 1024, 2)) + 'GiB' + \
                   '，剩余' + str(round((1 - i['data_counter'] / i['plan_monthly_data']), 2) * 100) + '%\n' + \
                   '重置时间为' + time.strftime(pattern2, time.localtime(i['data_next_reset'])) + '\n'
-    prefix += '----------------\n' + '🪧 现诚招猫猫服务器 Sponsor \n有意者请与 ******🐔 联系'
+    prefix += '----------------\n' + '🪧 现诚招猫猫服务器 Sponsor \n有意者请与 %s 联系' % config.magic_admin_nickname
     return prefix.strip()
 
 
@@ -106,10 +111,6 @@ async def get_coin_volume() -> str:
         ret += 'Price: ₮ ' + str(round(i['quote']['USDT']['price'], 2)) + '\n\n'
         index += 1
     return ret.strip()
-
-
-async def set_***_count(***_man: int) -> None:
-    pass
 
 
 async def get_stock(stock_name: str = None, stock_code: str = None):

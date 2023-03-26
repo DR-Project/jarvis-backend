@@ -184,15 +184,6 @@ async def _exp_cryptocoin(message: Message = CommandArg()):
     await exp_cryptocoin.finish(ret)
 
 
-'''
-@driver.on_bot_connect
-async def do_something(bot: Bot):
-    group_id = ***
-    msg = 'Jarvis now already back online, Sir'
-    await bot.send_group_msg(group_id=group_id, message=msg, auto_escape=True)
-'''
-
-
 async def cron_daily_coin():
     ret = await data_source.get_coin_volume()
     await _scheduler_controller(ret)
@@ -230,34 +221,34 @@ async def corn_daily_weather():
     gugu_door_cities = ['广州', '珠海', '东莞', '佛山', ]
     researcher_cities = ['广州', '北京', '深圳', '上海', '乌海', '梅州', '吉林', '杭州', '长春', ]
 
-    bot = nonebot.get_bots().get('***')
+    bot: Bot = nonebot.get_bot()
 
     for city in gugu_door_cities:
         target = city + '天气'
         ret = data_source.weather_get(target)
-        await bot.send_group_msg(group_id=***, message=ret, auto_escape=True)
+        await bot.send_group_msg(group_id=config.gugu_door_group_id, message=ret, auto_escape=True)
         if gugu_door_cities.index(city) != len(gugu_door_cities) - 1:
             await asyncio.sleep(30)
 
     for city in researcher_cities:
         target = city + '天气'
         ret = data_source.weather_get(target)
-        await bot.send_group_msg(group_id=***, message=ret, auto_escape=True)
+        await bot.send_group_msg(group_id=config.researcher_group_id, message=ret, auto_escape=True)
         if researcher_cities.index(city) != len(researcher_cities) - 1:
             await asyncio.sleep(30)
 
 
 async def _scheduler_controller(message: str):
-    groups = [***, ***]
-    bot = nonebot.get_bots()['***']
+    groups = [config.researcher_group_id, config.gugu_door_group_id]
+    bot: Bot = nonebot.get_bot()
     for group_id in groups:
         await bot.send_group_msg(group_id=group_id, message=message, auto_escape=True)
         await asyncio.sleep(random.choice([i for i in range(30, 60)]))
 
 
 async def _currency_scheduler_controller(message: str):
-    groups = [***, ***]
-    bot = nonebot.get_bots()['***']
+    groups = [config.airport_group_id]
+    bot: Bot = nonebot.get_bot()
     for group_id in groups:
         await bot.send_group_msg(group_id=group_id, message=message, auto_escape=True)
         await asyncio.sleep(random.choice([i for i in range(30, 60)]))

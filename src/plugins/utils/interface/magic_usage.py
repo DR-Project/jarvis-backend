@@ -1,5 +1,12 @@
-from typing import List, Dict, Any
 import httpx
+
+from typing import List, Dict, Any
+from nonebot import get_driver
+
+from ..config import Config
+
+global_config = get_driver().config
+config = Config(**global_config.dict())
 
 
 def get_usage() -> List[Dict[str, Any]]:
@@ -8,21 +15,12 @@ def get_usage() -> List[Dict[str, Any]]:
     :return: a list contain all the server usage data
     """
 
-    param_1 = {
-        'veid': '***',
-        'api_key': '***'
-    }
-
     # param_2 = {
     #     'veid': '***',
     #     'api_key': '***'
     # }
 
-    magic_info = {
-        '***': '***'
-    }
-
-    params = [param_1]
+    params = [config.magic_param_1]
     ret = []
     try:
         for param in params:
@@ -40,7 +38,7 @@ def get_usage() -> List[Dict[str, Any]]:
                 'data_counter': payload['data_counter'],
                 'plan_monthly_data': payload['plan_monthly_data'],
                 'suspended': payload['suspended'],
-                'node_name': magic_info[payload['hostname']]
+                'node_name': config.magic_info[payload['hostname']]
             }
 
             ret.append(msg)

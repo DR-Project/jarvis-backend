@@ -1,10 +1,10 @@
-from .config import Config
+import re
 
 from nonebot import get_driver
 from nonebot.plugin import on_regex
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
 
-import re
+from .config import Config
 
 global_config = get_driver().config
 config = Config(**global_config.dict())

@@ -1,9 +1,15 @@
 import asyncio
-
 import httpx
 import json
-
 import nonebot
+
+from nonebot import get_driver
+from nonebot.adapters.onebot.v11 import Bot
+
+from ..config import Config
+
+global_config = get_driver().config
+config = Config(**global_config.dict())
 
 
 class InstrumentNotExistException(Exception):
@@ -150,7 +156,7 @@ def get_price_instead(instrument_id: str) -> dict:
 
     headers = {
         'Accept': 'application / json',
-        'X-CMC_PRO_API_KEY': '***'
+        'X-CMC_PRO_API_KEY': config.cmc_apikey
     }
     request_data = instrument_id.split('-')
     symbol = request_data[0]
@@ -246,7 +252,7 @@ async def auto_alert() -> None:
     :return:
     """
 
-    bot = nonebot.get_bots()['***']
+    bot: Bot = nonebot.get_bot()
 
     for coin, database in coin_line.items():
         instrument_id = coin + '-USDT'
@@ -286,7 +292,7 @@ async def get_volume(time: str, limit: int) -> str:
     :param time: could be '24h', '7d', '30d'
     :return:
     """
-    API_KEY = '***'
+    API_KEY = config.cmc_apikey
 
     host = 'https://pro-api.coinmarketcap.com'
     endpoint = '/v1/cryptocurrency/listings/latest'
@@ -402,15 +408,15 @@ async def volume_controller(time: str, limit: int) -> dict:
 def dynamic_decimal(price: float) -> str:
     if price >= 10:
         ret = str('%.2f' % price)
-    elif price < 15 and price > 0.01:
+    elif 15 > price > 0.01:
         ret = str('%.4f' % price)
-    elif price < 0.15 and price > 0.0001:
+    elif 0.15 > price > 0.0001:
         ret = str('%.6f' % price)
-    elif price < 0.00015 and price > 0.000001:
+    elif 0.00015 > price > 0.000001:
         ret = str('%.8f' % price)
-    elif price < 0.0000015 and price > 0.00000001:
+    elif 0.0000015 > price > 0.00000001:
         ret = str('%.12f' % price)
-    elif price < 0.000000015 and price > 0.0000000001:
+    elif 0.000000015 > price > 0.0000000001:
         ret = str('%.14f' % price)
     elif price is None:
         ret = price

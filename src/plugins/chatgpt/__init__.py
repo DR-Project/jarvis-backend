@@ -56,7 +56,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         'content': message + state.get('addition', '')
     }
 
-    send_url = '***'
+    send_url = config.send_url
 
     r = httpx.get(url=send_url, params=params, headers=HEADERS)
 
@@ -71,7 +71,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         logger.info('等待异步返回回复，第[%d]次轮询' % i)
         await asyncio.sleep(3)
 
-        get_url = '***'
+        get_url = config.get_url
 
         params = {
             'gid': group_id,
