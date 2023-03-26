@@ -10,7 +10,7 @@ from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent, Bot, MessageSegment
 from nonebot.plugin import on_regex
 
-from . import data_source
+from .data_source import to_be_or_not_be
 from .config import Config
 from .data import SSR_DICT, SSR_STATISTICS
 
@@ -51,7 +51,7 @@ ssr_statistics = on_regex(REG_GACHA_STATISTICS, re.IGNORECASE)
 
 @queshi.handle()
 async def _queshi(bot: Bot, event: GroupMessageEvent):
-    if data_source.to_be_or_not_be(10):
+    if to_be_or_not_be(10):
         logger.info('成功击中')
         await queshi.finish('确实')
     logger.info('没有击中')
@@ -267,10 +267,10 @@ async def _diuren(bot: Bot, event: GroupMessageEvent):
         await diuren.finish(config.diu_fat_message, reply_message=True)
 
     if msg == config.magician_keyword:
-        await diuren.finish(Message([MessageSegment.at(data_source.mem_dicts[config.magician_keyword[1:]]), ' 丢人']))
+        await diuren.finish(Message([MessageSegment.at(config.mem_dicts[config.magician_keyword[1:]]), ' 丢人']))
 
     # 从 mem_dicts 中选取
-    num = data_source.mem_dicts[msg[1:]]
+    num = config.mem_dicts[msg[1:]]
     await diuren.finish(Message([MessageSegment.at(num), ' 丢人 ']))
 
 
@@ -365,7 +365,7 @@ async def _single_diu(bot: Bot, event: GroupMessageEvent):
 @diuren_pot.handle()
 async def _diuren_pot(bot: Bot, event: GroupMessageEvent):
     if event.group_id in config.big_yellow_group_id_set:
-        await diuren_pot.finish(Message([MessageSegment.at(data_source.mem_dicts.get('黄')), ' 出来挨打 ']))
+        await diuren_pot.finish(Message([MessageSegment.at(config.mem_dicts.get('黄')), ' 出来挨打 ']))
 
 
 @mc_diu.handle()
