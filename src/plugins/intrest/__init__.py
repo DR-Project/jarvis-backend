@@ -81,10 +81,10 @@ async def _roll_ssr(bot: Bot):
         # generating SSR
         SSR_DICT[group] = ssr_id
 
-        message = '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % 'showssr|查看SSR'
+        # message = '抽卡小游戏已上线，发送「单抽」进行抽卡 或者「%s」查看当前群的 SSR 是谁' % 'showssr|查看SSR'
 
         logger.info('群[group_id=%d]的 SSR 已经更新，新的 SSR 是[qq=%d]' % (group, ssr_id))
-        await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
+        # await bot.send_group_msg(group_id=group, message=message, auto_escape=True)
 
 
 @lookup_ssr.handle()
