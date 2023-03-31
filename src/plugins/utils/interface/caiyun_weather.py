@@ -67,7 +67,7 @@ def process_weather_data(location: Location, hourly_steps):
     ret = [
         '%s，' % weather_data.get('forecast_keypoint'),
         '气温 %s到%s°C，' % (temperature_min, temperature_max),
-        '空气质量%s。' % weather_data.get('max_air_quality')
+        '空气质量%s。' % weather_data.get('max_air_quality') if weather_data.get('max_air_quality') else '无空气质量数据'
     ]
 
     return ''.join(ret)

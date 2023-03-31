@@ -48,29 +48,25 @@ exp_cryptocoin = on_command(EREG_COIN)
 stock = on_command(STOCK)
 
 
-# rule checker
+# rule checker starts
 def weather_condition_checker():
     async def _checker(bot: Bot, event: Event, state: T_State) -> bool:
         """
-        自定义规则检查器
-        1. 是一个 回复 消息
-        2. 原消息是一个小程序
-        3. 小程序是一个地图 且该地图是 腾讯地图
-        4. 消息的正文中出现 天气 两个字
+        Customize Rule Checker
+        1. has to be a QQ Mini Program
+        2. the Mini Program has to be Tencent Map
         """
-        if hasattr(event, 'reply'):
-            # 在这个位置写入你的判断代码
-            if '天气' == event.get_plaintext():
-                _ = [x for x in event.reply.message if x.type == 'json'][0]
-                message = _.get('data').get('data')
-                data = json.loads(message)
-                if data.get('app') == 'com.tencent.map':
-                    return True
+        if hasattr(event, 'message'):
+            for message in event.message:
+                if message.type == 'json':
+                    msg = message.get('data').get('data')
+                    data = json.loads(msg)
+                    if data.get('app') == 'com.tencent.map':
+                        return True
 
     return Rule(_checker)
 
-
-# rule checker
+# rule checker ends
 
 
 xxx = on_message(rule=weather_condition_checker())
@@ -139,12 +135,7 @@ async def _weather(bot: Bot, event: MessageEvent):
 
 @xxx.handle()
 async def _xxx(bot: Bot, event: MessageEvent):
-    reply = event.reply
-    if not reply:
-        logger.info('reply is empty')
-        await xxx.finish()
-
-    json_message = reply.message[1].get('data').get('data')
+    json_message = event.message[0].get('data').get('data')
     location = json.loads(json_message).get('meta').get('Location.Search')
     logger.debug(location)
 
@@ -153,9 +144,9 @@ async def _xxx(bot: Bot, event: MessageEvent):
     line = '---------------'
     source = '以上数据来自彩云天气™️'
 
-    weather_message = '\n%s\n%s\n%s' % (process_weather_data(location_object, hourly_steps=4), line, source)
+    weather_message = '%s。\n%s\n%s' % (process_weather_data(location_object, hourly_steps=4), line, source)
 
-    await xxx.finish(weather_message, at_sender=True)
+    await xxx.finish(weather_message, reply_message=True)
 
 
 @hotcoin.handle()
